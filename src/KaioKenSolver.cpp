@@ -62,10 +62,13 @@ vector < vector < int > >  generarPeleas( int N ){
         vector < vector < int > > peleasIzq = generarPeleas( (N/2) );
         vector < vector < int > > peleasDer = generarPeleas( (N/2) + 1);  
         peleas = merge( peleasIzq,peleasDer);
-        vector < int > lastPeleaIzq  = peleasIzq[peleasIzq.size() -1];
-        vector < int > lastPeleaDer  = peleasDer[peleasDer.size() -1];
-        lastPeleaDer.insert(lastPeleaDer.end(), lastPeleaIzq.begin(), lastPeleaIzq.end());
-        peleas.push_back(lastPeleaDer);
+        if(peleasIzq.size() != peleasDer.size()){
+             vector < int > lastPeleaIzq  = peleasIzq[peleasIzq.size() -1];
+            vector < int > lastPeleaDer  = peleasDer[peleasDer.size() -1];
+            lastPeleaDer.insert(lastPeleaDer.end(), lastPeleaIzq.begin(), lastPeleaIzq.end());
+            peleas.push_back(lastPeleaDer);
+        }
+       
         
     }
     
