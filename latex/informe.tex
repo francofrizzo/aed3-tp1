@@ -1,0 +1,51 @@
+% ALGUNOS PAQUETES REQUERIDOS (EN UBUNTU): %
+% ========================================
+% %
+% texlive-latex-base %
+% texlive-latex-recommended %
+% texlive-fonts-recommended %
+% texlive-latex-extra %
+% texlive-lang-spanish (en ubuntu 13.10) %
+% ******************************************************** %
+
+\documentclass[a4paper]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage[pdftex]{graphicx}
+\usepackage{sidecap}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{makeidx}
+\usepackage{float}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{amsfonts}
+\usepackage{sectsty}
+\usepackage{wrapfig}
+\usepackage{listings}
+
+\input{page.layout}
+\usepackage{caratula}
+
+\begin{document}
+\materia{Algoritmos y Estructuras de Datos III}
+\submateria{Primer Cuatrimestre de 2016}
+\titulo{Trabajo Práctico I}
+%\subtitulo{Grupo: }
+\integrante{Franco Frizzo}{xxx/xx}{xxx}
+\integrante{Iván Pondal}{078/14}{ivan.pondal@gmail.com}
+\integrante{Manuel Mena}{xxx/xx}{xxx}
+\integrante{Maximiliano Paz}{251/14}{m4xileon@gmail.com}
+\maketitle
+% no footer on the first page
+\thispagestyle{empty}
+
+\newpage
+\tableofcontents
+
+\newpage
+\section{Introducción}
+\input{intro}
+
+\end{document}
