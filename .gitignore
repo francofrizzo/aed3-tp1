@@ -26,6 +26,9 @@
 *.exe
 *.out
 *.app
+KaioKenSolver
+GenkidamaSolver
+KamehamehaSolver
 
 # Latex
 *.aux
@@ -34,5 +37,3 @@
 *.log
 *.synctex.gz
 *.toc
-
-

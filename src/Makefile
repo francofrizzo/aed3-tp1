@@ -4,13 +4,13 @@ CC=g++
 # flags de compilación
 CFLAGS=-g -Wall -O2 -std=c++11
 
-SOURCES=KaioKenSolver.cpp GenkidamaSolver.cpp
+SOURCES=KaioKenSolver.cpp GenkidamaSolver.cpp KamehamehaSolver.cpp
 
 # Objetos que serán generados (no tocar)
 OBJECTS=$(SOURCES:.cpp=.o)
 
 # Nombre de ejecutables a generar
-EXECUTABLES=KaioKenSolver GenkidamaSolver
+EXECUTABLES=KaioKenSolver GenkidamaSolver KamehamehaSolver
 
 .PHONY: all clean
 
@@ -37,6 +37,17 @@ runGenkidamaSolver: cleanGenkidamaSolver GenkidamaSolver
 
 cleanGenkidamaSolver:
 	rm -rf GenkidamaSolver GenkidamaSolver.o
+
+# KAMEHAMEHA
+
+KamehamehaSolver: KamehamehaSolver.o
+	$(CC) $@.o -o $@
+
+runKamehamehaSolver: cleanKamehamehaSolver KamehamehaSolver
+	./KamehamehaSolver
+
+cleanKamehamehaSolver:
+	rm -rf KamehamehaSolver KamehamehaSolver.o
 
 # TODOS
 
