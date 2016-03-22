@@ -16,9 +16,11 @@ EXECUTABLES=KaioKenSolver GenkidamaSolver KamehamehaSolver
 
 all: clean $(SOURCES) $(EXECUTABLES)
 
+test: testKaioKenSolver testGenkidamaSolver testKamehamehaSolver
+
 # KAIOKEN
 
-KaioKenSolver: KaioKenSolver.o
+KaioKenSolver: cleanKaioKenSolver KaioKenSolver.o
 	$(CC) $@.o -o $@
 
 runKaioKenSolver: cleanKaioKenSolver KaioKenSolver
@@ -27,9 +29,12 @@ runKaioKenSolver: cleanKaioKenSolver KaioKenSolver
 cleanKaioKenSolver:
 	rm -rf KaioKenSolver KaioKenSolver.o
 
+testKaioKenSolver: KaioKenSolver
+	java -jar KaioKenTester.jar -exec ./$^ -test 0
+
 # GENKIDAMA
 
-GenkidamaSolver: GenkidamaSolver.o
+GenkidamaSolver: cleanGenkidamaSolver GenkidamaSolver.o
 	$(CC) $@.o -o $@
 
 runGenkidamaSolver: cleanGenkidamaSolver GenkidamaSolver
@@ -38,9 +43,12 @@ runGenkidamaSolver: cleanGenkidamaSolver GenkidamaSolver
 cleanGenkidamaSolver:
 	rm -rf GenkidamaSolver GenkidamaSolver.o
 
+testGenkidamaSolver: GenkidamaSolver
+	java -jar GenkidamaTester.jar -exec ./$^ -test 0
+
 # KAMEHAMEHA
 
-KamehamehaSolver: KamehamehaSolver.o
+KamehamehaSolver: cleanKamehamehaSolver KamehamehaSolver.o
 	$(CC) $@.o -o $@
 
 runKamehamehaSolver: cleanKamehamehaSolver KamehamehaSolver
@@ -48,6 +56,9 @@ runKamehamehaSolver: cleanKamehamehaSolver KamehamehaSolver
 
 cleanKamehamehaSolver:
 	rm -rf KamehamehaSolver KamehamehaSolver.o
+
+testKamehamehaSolver: KamehamehaSolver
+	java -jar KamehamehaTester.jar -exec ./$^ -test 0
 
 # TODOS
 
