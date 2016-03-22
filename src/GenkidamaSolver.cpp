@@ -1,4 +1,4 @@
-#define CORRER_TESTS true
+#define CORRER_TESTS false
 
 #include <iostream>
 #include <vector>
@@ -186,5 +186,11 @@ int main(){
 		}
 
 		vector<int> solucion = resolverGenkidama(n, t, coordenadasEnemigos, 0, n - 1);
+
+		cout << solucion.size() << endl;
+		for(unsigned int i = 0; i < solucion.size(); i++){
+			cout << solucion[i] << " ";
+		}
+		cout << endl;
 	}
 }
