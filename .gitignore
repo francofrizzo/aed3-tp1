@@ -37,3 +37,6 @@ KamehamehaSolver
 *.log
 *.synctex.gz
 *.toc
+
+# Compiled Latex files
+*informe.pdf
