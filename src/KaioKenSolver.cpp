@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <unistd.h>
 
 using namespace std;
 
@@ -113,8 +114,21 @@ vector < vector < int > > generarPeleas(int N) {
     return peleas;
 }
 
-int main() {
-    int N;
-    cin >> N;
-    printVecs(generarPeleas(N));
+int main(int argc, char *argv[]) {
+	if(argc > 1){
+		char opt;
+		while ((opt = getopt(argc, argv, "tp")) != -1) {
+			switch (opt) {
+				case 't':
+					break;
+				case 'p':
+					break;
+			}
+		}
+	}
+	else{
+		int n;
+		cin >> n;
+		printVecs(generarPeleas(n));
+	}
 }

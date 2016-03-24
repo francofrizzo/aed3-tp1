@@ -1,7 +1,6 @@
-#define CORRER_TESTS false
-
 #include <iostream>
 #include <vector>
+#include <unistd.h>
 #include "mini_test.h"
 
 using namespace std;
@@ -238,17 +237,26 @@ void test_seis_enemigos_cuatro_partes(){
 	ASSERT(compararVectores(solucion, esperado));
 }
 
-int main(){
-	if(CORRER_TESTS){
-		RUN_TEST(test_un_enemigo);
-		RUN_TEST(test_tres_enemigos_superior);
-		RUN_TEST(test_tres_enemigos_inferior);
-		RUN_TEST(test_tres_enemigos_medio);
-		RUN_TEST(test_tres_enemigos_separados);
-		RUN_TEST(test_tres_enemigos_superior_medio);
-		RUN_TEST(test_tres_enemigos_inferior_medio);
-		RUN_TEST(test_cuatro_enemigos_dos_partes);
-		RUN_TEST(test_seis_enemigos_cuatro_partes);
+int main(int argc, char *argv[]) {
+	if(argc > 1){
+		char opt;
+		while ((opt = getopt(argc, argv, "tp")) != -1) {
+			switch (opt) {
+				case 't':
+					RUN_TEST(test_un_enemigo);
+					RUN_TEST(test_tres_enemigos_superior);
+					RUN_TEST(test_tres_enemigos_inferior);
+					RUN_TEST(test_tres_enemigos_medio);
+					RUN_TEST(test_tres_enemigos_separados);
+					RUN_TEST(test_tres_enemigos_superior_medio);
+					RUN_TEST(test_tres_enemigos_inferior_medio);
+					RUN_TEST(test_cuatro_enemigos_dos_partes);
+					RUN_TEST(test_seis_enemigos_cuatro_partes);
+					break;
+				case 'p':
+					break;
+			}
+		}
 	}
 	else{
 		int n;
