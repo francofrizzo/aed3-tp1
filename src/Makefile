@@ -14,16 +14,16 @@ EXECUTABLES=KaioKenSolver GenkidamaSolver KamehamehaSolver
 
 .PHONY: all clean
 
-all: clean $(SOURCES) $(EXECUTABLES)
+all: $(SOURCES) $(EXECUTABLES)
 
 test: testKaioKenSolver testGenkidamaSolver testKamehamehaSolver
 
 # KAIOKEN
 
-KaioKenSolver: cleanKaioKenSolver KaioKenSolver.o
+KaioKenSolver: KaioKenSolver.o
 	$(CC) $@.o -o $@
 
-runKaioKenSolver: cleanKaioKenSolver KaioKenSolver
+runKaioKenSolver: KaioKenSolver
 	./KaioKenSolver
 
 cleanKaioKenSolver:
@@ -34,10 +34,10 @@ testKaioKenSolver: KaioKenSolver
 
 # GENKIDAMA
 
-GenkidamaSolver: cleanGenkidamaSolver GenkidamaSolver.o
+GenkidamaSolver: GenkidamaSolver.o
 	$(CC) $@.o -o $@
 
-runGenkidamaSolver: cleanGenkidamaSolver GenkidamaSolver
+runGenkidamaSolver: GenkidamaSolver
 	./GenkidamaSolver
 
 cleanGenkidamaSolver:
@@ -48,10 +48,10 @@ testGenkidamaSolver: GenkidamaSolver
 
 # KAMEHAMEHA
 
-KamehamehaSolver: cleanKamehamehaSolver KamehamehaSolver.o
+KamehamehaSolver: KamehamehaSolver.o
 	$(CC) $@.o -o $@
 
-runKamehamehaSolver: cleanKamehamehaSolver KamehamehaSolver
+runKamehamehaSolver: KamehamehaSolver
 	./KamehamehaSolver
 
 cleanKamehamehaSolver:
