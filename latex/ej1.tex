@@ -14,6 +14,12 @@
 
     % 3. Deducir una cota de complejidad temporal del algoritmo propuesto y justificar por qué el algoritmo cumple la cota dada. Utilizar el modelo uniforme.
     \subsection{Complejidad teórica}
+        El problema fue tratado como un DyC (divide and conquer), el algoritmo consta en de dividir en dos al N (cantidad de guerreros de la instancia a resolver) y llamar recursivamente las dos mitades. Los casos base son N = 1 y N = 2. Cuando N igual a 1 , se devuelve un array vacio, ya que teniendo un solo guerrero para que todos peleen no tengo que armar ninguna pelea, N igual a 2 , devuelvo el array [1,2] , ya que para que todos pelen teniendo dos guerreros , solo tengo que hacer que peleen entre ellos.
+        El caso N > 2, creo la primer pelea que es que la mitad  pelee con la otra mitad , luego si N es par 
+        llamo recursivamente a una mitad y a la otra , si es impar llamo recursivamente la mitad y la mitad más uno , luego unó las peleas de uno con las del otro y devuelvo eso como solución .
+        Para justificar la complejidad usaremos el Teorema Maestro. Dado que 2 es la cantidad des subproblemas a resolver y tambien las particiones y n es el costo de cada paso en la recursión , el algoritmo cae en el segundo caso , entonces la complejidad es de n log n.
+
+
 
     % 4. Dar un código fuente claro que implemente la solución propuesta. Se deben incluir las partes relevantes del código como apéndice del informe impreso entregado.
 
