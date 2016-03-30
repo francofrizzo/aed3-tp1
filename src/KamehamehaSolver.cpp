@@ -32,7 +32,7 @@ private:
 void imprimir(vector<XY> vec){
 	cout << "[";
 	for(unsigned int i = 0; i < vec.size(); i++){
-		cout << "(" << vec[i].x << "," << vec[i] << ")";
+		cout << "(" << vec[i].x << "," << vec[i].y << ")";
 		if(i < vec.size() - 1){
 			cout << ", ";
 		}
@@ -40,7 +40,7 @@ void imprimir(vector<XY> vec){
 	cout << "]" << endl;
 }
 
-long minKamehamehas;
+unsigned long minKamehamehas;
 
 vector<vector<XY> > ordenDeDestruccion;
 
@@ -48,7 +48,7 @@ vector<vector<XY> > ordenDeDestruccion;
 vector<XY> enemigosQueMueren (vector<XY> enemigos, FuncionLineal kamehameha){
 	vector<XY> destruidos;
 
-    for (int i = 0; i < enemigos.size(); i++) {
+    for (unsigned int i = 0; i < enemigos.size(); i++) {
 		if (kamehameha.y(enemigos[i].x) == enemigos[i].y)
 			destruidos.push_back(enemigos[i]);
     }
@@ -107,5 +107,8 @@ int main(int argc, char *argv[]){
 		}
 
 		minKamehamehas = n;
+
+		vector<vector<XY> > enemigosDestruidos;
+		recursividad(coordenadasEnemigos, enemigosDestruidos);
 	}
 }
