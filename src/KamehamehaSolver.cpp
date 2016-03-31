@@ -11,6 +11,11 @@ public:
 
 	double x;
 	double y;
+
+	ostream& operator<<(ostream& os, const XY& xy){
+	    os << "(" << xy.x << "," << xy.y << ")";
+	    return os;
+	}
 };
 
 class FuncionLineal{
@@ -65,23 +70,30 @@ void destruirEnemigos (vector<XY> &enemigosRestantes, vector<vector<XY> > &enemi
 
 void recursividad(vector<XY> enemigosRestantes, vector<vector<XY> > enemigosDestruidos){
 	if(enemigosRestantes.size() == 0){
+		for(unsigned int i = 0; i < ordenDeDestruccion.size(); i++)
+			imprimir(ordenDeDestruccion[i]);
 		if(enemigosDestruidos.size() < minKamehamehas){
 			minKamehamehas = enemigosDestruidos.size();
 			ordenDeDestruccion = enemigosDestruidos;
 		}
 	}
 	else if(enemigosRestantes.size() == 1){
-			enemigosDestruidos.push_back(enemigosRestantes);
-			enemigosRestantes.pop_back();
-			recursividad(enemigosRestantes, enemigosDestruidos);
+		cout << "queda uno: " << enemigosRestantes[0];
+		vector<XY> vacio;
+		vector<vector<XY> > copiaEnemigosDestruidos = enemigosDestruidos;
+		copiaEnemigosDestruidos.push_back(enemigosRestantes);
+		recursividad(vacio, enemigosDestruidos);
 	}
 	else{
 		//Todas las posibles combinaciones de Kamehamehas sin contar las que ya hice al reves
 		// Ejempĺo: si hice un kamehameha de 0,0 a 1,1 no voy a hacer de 1,1 a 0,0 porque es lo mismo
 		for(unsigned int i = 0; i < enemigosRestantes.size() - 1; i++){
 			for(unsigned int j = i + 1; j < enemigosRestantes.size(); j++){
-				destruirEnemigos(enemigosRestantes, enemigosDestruidos, FuncionLineal(enemigosRestantes[i], enemigosRestantes[j]));
-				recursividad(enemigosRestantes, enemigosDestruidos);
+				cout << "recursividad: " << enemigosRestantes[i] << " " << enemigosRestantes[j] << endl;
+				vector<XY> copiaEnemigosRestantes = enemigosRestantes;
+				vector<vector<XY> > copiaEnemigosDestruidos = enemigosDestruidos;
+				destruirEnemigos(copiaEnemigosRestantes, copiaEnemigosDestruidos, FuncionLineal(enemigosRestantes[i], enemigosRestantes[j]));
+				recursividad(copiaEnemigosRestantes, copiaEnemigosDestruidos);
 			}
 		}
 	}
