@@ -44,17 +44,24 @@ unsigned long minKamehamehas;
 
 vector<vector<XY> > ordenDeDestruccion;
 
-// Devuelve los enemigos que destruye el kamehameha en tiempo lineal
-vector<XY> enemigosQueMueren (vector<XY> enemigos, FuncionLineal kamehameha){
+// Saca los enemigos que destruye de enemigosRestantes y los agrega a enemigosDestruidos
+void destruirEnemigos (vector<XY> &enemigosRestantes, vector<vector<XY> > &enemigosDestruidos, FuncionLineal kamehameha){
 	vector<XY> destruidos;
 
-    for (unsigned int i = 0; i < enemigos.size(); i++) {
-		if (kamehameha.y(enemigos[i].x) == enemigos[i].y)
-			destruidos.push_back(enemigos[i]);
+	unsigned int i = 0;
+    while (i < enemigosRestantes.size()) {
+		if (kamehameha.y(enemigosRestantes[i].x) == enemigosRestantes[i].y){
+			destruidos.push_back(enemigosRestantes[i]);
+			enemigosRestantes.erase(enemigosRestantes.begin() + i);
+		}
+		else
+			i++;
     }
 
-    return destruidos;
+    enemigosDestruidos.push_back(destruidos);
 }
+
+
 
 void recursividad(vector<XY> enemigosRestantes, vector<vector<XY> > enemigosDestruidos){
 	if(enemigosRestantes.size() == 0){
@@ -63,20 +70,18 @@ void recursividad(vector<XY> enemigosRestantes, vector<vector<XY> > enemigosDest
 			ordenDeDestruccion = enemigosDestruidos;
 		}
 	}
-	else{
-		if(enemigosRestantes.size() == 1){
+	else if(enemigosRestantes.size() == 1){
 			enemigosDestruidos.push_back(enemigosRestantes);
 			enemigosRestantes.pop_back();
 			recursividad(enemigosRestantes, enemigosDestruidos);
-		}
-		else{
-			//Todas las posibles combinaciones de Kamehamehas sin contar las que ya hice al reves
-			// Ejempĺo: si hice un kamehameha de 0,0 a 1,1 no voy a hacer de 1,1 a 0,0 porque es lo mismo
-			for(unsigned int i = 0; i < enemigosRestantes.size() - 1; i++){
-				for(unsigned int j = i + 1; j < enemigosRestantes.size(); j++){
-					vector<XY> porDestruir = enemigosQueMueren(enemigosRestantes, FuncionLineal(enemigosRestantes[i], enemigosRestantes[j]));
-					imprimir(porDestruir);
-				}
+	}
+	else{
+		//Todas las posibles combinaciones de Kamehamehas sin contar las que ya hice al reves
+		// Ejempĺo: si hice un kamehameha de 0,0 a 1,1 no voy a hacer de 1,1 a 0,0 porque es lo mismo
+		for(unsigned int i = 0; i < enemigosRestantes.size() - 1; i++){
+			for(unsigned int j = i + 1; j < enemigosRestantes.size(); j++){
+				destruirEnemigos(enemigosRestantes, enemigosDestruidos, FuncionLineal(enemigosRestantes[i], enemigosRestantes[j]));
+				recursividad(enemigosRestantes, enemigosDestruidos);
 			}
 		}
 	}
@@ -108,7 +113,12 @@ int main(int argc, char *argv[]){
 
 		minKamehamehas = n;
 
+		//imprimir(coordenadasEnemigos);
+
 		vector<vector<XY> > enemigosDestruidos;
 		recursividad(coordenadasEnemigos, enemigosDestruidos);
+
+		for(unsigned int i = 0; i < ordenDeDestruccion.size(); i++)
+			imprimir(ordenDeDestruccion[i]);
 	}
 }
