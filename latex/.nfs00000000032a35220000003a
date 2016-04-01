@@ -1,0 +1,26 @@
+\section{Ejercicio 1}
+    % 1. Describir detalladamente el problema a resolver dando ejemplos del mismo y sus soluciones.
+    \subsection{Descripción del problema}
+        Gokú debe entrenar un ejército de $N$ guerreros para enfrentarse Majin Boo. Para lograr ese objetivo, desea organizar peleas entre sus luchadores. En cada pelea, los guerreros serán divididos en dos bandos que pelearán entre sí. El objetivo es que, para cualquier par de luchadores, haya al menos una pelea en la que se encuentren en bandos distintos. Al mismo tiempo, el número total de peleas debe ser el mínimo necesario.
+
+
+    % 2. Explicar de forma clara, sencilla, estructurada y concisa, las ideas desarrolladas para la resolución del problema. Utilizar pseudocódigo y lenguaje coloquial (no código fuente). Justificar por qué el procedimiento resuelve efectivamente el problema.
+    \subsection{Solución propuesta}
+        La idea central en la resolución del problema es la siguiente: en cada pelea, Gokú debe tratar de que luchen entre sí la mayor cantidad posible de guerreros que no se hayan enfrentado en una pelea anterior. En particular, en la primera pelea, querrá dividir los bandos de forma tal que luchen entre sí tantos guerreros como sea posible.
+
+        La idea intuitiva es que la solución óptima consiste en bandos con cantidades de guerreros tan similares como sea posible. Por ejemplo, si Gokú pone en un bando a un único guerrero y en el otro a los $N - 1$ guerreros restantes, los pares de guerreros que se enfrentarán en esa pelea serán $N - 1$, ya que todos los guerreros del segundo bando lucharán contra el que quede en el primero, pero nunca pelearán entre sí. Si, en cambio, decide poner $2$ guerreros en un bando, cada uno de ellos se enfrentará con los $N - 2$ del bando opuesto. Así, la cantidad de parejas de guerreros que se enfrenten será $2 (N - 2)$, mejorando el resultado anterior.
+        
+        En general, el conjunto de pares de guerreros que se enfrentan en cada pelea es el producto cartesiano de ambos bandos. Si el primer bando tiene $c$
+
+    % 3. Deducir una cota de complejidad temporal del algoritmo propuesto y justificar por qué el algoritmo cumple la cota dada. Utilizar el modelo uniforme.
+    \subsection{Complejidad teórica}
+        El problema fue tratado como un DyC (divide and conquer), el algoritmo consta en de dividir en dos al N (cantidad de guerreros de la instancia a resolver) y llamar recursivamente las dos mitades. Los casos base son N = 1 y N = 2. Cuando N igual a 1 , se devuelve un array vacio, ya que teniendo un solo guerrero para que todos peleen no tengo que armar ninguna pelea, N igual a 2 , devuelvo el array [1,2] , ya que para que todos pelen teniendo dos guerreros , solo tengo que hacer que peleen entre ellos.
+        El caso N > 2, creo la pelea que es que la mitad  pelee con la otra mitad , luego si N es par llamo recursivamente a una mitad y a la otra, luego concateno las peleas de uno con las del otro . Si es impar llamo recursivamente la mitad y la mitad más uno, luego como en el caso de la mitad más 1 , voy a tener una pelea de más la cual voy a concatenar con la ultima de la otra mitad (podria concatenarlo con cualquiera) y devuelvo las peleas concatenadas como solución . 
+        Para justificar la complejidad usaremos el Teorema Maestro. Dado que 2 es la cantidad des subproblemas a resolver y tambien las particiones y n es el costo de cada paso en la recursión , el algoritmo cae en el segundo caso , entonces la complejidad es de n log n.
+
+
+
+    % 4. Dar un código fuente claro que implemente la solución propuesta. Se deben incluir las partes relevantes del código como apéndice del informe impreso entregado.
+
+    % 5. Realizar una experimentación computacional para medir la performance del programa implementado. Usar un conjunto de casos de test en función de los parámetros de entrada, con instancias aleatorias e instancias particulares (de peor/mejor caso en tiempo de ejecución, por ejemplo). Presentar en forma gráfica una comparación entre los tiempos medidos y la complejidad teórica calculada y extraer conclusiones.
+    \subsection{Experimentación}

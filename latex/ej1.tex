@@ -56,9 +56,12 @@
 
     % 3. Deducir una cota de complejidad temporal del algoritmo propuesto y justificar por qué el algoritmo cumple la cota dada. Utilizar el modelo uniforme.
     \subsection{Complejidad teórica}
-        El problema fue tratado como un DyC (divide and conquer), el algoritmo consta en de dividir en dos al N (cantidad de guerreros de la instancia a resolver) y llamar recursivamente las dos mitades. Los casos base son N = 1 y N = 2. Cuando N igual a 1 , se devuelve un array vacio, ya que teniendo un solo guerrero para que todos peleen no tengo que armar ninguna pelea, N igual a 2 , devuelvo el array [1,2] , ya que para que todos pelen teniendo dos guerreros , solo tengo que hacer que peleen entre ellos.
-        El caso N > 2, creo la pelea que es que la mitad  pelee con la otra mitad , luego si N es par llamo recursivamente a una mitad y a la otra, luego concateno las peleas de uno con las del otro . Si es impar llamo recursivamente la mitad y la mitad más uno, luego como en el caso de la mitad más 1 , voy a tener una pelea de más la cual voy a concatenar con la ultima de la otra mitad (podria concatenarlo con cualquiera) y devuelvo las peleas concatenadas como solución . 
-        Para justificar la complejidad usaremos el Teorema Maestro. Dado que 2 es la cantidad des subproblemas a resolver y tambien las particiones y n es el costo de cada paso en la recursión , el algoritmo cae en el segundo caso , entonces la complejidad es de n log n.
+         
+        Para justificar la complejidad usaremos el Teorema Maestro 
+        \[T(n) = \begin{cases} 2T(\frac{n}{2}) + f(n) &  n > 1 \\
+                                \theta(1) & n = 1    \end{cases} \]
+        Trivialmente en el caso que sea n sea 1, se ve que su complejidad es $\theta(1)$ .El costo de la funcion  $f(n)$ es $\theta(n)$ , dado que el costo de armar la pelea es  $\theta(n)$  .
+        Dado que 2 es la cantidad des subproblemas a resolver y tambien las particiones y n es el costo de cada paso en la recursión , el algoritmo cae en el segundo caso , entonces la complejidad es de $ n log n$.
 
 
 
