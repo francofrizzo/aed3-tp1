@@ -12,8 +12,8 @@ using namespace std;
 // Imprime un vector (de enteros) a la salida estándar.
 // Los elementos se imprimen separados por espacios,
 // en una única línea seguida de un caracter de fin de línea.
-void printVec(vector < int > vec) {
-    for (int i = 0; i < vec.size(); ++i) {
+void imprimirVector(vector < int > vec) {
+    for (unsigned int i = 0; i < vec.size(); ++i) {
         cout << vec[i] << " ";
     }
     cout << endl;
@@ -22,10 +22,10 @@ void printVec(vector < int > vec) {
 // Recibe una lista de vectores. Imprime a la salida estándar
 // el número de elementos de la lista, y a continuación todos
 // los vectores, cada uno en una nueva línea
-void printVecs(vector < vector < int > > vecs) {
+void imprimirVectores(vector < vector < int > > vecs) {
     cout << vecs.size() << endl;
-    for (int i = 0; i < vecs.size(); ++i) {
-        printVec(vecs[i]);
+    for (unsigned int i = 0; i < vecs.size(); ++i) {
+        imprimirVector(vecs[i]);
     }
 }
 
@@ -34,8 +34,8 @@ void printVecs(vector < vector < int > > vecs) {
 // más larga que la otra, omite los elementos sobrantes.
 vector < vector < int > >  merge (vector < vector < int > > peleasIzq, vector < vector < int > > peleasDer) {
     vector < vector < int > > peleas;
-    int minSize =  min(peleasIzq.size(), peleasDer.size());
-    for (int i = 0; i < minSize; ++i) {
+    unsigned int tamMinimo =  min(peleasIzq.size(), peleasDer.size());
+    for (unsigned int i = 0; i < tamMinimo; ++i) {
         vector < int > peleaIzq  = peleasIzq[i];
         vector < int > peleaDer  = peleasDer[i];
         peleaIzq.insert(peleaIzq.end(), peleaDer.begin(), peleaDer.end());
@@ -49,7 +49,7 @@ vector < vector < int > >  merge (vector < vector < int > > peleasIzq, vector < 
 */
 
 // Resuelve la instancia del problema correspondiente a un ejército de N guerreros.
-vector < vector < int > > generarPeleas(int N) {
+vector < vector < int > > generarPeleas(unsigned int N) {
 
     vector < vector < int > > peleas;
 
@@ -71,11 +71,11 @@ vector < vector < int > > generarPeleas(int N) {
 
     // Primer pelea
     vector < int > pelea ;
-    int i;
+    unsigned int i;
     for (i = 0; i < N / 2; ++i) {
         pelea.push_back(1);
     }
-    for (i; i < N; ++i) {
+    for (; i < N; ++i) {
         pelea.push_back(2);
     }
     peleas.push_back(pelea);
@@ -96,18 +96,18 @@ vector < vector < int > > generarPeleas(int N) {
         // por lo que es completada replicando su última pelea para así poder
         // concatenarla con la última pelea de la sub-solución derecha.
         if (peleasIzq.size() != peleasDer.size()) {
-            vector < int > lastPeleaIzq;
-            vector < int > lastPeleaDer;
+            vector < int > ultPeleaIzq;
+            vector < int > ultPeleaDer;
 
             if (peleasIzq.size() > 0) {
-                lastPeleaIzq = peleasIzq[peleasIzq.size() - 1];
+                ultPeleaIzq = peleasIzq[peleasIzq.size() - 1];
             } else {
-                lastPeleaIzq.push_back(1);
+                ultPeleaIzq.push_back(1);
             }
-            lastPeleaDer = peleasDer[peleasDer.size() - 1];
+            ultPeleaDer = peleasDer[peleasDer.size() - 1];
             
-            lastPeleaIzq.insert(lastPeleaIzq.end(), lastPeleaDer.begin(), lastPeleaDer.end());
-            peleas.push_back(lastPeleaIzq);
+            ultPeleaIzq.insert(ultPeleaIzq.end(), ultPeleaDer.begin(), ultPeleaDer.end());
+            peleas.push_back(ultPeleaIzq);
         }
     }
 
@@ -127,8 +127,8 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	else{
-		int n;
+		unsigned int n;
 		cin >> n;
-		printVecs(generarPeleas(n));
+		imprimirVectores(generarPeleas(n));
 	}
 }
