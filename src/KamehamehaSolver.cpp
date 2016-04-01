@@ -31,8 +31,12 @@ class Recta {
 public:
     Recta (XY a, XY b) : a(a), b(b) {};
 
-    bool pasaPor(XY p) {
+    bool pasaPor(const XY p) const {
         return (b.x - a.x) * (p.y - a.y) == (p.x - a.x) * (b.y - a.y);
+    }
+
+    bool operator==(const Recta& otra) const {
+        return this->pasaPor(otra.a) && this->pasaPor(otra.b);
     }
 
 private:
@@ -70,6 +74,7 @@ bool compararVectores(const vector<T> calculado, const vector<T> esperado) {
 /*
 **  Variables globales
 */
+unsigned int N;
 vector<XY> coordenadasEnemigos;
 
 /*
@@ -94,59 +99,73 @@ vector<unsigned int> destruirEnemigos (vector<unsigned int> &enemigosRestantes, 
     return destruidos;
 }
 
-vector<vector<unsigned int> > resolverKamehamehaRecursivo(vector<unsigned int> enemigos, unsigned int limite, bool& valido) {
-    vector<vector<unsigned int> > mejorSolucion;
-    valido = false;
+bool resolverKamehamehaRecursivo(vector<unsigned int> enemigos, vector<vector<unsigned int>>& solucion, unsigned int limite) {
+    solucion = vector<vector<unsigned int>>();
 
     if (enemigos.size() == 0) {
-        valido = true;
+        return true;
     } else if (limite > 0) {
         if (enemigos.size() == 1 || enemigos.size() == 2) {
-            mejorSolucion.push_back(enemigos);
-            valido = true;
+            solucion.push_back(enemigos);
+            return true;
         } else {
+            vector<vector<unsigned int> > mejorSubsolucion;
+            bool haySubsolucionValida = false;
+            vector<Recta> kamehamehasProbados;
+
             // Todas las posibles combinaciones de Kamehamehas sin contar las que ya hice al reves
             // Ejempĺo: si hice un kamehameha de 0,0 a 1,1 no voy a hacer de 1,1 a 0,0 porque es lo mismo
             for (unsigned int i = 0; i < enemigos.size() - 1; i++){
-                unsigned int minimo = limite - 1;
-                bool primerIntento = true;
                 for (unsigned int j = i + 1; j < enemigos.size(); j++){
                     Recta kamehameha = Recta(coordenadasEnemigos[enemigos[i]], coordenadasEnemigos[enemigos[j]]);
-                    vector<unsigned int> enemigosRestantes = enemigos;
 
-                    bool solucionValida = true;
-                    vector<vector<unsigned int> > solucion;
-                    solucion.push_back(destruirEnemigos(enemigosRestantes, kamehameha));
-
-                    if (enemigosRestantes.size() > 0) {
-                        vector< vector<unsigned int>> enemigosDestruidos = resolverKamehamehaRecursivo(enemigosRestantes, minimo, solucionValida);
-                        if (solucionValida) {
-                            solucion.insert(solucion.end(), enemigosDestruidos.begin(), enemigosDestruidos.end());
+                    bool repetido = false;
+                    for (unsigned int k = 0; k < kamehamehasProbados.size(); k++) {
+                        if (kamehameha == kamehamehasProbados[k]) {
+                            repetido = true;
+                            break;
                         }
                     }
 
-                    if (solucionValida && (solucion.size() < minimo || primerIntento)) {
-                        minimo = solucion.size();
-                        mejorSolucion = solucion;
-                        valido = true;
-                    }
+                    if (!repetido) {
+                        kamehamehasProbados.push_back(kamehameha);
+                        vector<unsigned int> enemigosRestantes = enemigos;
+                        vector<vector<unsigned int> > subsolucion;
+                        subsolucion.push_back(destruirEnemigos(enemigosRestantes, kamehameha));
 
-                    primerIntento = false;
+                        if (enemigosRestantes.size() > 0) {
+                            vector<vector<unsigned int> > subsolucionRecursiva;
+                            if (resolverKamehamehaRecursivo(enemigosRestantes, subsolucionRecursiva, limite - 1)) {
+                                haySubsolucionValida = true;
+                                subsolucion.insert(subsolucion.end(), subsolucionRecursiva.begin(), subsolucionRecursiva.end());
+                                mejorSubsolucion = subsolucion;
+                                limite = subsolucion.size();
+                            }
+                        } else {
+                            haySubsolucionValida = true;
+                            mejorSubsolucion = subsolucion;
+                            limite = 1;
+                        }
+                    }
                 }
+            }
+
+            if (haySubsolucionValida) {
+                solucion.insert(solucion.end(), mejorSubsolucion.begin(), mejorSubsolucion.end());
+                return true;
             }
         }
     }
 
-    return mejorSolucion;
+    return false;
 }
 
-vector<vector<unsigned int> > resolverKamehameha(int n) {
-    vector<unsigned int> enemigos = vector<unsigned int>(n);
+vector<vector<unsigned int> > resolverKamehameha() {
+    vector<unsigned int> enemigos = vector<unsigned int>(N);
     iota(enemigos.begin(), enemigos.end(), 0);
 
-    bool valido;
-    vector<vector<unsigned int> > solucion = resolverKamehamehaRecursivo(enemigos, n, valido);
-
+    vector<vector<unsigned int> > solucion;
+    resolverKamehamehaRecursivo(enemigos, solucion, N);
     return solucion;
 }
 
@@ -155,23 +174,23 @@ vector<vector<unsigned int> > resolverKamehameha(int n) {
 */
 
 void test_vacio() {
-    int n = 0;
-    coordenadasEnemigos = vector<XY>(n);
+    N = 0;
+    coordenadasEnemigos = vector<XY>(N);
     // coordenadasEnemigos[0][0] = 1;
     // coordenadasEnemigos[0][1] = 1;
 
-    vector<vector<unsigned int> > solucion = resolverKamehameha(n);
+    vector<vector<unsigned int> > solucion = resolverKamehameha();
     vector<vector<unsigned int> > esperado = vector<vector<unsigned int>>();
 
     ASSERT(compararVectores(solucion, esperado));
 }
 
 void test_unico() {
-    int n = 1;
-    coordenadasEnemigos = vector<XY>(n);
+    N = 1;
+    coordenadasEnemigos = vector<XY>(N);
     coordenadasEnemigos[0] = XY(0,0);
 
-    vector<vector<unsigned int> > solucion = resolverKamehameha(n);
+    vector<vector<unsigned int> > solucion = resolverKamehameha();
 
     vector<vector<unsigned int> > esperado = vector<vector<unsigned int>>(1);
     esperado[0].push_back(0);
@@ -180,28 +199,28 @@ void test_unico() {
 }
 
 void test_cuatro_en_linea() {
-    int n = 4;
-    coordenadasEnemigos = vector<XY>(n);
+    N = 4;
+    coordenadasEnemigos = vector<XY>(N);
     coordenadasEnemigos[0] = XY(0,0);
     coordenadasEnemigos[1] = XY(1,1);
     coordenadasEnemigos[2] = XY(2,2);
     coordenadasEnemigos[3] = XY(3,3);
 
-    vector<vector<unsigned int> > solucion = resolverKamehameha(n);
+    vector<vector<unsigned int> > solucion = resolverKamehameha();
 
     ASSERT_EQ(solucion.size(), 1);
     ASSERT_EQ(solucion[0].size(), 4);
 }
 
 void test_cuadrado() {
-    int n = 4;
-    coordenadasEnemigos = vector<XY>(n);
+    N = 4;
+    coordenadasEnemigos = vector<XY>(N);
     coordenadasEnemigos[0] = XY(50,100);
     coordenadasEnemigos[1] = XY(50,150);
     coordenadasEnemigos[2] = XY(100,150);
     coordenadasEnemigos[3] = XY(100,100);
 
-    vector<vector<unsigned int> > solucion = resolverKamehameha(n);
+    vector<vector<unsigned int> > solucion = resolverKamehameha();
 
     ASSERT_EQ(solucion.size(), 2);
     ASSERT_EQ(solucion[0].size(), 2);
@@ -209,19 +228,19 @@ void test_cuadrado() {
 }
 
 void test_tres_radiales() {
-    int n = 9;
-    coordenadasEnemigos = vector<XY>(n);
+    N = 9;
+    coordenadasEnemigos = vector<XY>(N);
     coordenadasEnemigos[0] = XY(22,31);
     coordenadasEnemigos[1] = XY(44,62);
     coordenadasEnemigos[2] = XY(5,21);
     coordenadasEnemigos[3] = XY(10,42);
-    coordenadasEnemigos[4] = XY(15,64);
+    coordenadasEnemigos[4] = XY(15,63);
     coordenadasEnemigos[5] = XY(1001,32);
     coordenadasEnemigos[6] = XY(2002,64);
     coordenadasEnemigos[7] = XY(4004,128);
     coordenadasEnemigos[8] = XY(8008,256);
 
-    vector<vector<unsigned int> > solucion = resolverKamehameha(n);
+    vector<vector<unsigned int> > solucion = resolverKamehameha();
 
     ASSERT_EQ(solucion.size(), 3);
 }
@@ -247,16 +266,15 @@ int main (int argc, char* argv[]) {
         }
     } else {
         // Parseo de input
-        int n;
-        cin >> n;
+        cin >> N;
 
-        for (int i = 0; i < n; i++){
+        for (unsigned int i = 0; i < N; i++){
             XY enemigo;
             cin >> enemigo.x >> enemigo.y;
             coordenadasEnemigos.push_back(enemigo);
         }
 
-        vector< vector< unsigned int > > solucion = resolverKamehameha(n);
+        vector< vector< unsigned int > > solucion = resolverKamehameha();
 
         imprimirSolucion(solucion);
     }
