@@ -7,34 +7,31 @@ using namespace std;
 class XY {
 public:
 	XY (){};
-	XY (double x, double y) : x(x), y(y){};
+	XY (int x, int y) : x(x), y(y){};
 
-	double x;
-	double y;
+	int x;
+	int y;
 
-	ostream& operator<<(ostream& os, const XY& xy){
-	    os << "(" << xy.x << "," << xy.y << ")";
-	    return os;
-	}
+	// ostream& operator<<(ostream& os, const XY& xy){
+	//     os << "(" << xy.x << "," << xy.y << ")";
+	//     return os;
+	// }
 };
 
-class FuncionLineal{
+class Recta {
 public:
-	FuncionLineal(XY a, XY b){
-		pendiente = (a.y - b.y) / (a.x - b.x);
-		ordenadaAlOrigen = a.y - pendiente * a.x;
-	}
+	Recta (XY a, XY b) : a(a), b(b) {};
 
-	double y(double x){
-		return pendiente * x + ordenadaAlOrigen;
+	bool pasaPor(XY p) {
+		return (b.x - a.x) * (p.y - a.y) == (p.x - a.x) * (b.y - a.y);
 	}
 
 private:
-	double pendiente;
-	double ordenadaAlOrigen;
+	XY a;
+	XY b;
 };
 
-void imprimir(vector<XY> vec){
+void imprimir(vector<XY> vec) {
 	cout << "[";
 	for(unsigned int i = 0; i < vec.size(); i++){
 		cout << "(" << vec[i].x << "," << vec[i].y << ")";
@@ -50,12 +47,12 @@ unsigned long minKamehamehas;
 vector<vector<XY> > ordenDeDestruccion;
 
 // Saca los enemigos que destruye de enemigosRestantes y los agrega a enemigosDestruidos
-void destruirEnemigos (vector<XY> &enemigosRestantes, vector<vector<XY> > &enemigosDestruidos, FuncionLineal kamehameha){
+void destruirEnemigos (vector<XY> &enemigosRestantes, vector<vector<XY> > &enemigosDestruidos, Recta kamehameha){
 	vector<XY> destruidos;
 
 	unsigned int i = 0;
     while (i < enemigosRestantes.size()) {
-		if (kamehameha.y(enemigosRestantes[i].x) == enemigosRestantes[i].y){
+		if (kamehameha.pasaPor(enemigosRestantes[i])){
 			destruidos.push_back(enemigosRestantes[i]);
 			enemigosRestantes.erase(enemigosRestantes.begin() + i);
 		}
@@ -65,8 +62,6 @@ void destruirEnemigos (vector<XY> &enemigosRestantes, vector<vector<XY> > &enemi
 
     enemigosDestruidos.push_back(destruidos);
 }
-
-
 
 void recursividad(vector<XY> enemigosRestantes, vector<vector<XY> > enemigosDestruidos){
 	if(enemigosRestantes.size() == 0){
@@ -78,7 +73,7 @@ void recursividad(vector<XY> enemigosRestantes, vector<vector<XY> > enemigosDest
 		}
 	}
 	else if(enemigosRestantes.size() == 1){
-		cout << "queda uno: " << enemigosRestantes[0];
+		// cout << "queda uno: " << enemigosRestantes[0];
 		vector<XY> vacio;
 		vector<vector<XY> > copiaEnemigosDestruidos = enemigosDestruidos;
 		copiaEnemigosDestruidos.push_back(enemigosRestantes);
@@ -89,10 +84,10 @@ void recursividad(vector<XY> enemigosRestantes, vector<vector<XY> > enemigosDest
 		// Ejempĺo: si hice un kamehameha de 0,0 a 1,1 no voy a hacer de 1,1 a 0,0 porque es lo mismo
 		for(unsigned int i = 0; i < enemigosRestantes.size() - 1; i++){
 			for(unsigned int j = i + 1; j < enemigosRestantes.size(); j++){
-				cout << "recursividad: " << enemigosRestantes[i] << " " << enemigosRestantes[j] << endl;
+				// cout << "recursividad: " << enemigosRestantes[i] << " " << enemigosRestantes[j] << endl;
 				vector<XY> copiaEnemigosRestantes = enemigosRestantes;
 				vector<vector<XY> > copiaEnemigosDestruidos = enemigosDestruidos;
-				destruirEnemigos(copiaEnemigosRestantes, copiaEnemigosDestruidos, FuncionLineal(enemigosRestantes[i], enemigosRestantes[j]));
+				destruirEnemigos(copiaEnemigosRestantes, copiaEnemigosDestruidos, Recta(enemigosRestantes[i], enemigosRestantes[j]));
 				recursividad(copiaEnemigosRestantes, copiaEnemigosDestruidos);
 			}
 		}
@@ -112,6 +107,8 @@ int main(int argc, char *argv[]){
 		}
 	}
 	else{
+
+		// Parseo de input
 
 		int n;
 		cin >> n;
