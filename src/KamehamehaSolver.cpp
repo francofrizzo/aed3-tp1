@@ -19,6 +19,14 @@ public:
     int x;
     int y;
 
+    bool operator==(const XY& otro) const {
+        return this->x == otro.x && this->y == otro.y;
+    }
+
+    bool operator!=(const XY& otro) const {
+        return this->x != otro.x || this->y != otro.y;
+    }
+
 };
 
 ostream& operator<<(ostream& os, const XY& xy){
@@ -39,10 +47,20 @@ public:
         return this->pasaPor(otra.a) && this->pasaPor(otra.b);
     }
 
+    ostream& imprimir(ostream& os) const {
+        os << "<" << this->a << ";" << this->b << ">";
+        return os;
+    }
+
 private:
     XY a;
     XY b;
 };
+
+ostream& operator<<(ostream& os, const Recta& r){
+    r.imprimir(os);
+    return os;
+}
 
 // Imprime la solución con el formato esperado
 void imprimirSolucion(vector< vector <unsigned int> > solucion) {
@@ -246,6 +264,48 @@ void test_tres_radiales() {
 }
 
 /*
+**  Pruebas de performance
+*/
+
+vector<XY> generarPeorCaso(unsigned int n) {
+    vector<XY> enemigos;
+
+    if (n >= 1) {
+        enemigos.push_back(XY(rand(), rand()));
+    }
+
+    if (n >=2) {
+        XY enemigo;
+        do {
+            enemigo = XY(rand(), rand());
+        } while (enemigo == enemigos[0]);
+        enemigos.push_back(enemigo);
+    }
+
+    for (unsigned int i = 2; i < n; i++) {
+        XY enemigo;
+        bool repetido = true;
+        while (repetido) {
+            enemigo = XY(rand(), rand());
+            repetido = false;
+            for (unsigned int j = 0; j < enemigos.size(); j++) {
+                for (unsigned int k = j + 1; k < enemigos.size(); k++) {
+                    Recta r = Recta(enemigos[j], enemigos[k]);
+                    if (r.pasaPor(enemigo)) {
+                        repetido = true;
+                        break;
+                        break;
+                    }
+                }
+            }
+        }
+        enemigos.push_back(enemigo);
+    }
+
+    return enemigos;
+}
+
+/*
 **  Main
 */
 
@@ -261,6 +321,11 @@ int main (int argc, char* argv[]) {
                     RUN_TEST(test_cuadrado);
                     RUN_TEST(test_tres_radiales);
                 case 'p':
+                    for (unsigned int i = 1; i <= 15; i++) {
+                        N = i;
+                        coordenadasEnemigos = generarPeorCaso(N);
+                        resolverKamehameha();
+                    }
                     break;
             }
         }
