@@ -66,7 +66,7 @@ vector< vector<int>> generarPeleas(int n){
 
 void generarPerformanceTest(int saltos, int muestras){
 	ofstream archivoSalida;
-	archivoSalida.open("kaio_ken_output");
+	archivoSalida.open("../exp/kaioKenOutput");
 	double tiempo_promedio = 0;
 	double tiempo_promedio_log = 0;
 	double tiempo_promedio_c = 0;
@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
 				case 't':
 					break;
 				case 'p':
-					generarPerformanceTest(32, 2);
+					generarPerformanceTest(24, 2);
 					break;
 			}
 		}
