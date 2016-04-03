@@ -1,13 +1,27 @@
+#include <cmath>
+#include <fstream>
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <chrono>
 #include <unistd.h>
 
 using namespace std;
 
+static chrono::time_point<chrono::high_resolution_clock> start_time;
+
 /*
 **  Funciones auxiliares
 */
+
+void start_timer() {
+    start_time = chrono::high_resolution_clock::now();
+}
+
+double stop_timer() {
+    chrono::time_point<chrono::high_resolution_clock> end_time = chrono::high_resolution_clock::now();
+    return double(chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count());
+}
 
 // Imprime un vector (de enteros) a la salida estándar.
 // Los elementos se imprimen separados por espacios,
@@ -50,6 +64,33 @@ vector< vector<int>> generarPeleas(int n){
 	return peleas;
 }
 
+void generarPerformanceTest(int saltos, int muestras){
+	ofstream archivoSalida;
+	archivoSalida.open("kaio_ken_output");
+	double tiempo_promedio = 0;
+	double tiempo_promedio_log = 0;
+	double tiempo_promedio_c = 0;
+	int potencia_dos = 1;
+	int potencia = 1;
+
+	while(potencia < saltos){
+		potencia_dos *= 2;
+		tiempo_promedio = 0;
+		for(int j = 0; j < muestras; j++){
+			start_timer();
+			generarPeleas(potencia_dos);
+			tiempo_promedio += stop_timer();
+		}
+		tiempo_promedio /= muestras;
+		tiempo_promedio_log = tiempo_promedio/potencia_dos;
+		tiempo_promedio_c = tiempo_promedio_log/log(potencia_dos);
+		archivoSalida << potencia_dos << " " << tiempo_promedio << " " << tiempo_promedio_log << " " << tiempo_promedio_c << endl;
+		potencia++;
+	}
+
+	archivoSalida.close();
+}
+
 int main(int argc, char *argv[]) {
 	if(argc > 1){
 		char opt;
@@ -58,6 +99,7 @@ int main(int argc, char *argv[]) {
 				case 't':
 					break;
 				case 'p':
+					generarPerformanceTest(32, 2);
 					break;
 			}
 		}
