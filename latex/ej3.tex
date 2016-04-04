@@ -1,0 +1,34 @@
+\section{Ejercicio 3}
+    % 1. Describir detalladamente el problema a resolver dando ejemplos del mismo y sus soluciones.
+    \subsection{Descripción del problema}
+        Gokú se está enfrentando a N androides y necesita destruirlos con la menor cantidad de Kamehamehas posibles. Los enemigos ode Gokú se encuentran en posiciones $(X_i , Y_i)$ y los Kamehameha recorren una semirrecta desde donde Gokú lo lance, en cualquier dirección que Gokú lo decida. ¿Cuántos Kamehamehas necesita Gokú para desturir a todos los androides del doctor Maki Gero? \\
+
+        Se pide escribir un algoritmo que tome la cantidad de androides N y las posiciones $(X_i , Y_i)$ de los mismos y decida cuántos Kamehameha debe lanzar Gokú y a qué enemigos destruye con cada Kamehameha. Si hay más de una solución óptima, el algoritmo puede devolver cualquiera de ellas. Se pide utilizar la técnica de Backtracking y elaborar podas y estrategias para mejorar los tiempos de ejecución; éstas deberán estar apropiadamente documentadas en el informe. El algoritmo debe tener una complejidad temporal $O(N^{N+2})$ o mejor. \\
+
+        La salida que el algoritmo debe retornar consiste en la cantidad de kamehamehas seguido de esa cantidad de lineas, donde cada una comienza con lacantidad de androides destruidos, seguido por los indices de dichos androides. \\
+
+        Por ejemplo, para la entrada: \\
+
+        \texttt{5}   \\
+        \texttt{0 0} \\
+        \texttt{0 1} \\
+        \texttt{0 2} \\
+        \texttt{1 2} \\
+        \texttt{2 2} \\
+        
+
+    % 2. Explicar de forma clara, sencilla, estructurada y concisa, las ideas desarrolladas para la resolución del problema. Utilizar pseudocódigo y lenguaje coloquial (no código fuente). Justificar por qué el procedimiento resuelve efectivamente el problema.
+    \subsection{Solución propuesta}
+    La solución consiste en probar todas las combinaciones posibles de kamehamehas, y retornar la lista de kamehamehas de menor tamaño
+
+
+       
+    % 3. Deducir una cota de complejidad temporal del algoritmo propuesto y justificar por qué el algoritmo cumple la cota dada. Utilizar el modelo uniforme.
+    \subsection{Complejidad teórica}
+         
+       
+
+    % 4. Dar un código fuente claro que implemente la solución propuesta. Se deben incluir las partes relevantes del código como apéndice del informe impreso entregado.
+
+    % 5. Realizar una experimentación computacional para medir la performance del programa implementado. Usar un conjunto de casos de test en función de los parámetros de entrada, con instancias aleatorias e instancias particulares (de peor/mejor caso en tiempo de ejecución, por ejemplo). Presentar en forma gráfica una comparación entre los tiempos medidos y la complejidad teórica calculada y extraer conclusiones.
+    \subsection{Experimentación}
