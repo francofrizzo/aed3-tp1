@@ -1,10 +1,23 @@
+
 \section{Ejercicio 2}
     % 1. Describir detalladamente el problema a resolver dando ejemplos del mismo y sus soluciones.
     \subsection{Descripción del problema}
-        $N$ soldados de Freezer estan parados en distintos puntos $(X_i,Y_i)$ sobre nuestro planeta y estan dispuestos a acabar con toda la humanidad. Para esto, Goku desea lanzarles algunas Genkidamas que puedan acabar con ellos. Los puntos cumplen con la propiedad $ X_1 > X_2 >
-        . . . > X N ≥ 0 y 0 ≤ Y_1 < Y_2 < . . . < Y N$ . Goku quiere lanzar las Genkidamas a puntos donde hay enemigos, por lo que si en un punto no hay un enemigo no puede lanzar una Genkidama a ese punto (si puede lanzarla si habia un enemigo que ya fue destruido por Goku con una Genkidama previa). Una Genkidama lanzada al punto $(X,Y)$ destruye a todos los enemigos que estan en el rectangulo con lados paralelos a los ejes y extremos en $(0, 0) y (X + T, Y + T )$
+        $N$ soldados de Freezer estan parados en distintos puntos $(X_i,Y_i)$ sobre nuestro planeta y estan dispuestos a acabar con toda la humanidad. Para esto, Goku desea lanzarles algunas Genkidamas que puedan acabar con ellos. Los puntos cumplen con la propiedad $ X_1 > X_2 >. . . > X_N \geq 0 $ y $ 0 \leq Y_1 < Y_2 < . . . < Y_N$ . Goku quiere lanzar las Genkidamas a puntos donde hay enemigos, por lo que si en un punto no hay un enemigo no puede lanzar una Genkidama a ese punto (si puede lanzarla si habia un enemigo que ya fue destruido por Goku con una Genkidama previa). Una Genkidama lanzada al punto $(X,Y)$ destruye a todos los enemigos que estan en el rectangulo con lados paralelos a los ejes y extremos en $(0, 0)$ y $(X + T, Y + T )$
+
+        Se pide escribir un algoritmo que tome el numero de enemigos de Goku, las posiciones de los mismos, y el valor de $T$ , y que indique la minima cantidad de Genkidamas debe lanzar Goku para acabar con todos sus enemigos, junto con los  indices de aquellos enemigos a cuyas posiciones lanza las Genkidamas. El algoritmo debe tener una complejidad temporal $O(N)$, siendo $N$ la cantidad de enemigos.
+
     % 2. Explicar de forma clara, sencilla, estructurada y concisa, las ideas desarrolladas para la resolución del problema. Utilizar pseudocódigo y lenguaje coloquial (no código fuente). Justificar por qué el procedimiento resuelve efectivamente el problema.
     \subsection{Solución propuesta}
+        Si tirara un genkidama a cada enemigo eso solucionaria el problema de matar a todos los enemigos, pero solo seria solucion optima si todos los enemigos estuviesen a una distancia mayor a $\sqrt{2}T$ , ya que cada enemigo tendria una diferencia mayor a $T$ con respecto a las coordenadas $x$ e $y$. 
+
+        Ahora si un enemigo esta a una diferencia con respecto a la coordenada $y$ menor a $T$ del enemigo siguiente , tirando una genkidama a ese enemigo y no al siguiente reduciria en uno la cantidad de genkidamas ha tirar. Si no , si el proximo enemigo esta a una diferencia menor a $T$ en con respecto a la coordenada $x$, podria no tirar una genkidama sobre ese enemigo dejandolo pendiente, y cuando ya no pueda matar al primer enemigo que deje pendiente , tirar una genkidama sobre ese, ahorandome esos pendientes enemigos. A partir de la ideas recien expuestas, Se pasa a explicar el algoritmo:  
+
+
+        LLamaremos $maxY$ a el maximo $y$ que cubre el último genkidama, y $xPendiente$ a la coordenada $x$ del primer enemigo que deje pendiente ha eleminar con un futuro genkidama.
+        Para el caso $n = 1$ se ha resuelto devolviendo el único elemento. Para $n > 2$: si el primer enemigo no se puede dejar pendiendte, osea que $x_0 > x_1  - T$, entonces se tirara un genkidama a él y se guardara el maximo $y$ que cubre el genkidama en $maxY$, si no se guardara el $x$ del enemigo en $xPendiente$. Para los casos mayores a 1 y menores a $n$ , Si el $maxY$ es menor a la cordenada $y$ del enemigo, entonces si un genkidama tirado a el siguiente enemigo no cubre al anterior, osea $x_i > x_{i+1} - T$  entonces tiro un genkidama a él , actualizo el maxY e intancio $xPendiente$ en $0$, si no , si $xPendiente$ es $0$ entonces lo reemplazo por la coordenada $x$ del enemigo actual, si un genkidama tirado a el siguiente enemigo no cubre al $xPendiente$, osea  $xPendiente> x_{i+1} - T$, entonces tiro un genkidama a él , actualizo el maxY e intancio $xPendiente$ en $0$. Si el último enemigo no es cubierto por el último genkidama entonces se ha de tirar un genkidama sobre él.
+
+
+
        
     % 3. Deducir una cota de complejidad temporal del algoritmo propuesto y justificar por qué el algoritmo cumple la cota dada. Utilizar el modelo uniforme.
     \subsection{Complejidad teórica}

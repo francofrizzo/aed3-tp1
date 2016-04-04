@@ -57,11 +57,9 @@
     % 3. Deducir una cota de complejidad temporal del algoritmo propuesto y justificar por qué el algoritmo cumple la cota dada. Utilizar el modelo uniforme.
     \subsection{Complejidad teórica}
          
-        Para justificar la complejidad usaremos el Teorema Maestro 
-        \[T(n) = \begin{cases} 2T(\frac{n}{2}) + f(n) &  n > 1 \\
-                                \theta(1) & n = 1    \end{cases} \]
-        Trivialmente en el caso que sea n sea 1, se ve que su complejidad es $\theta(1)$ .El costo de la funcion  $f(n)$ es $\theta(n)$ , dado que el costo de armar la pelea es  $\theta(n)$  .
-        Dado que 2 es la cantidad des subproblemas a resolver y tambien las particiones y n es el costo de cada paso en la recursión , el algoritmo cae en el segundo caso , entonces la complejidad es de $ n log n$.
+      Se tiene una matriz de $log(n)$ filas por $n$ columnas, se inicializa la matriz en 1, eso cuesta $nlog(n)$ . Para generar las peleas se recorre la matriz: se tiene un ciclo que recorre las filas, dentro del mismo se tiene dos ciclos anidados que se encargan de recorrer las columnas. Para recorrer las columnas : el primer ciclo va hasta $n$ de saltos de a $2^i$ ($\frac{n}{2^i}$ iteraciones), el ciclo anidado va hasta $2^i$ con saltos de a 1 ($2^i$ iteraciones).
+
+      Entonces la complejidad de los tres ciclos es $\sum_{i = 0}^{log(n)} \sum_{j = 0}^{\frac{n}{2^i}}  2^i = \sum_{i = 0}^{log(n)} \frac{n}{2^i} * 2^i = \sum_{i = 0}^{log(n)} n = nlog(n)$. Se puede concluir que la complejidad del algoritmo es $O(nlog(n))$. 
 
 
 
