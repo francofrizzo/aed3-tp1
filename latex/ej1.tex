@@ -53,8 +53,8 @@
 	para el mismo:
 
 	\begin{itemize}
-		\item{Como entrada se utilizó $N = 2^{k}$ con $0 < k < 24.$}
-		\item{Por cada $N$, se repitió 10 veces la medición y se calculó un
+		\item{Como entrada se utilizó $N = 2^{k}$ con $0 < k < 25.$}
+		\item{Por cada $N$, se repitió $2^{\frac{25 - k}{2}}$ veces la medición y se calculó un
 			promedio.}
 		\item{Sólo se midió el costo temporal de generar la solución, no
 			de lectura y escritura del problema.}
@@ -73,7 +73,7 @@
 
 	Los resultados obtenidos fueron los siguientes:
 
-	\newcommand\constante{30}
+	\newcommand\constante{2.5}
 	\begin{figure}[H]
 		\centering
 		\caption{}
@@ -116,7 +116,7 @@
 					ylabel={Tiempo de ejecución (nanosegundos)},
 					scaled x ticks=false,
 					scaled y ticks=false,
-					ymax=500,
+					ymax=100,
 					enlargelimits=0.05,
 					width=0.5\textwidth,
 					height=0.5\textwidth,
@@ -147,7 +147,7 @@
 					scaled x ticks=false,
 					scaled y ticks=false,
 					ymin=0,
-					ymax=150,
+					ymax=10,
 					enlargelimits=0.05,
 					width=0.5\textwidth,
 					height=0.5\textwidth,
@@ -163,8 +163,9 @@
 	\end{figure}
 
 	Finalmente, en la Figura \ref{fig:tiempo_sobre_n_log_n} se tiene que
-	$\frac{T}{N*log(N)}$ converge a una constante que es acotada por el $c$
-	utilizado en las figuras anteriores.
+	$\frac{T}{N*log(N)}$ converge a una constante que puede ser acotada por $c =
+	\constante$. Este $c$ es el mismo que es utilizado en las figuras
+	anteriores.
 
 	Es así como se llega a la conclusión de que efectivamente la complejidad
 	temporal de la solución desarrollada coincide con la complejidad teórica estipulada.

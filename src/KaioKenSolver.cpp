@@ -64,13 +64,14 @@ vector< vector<int>> generarPeleas(int n){
 	return peleas;
 }
 
-void generarPerformanceTest(bool exponencial, int n, int muestras){
+void generarPerformanceTest(bool exponencial, int n){
 	ofstream archivoSalida;
 	archivoSalida.open("../exp/kaioKenOutput");
 
 	double tiempo_promedio = 0;
 	double tiempo_promedio_log = 0;
 	double tiempo_promedio_c = 0;
+	int muestras = 0;
 
 	if(exponencial){
 		int potencia_dos = 1;
@@ -78,6 +79,7 @@ void generarPerformanceTest(bool exponencial, int n, int muestras){
 		while(potencia < n){
 			potencia_dos *= 2;
 			tiempo_promedio = 0;
+			muestras = pow(2, (n - potencia)/2);
 			for(int j = 0; j < muestras; j++){
 				start_timer();
 				generarPeleas(potencia_dos);
@@ -91,6 +93,7 @@ void generarPerformanceTest(bool exponencial, int n, int muestras){
 		}
 	}
 	else{
+		muestras = 10;
 		for(int i = 1; i < n; i += 100){
 			tiempo_promedio = 0;
 			for(int j = 0; j < muestras; j++){
@@ -116,7 +119,7 @@ int main(int argc, char *argv[]) {
 				case 't':
 					break;
 				case 'p':
-					generarPerformanceTest(true, 24, 10);
+					generarPerformanceTest(true, 25);
 					break;
 			}
 		}
