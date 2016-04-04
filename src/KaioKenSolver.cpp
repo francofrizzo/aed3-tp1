@@ -64,28 +64,45 @@ vector< vector<int>> generarPeleas(int n){
 	return peleas;
 }
 
-void generarPerformanceTest(int saltos, int muestras){
+void generarPerformanceTest(bool exponencial, int n, int muestras){
 	ofstream archivoSalida;
 	archivoSalida.open("../exp/kaioKenOutput");
+
 	double tiempo_promedio = 0;
 	double tiempo_promedio_log = 0;
 	double tiempo_promedio_c = 0;
-	int potencia_dos = 1;
-	int potencia = 1;
 
-	while(potencia < saltos){
-		potencia_dos *= 2;
-		tiempo_promedio = 0;
-		for(int j = 0; j < muestras; j++){
-			start_timer();
-			generarPeleas(potencia_dos);
-			tiempo_promedio += stop_timer();
+	if(exponencial){
+		int potencia_dos = 1;
+		int potencia = 1;
+		while(potencia < n){
+			potencia_dos *= 2;
+			tiempo_promedio = 0;
+			for(int j = 0; j < muestras; j++){
+				start_timer();
+				generarPeleas(potencia_dos);
+				tiempo_promedio += stop_timer();
+			}
+			tiempo_promedio /= muestras;
+			tiempo_promedio_log = tiempo_promedio/potencia_dos;
+			tiempo_promedio_c = tiempo_promedio_log/log(potencia_dos);
+			archivoSalida << potencia_dos << " " << tiempo_promedio << " " << tiempo_promedio_log << " " << tiempo_promedio_c << endl;
+			potencia++;
 		}
-		tiempo_promedio /= muestras;
-		tiempo_promedio_log = tiempo_promedio/potencia_dos;
-		tiempo_promedio_c = tiempo_promedio_log/log(potencia_dos);
-		archivoSalida << potencia_dos << " " << tiempo_promedio << " " << tiempo_promedio_log << " " << tiempo_promedio_c << endl;
-		potencia++;
+	}
+	else{
+		for(int i = 1; i < n; i += 100){
+			tiempo_promedio = 0;
+			for(int j = 0; j < muestras; j++){
+				start_timer();
+				generarPeleas(i);
+				tiempo_promedio += stop_timer();
+			}
+			tiempo_promedio /= muestras;
+			tiempo_promedio_log = tiempo_promedio/i;
+			tiempo_promedio_c = tiempo_promedio_log/log(i);
+			archivoSalida << i << " " << tiempo_promedio << " " << tiempo_promedio_log << " " << tiempo_promedio_c << endl;
+		}
 	}
 
 	archivoSalida.close();
@@ -99,7 +116,7 @@ int main(int argc, char *argv[]) {
 				case 't':
 					break;
 				case 'p':
-					generarPerformanceTest(24, 2);
+					generarPerformanceTest(true, 24, 10);
 					break;
 			}
 		}
