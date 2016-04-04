@@ -1,14 +1,37 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <numeric>    // iota
 #include <unistd.h>
+#include <algorithm>
+#include <chrono>
 #include "mini_test.h"
+#include <cmath>
 
 using namespace std;
+
+#define MAX_N 10
+#define CANT_REPETICIONES 20
+#define PRUEBA_PEOR_CASO 0
+#define PRUEBA_CASO_INTERMEDIO 1
+#define PRUEBA_MEJOR_CASO 2
 
 /*
 **  Clases y funciones auxiliares
 */
+
+// Medición de tiempos
+
+static chrono::time_point<chrono::high_resolution_clock> start_time;
+
+void start_timer() {
+    start_time = chrono::high_resolution_clock::now();
+}
+
+double stop_timer() {
+    chrono::time_point<chrono::high_resolution_clock> end_time = chrono::high_resolution_clock::now();
+    return double(chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count());
+}
 
 // Representa un punto en el plano bidimensional
 class XY {
@@ -18,6 +41,14 @@ public:
 
     int x;
     int y;
+
+    bool operator==(const XY& otro) const {
+        return this->x == otro.x && this->y == otro.y;
+    }
+
+    bool operator!=(const XY& otro) const {
+        return this->x != otro.x || this->y != otro.y;
+    }
 
 };
 
@@ -39,10 +70,31 @@ public:
         return this->pasaPor(otra.a) && this->pasaPor(otra.b);
     }
 
+    ostream& imprimir(ostream& os) const {
+        os << "<" << this->a << ";" << this->b << ">";
+        return os;
+    }
+
+    XY puntoAleatorio() const {
+        XY punto;
+        do {
+            int deltaX = this->a.x - this->b.x;
+            int deltaY = this->a.y - this->b.y;
+            int mult = rand();
+            punto = XY(abs(this->a.x + mult * deltaX), abs(this->a.y + mult * deltaY));
+        } while (punto == this->b || ! this->pasaPor(punto));
+        return punto;
+    }
+
 private:
     XY a;
     XY b;
 };
+
+ostream& operator<<(ostream& os, const Recta& r){
+    r.imprimir(os);
+    return os;
+}
 
 // Imprime la solución con el formato esperado
 void imprimirSolucion(vector< vector <unsigned int> > solucion) {
@@ -77,12 +129,20 @@ bool compararVectores(const vector<T> calculado, const vector<T> esperado) {
 unsigned int N;
 vector<XY> coordenadasEnemigos;
 
+// Imprime por la salida estándar las coordenadas de los enemigos
+void imprimirEnemigos() {
+    for (unsigned int i = 0; i < coordenadasEnemigos.size(); i++) {
+        cout << coordenadasEnemigos[i] << "; ";
+    }
+    cout << endl;
+}
+
 /*
 **  Resolución del ejercicio
 */
 
 // Saca los enemigos que destruye de enemigosRestantes y los agrega a enemigosDestruidos
-vector<unsigned int> destruirEnemigos (vector<unsigned int> &enemigosRestantes, Recta kamehameha){
+vector<unsigned int> destruirEnemigos(vector<unsigned int> &enemigosRestantes, Recta kamehameha){
     vector<unsigned int> destruidos;
 
     unsigned int i = 0;
@@ -246,6 +306,159 @@ void test_tres_radiales() {
 }
 
 /*
+**  Pruebas de performance
+*/
+
+vector<XY> generarPeorCaso(unsigned int n) {
+    vector<XY> enemigos;
+
+    if (n >= 1) {
+        enemigos.push_back(XY(rand(), rand()));
+    }
+
+    if (n >=2) {
+        XY enemigo;
+        do {
+            enemigo = XY(rand(), rand());
+        } while (enemigo == enemigos[0]);
+        enemigos.push_back(enemigo);
+    }
+
+    for (unsigned int i = 2; i < n; i++) {
+        XY enemigo;
+        bool repetido = true;
+        while (repetido) {
+            enemigo = XY(rand(), rand());
+            repetido = false;
+            for (unsigned int j = 0; j < enemigos.size(); j++) {
+                for (unsigned int k = j + 1; k < enemigos.size(); k++) {
+                    Recta r = Recta(enemigos[j], enemigos[k]);
+                    if (r.pasaPor(enemigo)) {
+                        repetido = true;
+                        break;
+                        break;
+                    }
+                }
+            }
+        }
+        enemigos.push_back(enemigo);
+    }
+
+    return enemigos;
+}
+
+
+vector<XY> generarMejorCaso(unsigned int n) {
+    vector<XY> enemigos;
+
+    if (n >= 1) {
+        enemigos.push_back(XY(rand(), rand()));
+    }
+
+    if (n >=2) {
+        XY enemigo;
+        do {
+            enemigo = XY(rand(), rand());
+        } while (enemigo == enemigos[0]);
+        enemigos.push_back(enemigo);
+    }
+
+    if (n >= 3) {
+        Recta r = Recta(enemigos[0], enemigos[1]);
+
+        for (unsigned int i = 2; i < n; i++) {
+            XY enemigo;
+            bool repetido = true;
+            while (repetido) {
+                enemigo = r.puntoAleatorio();
+                repetido = false;
+                for (unsigned int j = 2; j < enemigos.size(); j++) {
+                    if (enemigo == enemigos[j]) {
+                        repetido = true;
+                        break;
+                    }
+                }
+            }
+            enemigos.push_back(enemigo);
+        }
+    }
+
+    return enemigos;
+}
+
+vector<XY> generarCasoIntermedioRandom(unsigned int n) {
+    vector<XY> enemigos;
+
+    unsigned int k;
+    unsigned int restantes = n;
+
+    while (restantes > 0) {
+        if (restantes < 4) {
+            k = restantes;
+        } else {
+            k = (rand() % (restantes - 3)) + 3;
+        }
+        vector<XY> subEnemigos = generarMejorCaso(k);
+        enemigos.insert(enemigos.end(), subEnemigos.begin(), subEnemigos.end());
+        restantes = restantes - k;
+    }
+
+    random_shuffle(enemigos.begin(), enemigos.end());
+    return enemigos;
+}
+
+vector<XY> generarCasoIntermedio(unsigned int n) {
+    unsigned int k = n / 2;
+
+    vector<XY> subEnemigos1 = generarMejorCaso(k);
+    vector<XY> subEnemigos2 = generarMejorCaso(n - k);
+
+    subEnemigos1.insert(subEnemigos1.end(), subEnemigos2.begin(), subEnemigos2.end());
+
+    random_shuffle(subEnemigos1.begin(), subEnemigos1.end());
+    return subEnemigos1;
+}
+
+void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
+    for (unsigned int i = 1; i <= MAX_N; i++) {
+        double tiempos[CANT_REPETICIONES];
+        double tiempo_promedio = 0;
+        double varianza = 0;
+
+        N = i;
+        switch (prueba_id) {
+            case PRUEBA_PEOR_CASO:
+                coordenadasEnemigos = generarPeorCaso(N);
+                break;
+
+            case PRUEBA_CASO_INTERMEDIO:
+                coordenadasEnemigos = generarCasoIntermedio(N);
+                break;
+
+            case PRUEBA_MEJOR_CASO:
+                coordenadasEnemigos = generarMejorCaso(N);
+                break;
+        }
+        
+        for (unsigned int r = 0; r < CANT_REPETICIONES; r++) {
+            start_timer();
+            resolverKamehameha();
+            tiempos[r] = stop_timer();
+            tiempo_promedio += tiempos[r];
+        }
+
+        tiempo_promedio = tiempo_promedio / CANT_REPETICIONES;
+
+        for (unsigned int r = 0; r < CANT_REPETICIONES; r++) {
+            varianza += (tiempos[r] - tiempo_promedio) * (tiempos[r] - tiempo_promedio);
+        }
+        varianza = sqrt(varianza / CANT_REPETICIONES);
+
+        archivoSalida << i << " " << tiempo_promedio << " " << varianza << endl;
+    }
+}
+
+/*
 **  Main
 */
 
@@ -261,6 +474,20 @@ int main (int argc, char* argv[]) {
                     RUN_TEST(test_cuadrado);
                     RUN_TEST(test_tres_radiales);
                 case 'p':
+                    ofstream archivoSalida;
+
+                    archivoSalida.open("kamehameha_peor_caso_output");
+                    ejecutarPruebas(PRUEBA_PEOR_CASO, archivoSalida);
+                    archivoSalida.close();
+
+                    archivoSalida.open("kamehameha_caso_intermedio_output");
+                    ejecutarPruebas(PRUEBA_CASO_INTERMEDIO, archivoSalida);
+                    archivoSalida.close();
+
+                    archivoSalida.open("kamehameha_mejor_caso_output");
+                    ejecutarPruebas(PRUEBA_MEJOR_CASO, archivoSalida);
+                    archivoSalida.close();
+
                     break;
             }
         }
