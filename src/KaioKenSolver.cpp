@@ -49,7 +49,7 @@ void imprimirVectores(vector < vector < int > > vecs) {
 
 vector< vector<int>> generarPeleas(int n){
 	int cantidadPeleas = ceil(log(n)/log(2));
-    vector< vector<int>> peleas = vector< vector<int>>(cantidadPeleas, vector<int>(n, 1));
+    vector<vector<int>> peleas = vector<vector<int>>(cantidadPeleas, vector<int>(n, 1));
 	int saltos = 1;
 	for(int i = 0; i < cantidadPeleas; i++){
 		for(int j = 0; j < n; j += 2*saltos){

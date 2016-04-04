@@ -16,43 +16,13 @@
 
     % 2. Explicar de forma clara, sencilla, estructurada y concisa, las ideas desarrolladas para la resolución del problema. Utilizar pseudocódigo y lenguaje coloquial (no código fuente). Justificar por qué el procedimiento resuelve efectivamente el problema.
     \subsection{Solución propuesta}
-        La idea central en la resolución del problema fue la siguiente: en cada pelea, Gokú debe tratar de que luchen entre sí la mayor cantidad posible de guerreros que no se hayan enfrentado en una pelea anterior. En particular, en la primera pelea, querrá dividir los bandos de forma tal que luchen entre sí tantos guerreros como sea posible.
+        La solución que se propone para el problema resulta más fácil de comprender con un sencillo cambio de óptica. En lugar de entender una solución como una sucesión de peleas, donde a cada una de ellas le corresponde una lista representando a un peleador, puede pensarse en una asignación entre cada guerrero y su \emph{historial de peleas}: la lista de los bandos que le fueron asignados en cada una de las peleas. Por ejemplo, si el historial de peleas de un guerrero es \texttt{2122}, esto significa que en la primera, la tercera y la cuarta pelea formó parte del bando número 2, mientras que en el segundo enfrentamiento peleó en el bando número 1. En una solución presentada según el formato requerido, los historiales de peleas de cada guerrero pueden verse si se la lee por columnas.
 
-        La idea intuitiva es que la solución óptima consiste en minimizar la diferencia entre las cantidades de guerreros de ambos bandos. Por ejemplo, si Gokú pone en un bando a un único guerrero y en el otro a los $N - 1$ guerreros restantes, los pares de guerreros que se enfrentarán en esa pelea serán $N - 1$, ya que todos los guerreros del segundo bando lucharán contra el que quede en el primero, pero nunca pelearán entre sí. Si, en cambio, decide poner $2$ guerreros en un bando, cada uno de ellos se enfrentará con los $N - 2$ del bando opuesto. Así, la cantidad de parejas de guerreros que se enfrenten será $2 (N - 2)$, mejorando el resultado anterior.
-        
-        En general, el conjunto de pares de guerreros que se enfrentan en cada pelea es el producto cartesiano de ambos bandos. Si el primer bando tiene $k$ guerreros, el otro tendrá $N - k$, por lo que el cardinal de este producto será $N (N - k) = N^2 - Nk$. Es sencillo ver que este producto es máximo cuando $k = \frac{N}{2}$.
+        Para que una solución al problema sea válida, es necesario cualquier par de peleadores diferentes se enfrente al menos en una pelea. Puede observarse que esto equivale a que el historial de peleas asignado a cada guerrero sea distinto, es decir, que difiera como mínimo en un dígito de todos los demás. Por otro lado, se pide que se lleve a cabo el mínimo número de peleas necesario, o lo que es lo mismo, que la longitud de los historiales de peleas sea la menor posible.
 
-        A la hora de resolver el problema, se utilizó la técnica de programación \emph{dividir y conquistar}, volcando de forma casi directa el razonamiento recién expuesto. Si se deja momentáneamente de lado el requerimiento de que la cantidad de peleas efectuadas sea mínima, el problema puede resolverse de esta forma:
+        Observando el problema desde esta perspectiva, es posible apreciar su semejanza con la construcción de un sistema de numeración posicional. Mientras que en un sistema de numeración se busca representar a los números naturales mediante una serie finita de símbolos provenientes de un alfabeto también finito, en una solución al problema planteado se busca asignar a cada peleador un historial de peleas, que consiste también en una serie finita de elementos de un conjunto finito: los bandos 1 y 2. Además, en un sistema de numeración, la representación de cada número tiene, en cierto sentido, la mínima longitud posible: estas se van asignando en orden creciente, y si queda ``libre'' una representación de cinco dígitos para un número, se utiliza esta antes que una de seis. Esto se parece al requisito de optimalidad requerido por el problema. Por último, dados dos números distintos, es necesario que sus representaciones en un sistema de numeración difieran como mínimo en un dígito, de forma análoga a lo que se desea que suceda con los historiales de peleas de dos guerreros diferentes.
 
-        \begin{enumerate}
-            \item Se comienza dividiendo a los peleadores en dos subconjuntos $A$ y $B$, que constituirán los bandos que se enfrentarán en la primera pelea.
-            \item A continuación, hay que asegurarse de que los guerreros que quedaron en el mismo subconjunto se enfrenten en las peleas posteriores. Esto puede hacerse aplicando el algoritmo de forma recursiva sobre ambos subconjuntos. Así se obtiene, para cada subconjunto, una serie de \emph{subpeleas} que garantiza que todo par de peleadores se enfrenta al menos una vez.
-            \item Se concatenan las \emph{subpeleas}, haciendo que la $i$-ésima \emph{subpelea} del subconjunto $A$ ocurra simultáneamente con la $i$-ésima \emph{subpelea} del subconjunto $B$. Si en uno de los subconjuntos deben realizarse más \emph{subpeleas} que en el otro, resulta indistinto en qué bando se encuentran durante las mismas los peleadores del otro subconjunto.
-        \end{enumerate}
-
-        Aplicando estos pasos e ignorando el requisito de que la cantidad de peleas sea la mínima posible, Gokú podría obtener, a partir de la entrada $N = 10$, el resultado que se muestra en la Figura \ref{fig:ej1-non-optimal-example}.
-
-        \begin{figure}[h]
-          \centering
-
-          \includegraphics{imagenes/ej1-non-optimal-example.pdf} \vspace{1em} \\
-
-          \caption{Ejemplo de solución (no óptima) para el caso $N = 10$. Son necesarias 5 peleas.}
-          \label{fig:ej1-non-optimal-example}
-        \end{figure}
-
-        Desde luego, nada nos garantiza que, en cada paso de la recursión, Gokú haya tomado las decisiones óptimas. ¿Podría lograrse que todos los peleadores se enfrenten en una menor cantidad de peleas? Aplicando las ideas antes expuestas, y haciendo que en cada paso de la recusión los subconjuntos $A$ y $B$ tengan $\frac{N}{2}$ guerreros cada uno, se obtiene una mejor solución, como muestra la Figura \ref{fig:ej1-optimal-example}.
-
-        \begin{figure}[h]
-          \centering
-
-          \includegraphics{imagenes/ej1-optimal-example.pdf} \vspace{1em} \\
-
-          \caption{Ejemplo de solución óptima para el caso $N = 10$. Solo hacen falta 4 peleas.}
-          \label{fig:ej1-optimal-example}
-        \end{figure}
-
-        
+        El sistema de numeración binario utiliza, comúnmente, los símbolos 0 y 1. Sin embargo, esta elección es completamente arbitraria. Si se piensa en una variante de este sistema construida en base a los símbolos 1 y 2, el problema de asignar un historial de peleas para $N$ guerreros que cumpla los requerimientos de Gokú puede reducirse a encontrar una representación en dicho sistema para los primeros $N$ números naturales. (A modo ilustrativo, pueden observarse las columnas de las soluciones de ejemplo expuestas en la descripción del problema. Si se reemplazan los símbolos $\lbrace1,2\rbrace$ por $\lbrace1,0\rbrace$, las columnas corresponden exactamente a la escritura binaria de los números entre 0 y 7).
 
     % 3. Deducir una cota de complejidad temporal del algoritmo propuesto y justificar por qué el algoritmo cumple la cota dada. Utilizar el modelo uniforme.
     \subsection{Complejidad teórica}
@@ -60,7 +30,6 @@
       Se tiene una matriz de $log(n)$ filas por $n$ columnas, se inicializa la matriz en 1, eso cuesta $nlog(n)$ . Para generar las peleas se recorre la matriz: se tiene un ciclo que recorre las filas, dentro del mismo se tiene dos ciclos anidados que se encargan de recorrer las columnas. Para recorrer las columnas : el primer ciclo va hasta $n$ de saltos de a $2^i$ ($\frac{n}{2^i}$ iteraciones), el ciclo anidado va hasta $2^i$ con saltos de a 1 ($2^i$ iteraciones).
 
       Entonces la complejidad de los tres ciclos es $\sum_{i = 0}^{log(n)} \sum_{j = 0}^{\frac{n}{2^i}}  2^i = \sum_{i = 0}^{log(n)} \frac{n}{2^i} * 2^i = \sum_{i = 0}^{log(n)} n = nlog(n)$. Se puede concluir que la complejidad del algoritmo es $O(nlog(n))$. 
-
 
 
     % 4. Dar un código fuente claro que implemente la solución propuesta. Se deben incluir las partes relevantes del código como apéndice del informe impreso entregado.
