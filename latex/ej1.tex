@@ -69,8 +69,48 @@
 
     % 5. Realizar una experimentación computacional para medir la performance del programa implementado. Usar un conjunto de casos de test en función de los parámetros de entrada, con instancias aleatorias e instancias particulares (de peor/mejor caso en tiempo de ejecución, por ejemplo). Presentar en forma gráfica una comparación entre los tiempos medidos y la complejidad teórica calculada y extraer conclusiones.
     \subsection{Experimentación}
-	\begin{center}
-		\newcommand\constante{30}
+
+	A la hora de medir el rendimiento del algoritmo y confirmar la complejidad
+	teórica se tuvieron que considerar varios aspectos tales que los
+	resultados de la experimentación reflejaran lo mejor posible su
+	comportamiento.
+
+	Dado que el problema consiste en una única entrada, los casos de prueba
+	posibles se reducen al conjunto de los números enteros positivos. Como la
+	complejidad temporal del algoritmo es $\theta(Nlog(N))$, no hay un peor
+	y mejor escenario, por lo tanto no es necesario establecer condiciones sobre
+	la entrada.
+
+	El experimento consiste en la medición de los tiempos de ejecución para
+	entradas cada vez más grandes. A continuación se describen las condiciones aplicadas
+	para el mismo:
+
+	\begin{itemize}
+		\item{Como entrada se utilizó $N = 2^{k}$ con $0 < k < 24.$}
+		\item{Por cada $N$, se repitió 10 veces la medición y se calculó un
+			promedio.}
+		\item{Sólo se midió el costo temporal de generar la solución, no
+			de lectura y escritura del problema.}
+		\item{Para la medición del tiempo se utilizó la librería \texttt{chronos}
+			con unidad de tiempo en nanosegundos.}
+	\end{itemize}
+
+	De estos puntos, cabe destacar la elección de potencias de dos como
+	entrada. Esta decisión surge del hecho de que en valores pequeños las
+	mediciones de tiempo son más sensibles a perturbaciones del sistema en el
+	que están corriendo. Al elegir $N = 2^{k}$ como entrada tenemos que para los
+	primeros valores de $k$, los $N$ resultantes se encuentran relativamente
+	concentrados, logrando así un muestreo que caracterice mejor estos valores.
+	A medida que se aumenta el $k$, obtenemos valores de entrada más espaciados
+	con tamaños donde el ruido introducido por el sistema es despreciable.
+
+	Los resultados obtenidos fueron los siguientes:
+
+	\newcommand\constante{30}
+	\begin{figure}[H]
+		\centering
+		\caption{}
+		\label{fig:tiempo_base}
 		\begin{tikzpicture}
 			\begin{axis}[
 					title={},
@@ -90,7 +130,18 @@
 				\legend{$T$, $c*N*log(N)$}
 			\end{axis}
 		\end{tikzpicture}
+	\end{figure}
 
+	En la Figura \ref{fig:tiempo_base} se puede observar como la curva generada por el
+	tiempo de ejecución puede ser acotada para un $c$ fijo por una función
+	$c*N*log(N)$. Para ratificar esta observación se procede dividiendo cada $T$
+	por su respectivo $N$ con la intención de generar una curva de forma
+	logarítmica.
+
+	\begin{figure}[H]
+		\centering
+		\caption{}
+		\label{fig:tiempo_sobre_n}
 		\begin{tikzpicture}
 			\begin{axis}[
 					title={},
@@ -111,7 +162,16 @@
 				\legend{$\frac{T}{N}$, $c*log(N)$}
 			\end{axis}
 		\end{tikzpicture}
+	\end{figure}
 
+	Con la Figura \ref{fig:tiempo_sobre_n} se corrobora lo previsto, ya que
+	efectivamente se puede apreciar cómo con la misma constante $c$ se puede
+	acotar por una función $c*log(N)$.
+
+	\begin{figure}[H]
+		\centering
+		\caption{}
+		\label{fig:tiempo_sobre_n_log_n}
 		\begin{tikzpicture}
 			\begin{axis}[
 					title={},
@@ -133,4 +193,14 @@
 				\legend{$\frac{T}{N*log(N)}$, $c$}
 			\end{axis}
 		\end{tikzpicture}
-	\end{center}
+	\end{figure}
+
+	Finalmente, en la Figura \ref{fig:tiempo_sobre_n_log_n} se tiene que
+	$\frac{T}{N*log(N)}$ converge a una constante que es acotada por el $c$
+	utilizado en las figuras anteriores.
+
+	Es así como se llega a la conclusión de que efectivamente la complejidad
+	temporal de la solución desarrollada coincide con la complejidad teórica estipulada.
+
+	Para reproducir los datos utilizados basta con ejecutar \texttt{KaioKenSolver
+	-p}.
