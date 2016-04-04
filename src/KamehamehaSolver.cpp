@@ -3,16 +3,19 @@
 #include <vector>
 #include <numeric>    // iota
 #include <unistd.h>
+#include <algorithm>
 #include <chrono>
 #include "mini_test.h"
 #include <cmath>
 
 using namespace std;
 
-#define MAX_N 12
+#define MAX_N 10
 #define CANT_REPETICIONES 20
 #define PRUEBA_PEOR_CASO 0
-#define PRUEBA_MEJOR_CASO 1
+#define PRUEBA_CASO_INTERMEDIO 1
+#define PRUEBA_MEJOR_CASO 2
+
 /*
 **  Clases y funciones auxiliares
 */
@@ -383,6 +386,39 @@ vector<XY> generarMejorCaso(unsigned int n) {
     return enemigos;
 }
 
+vector<XY> generarCasoIntermedioRandom(unsigned int n) {
+    vector<XY> enemigos;
+
+    unsigned int k;
+    unsigned int restantes = n;
+
+    while (restantes > 0) {
+        if (restantes < 4) {
+            k = restantes;
+        } else {
+            k = (rand() % (restantes - 3)) + 3;
+        }
+        vector<XY> subEnemigos = generarMejorCaso(k);
+        enemigos.insert(enemigos.end(), subEnemigos.begin(), subEnemigos.end());
+        restantes = restantes - k;
+    }
+
+    random_shuffle(enemigos.begin(), enemigos.end());
+    return enemigos;
+}
+
+vector<XY> generarCasoIntermedio(unsigned int n) {
+    unsigned int k = n / 2;
+
+    vector<XY> subEnemigos1 = generarMejorCaso(k);
+    vector<XY> subEnemigos2 = generarMejorCaso(n - k);
+
+    subEnemigos1.insert(subEnemigos1.end(), subEnemigos2.begin(), subEnemigos2.end());
+
+    random_shuffle(subEnemigos1.begin(), subEnemigos1.end());
+    return subEnemigos1;
+}
+
 void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
     for (unsigned int i = 1; i <= MAX_N; i++) {
         double tiempos[CANT_REPETICIONES];
@@ -393,6 +429,10 @@ void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
         switch (prueba_id) {
             case PRUEBA_PEOR_CASO:
                 coordenadasEnemigos = generarPeorCaso(N);
+                break;
+
+            case PRUEBA_CASO_INTERMEDIO:
+                coordenadasEnemigos = generarCasoIntermedio(N);
                 break;
 
             case PRUEBA_MEJOR_CASO:
@@ -438,6 +478,10 @@ int main (int argc, char* argv[]) {
 
                     archivoSalida.open("kamehameha_peor_caso_output");
                     ejecutarPruebas(PRUEBA_PEOR_CASO, archivoSalida);
+                    archivoSalida.close();
+
+                    archivoSalida.open("kamehameha_caso_intermedio_output");
+                    ejecutarPruebas(PRUEBA_CASO_INTERMEDIO, archivoSalida);
                     archivoSalida.close();
 
                     archivoSalida.open("kamehameha_mejor_caso_output");
