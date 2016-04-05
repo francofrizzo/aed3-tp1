@@ -14,11 +14,22 @@
 
 
         LLamaremos $maxY$ a el maximo $y$ que cubre el último genkidama, y $xPendiente$ a la coordenada $x$ del primer enemigo que deje pendiente ha eleminar con un futuro genkidama.
-        Para el caso $n = 1$ se ha resuelto devolviendo el único elemento. Para $n > 2$: si el primer enemigo no se puede dejar pendiendte, osea que $x_0 > x_1  - T$, entonces se ha de tirar un genkidama a él y se ha de guardar el maximo $y$ que cubre el genkidama en $maxY$, si no se ha guardar el $x$ del enemigo en $xPendiente$. Para los casos mayores a 1 y menores a $n$ , Si el $maxY$ es menor a la cordenada $y$ del enemigo, entonces si un genkidama tirado a el siguiente enemigo no cubre al anterior, osea $x_i > x_{i+1} - T$,  entonces tiro un genkidama a él , actualizo el maxY e intancio $xPendiente$ en $0$, si no , si $xPendiente$ es $0$ entonces lo reemplazo por la coordenada $x$ del enemigo actual, si un genkidama tirado a el siguiente enemigo no cubre al $xPendiente$, osea  $xPendiente > x_{i+1} - T$, entonces tiro un genkidama a él , actualizo el maxY e intancio $xPendiente$ en $0$. Si el último enemigo no es cubierto por el último genkidama entonces se ha de tirar un genkidama sobre él.
+        Para el caso $n = 1$ se ha resuelto devolviendo $1$. Para $n > 2$: si el primer enemigo no se puede dejar pendiendte, osea que $x_0 > x_1  - T$, entonces se ha de tirar un genkidama a él y se ha de guardar el maximo $y$ que cubre el genkidama en $maxY$, si no se ha guardar el $x$ del enemigo en $xPendiente$. Para los casos mayores a 1 y menores a $n$ , Si el $maxY$ es menor a la cordenada $y$ del enemigo, entonces si un genkidama tirado a el siguiente enemigo no cubre al anterior, osea $x_i > x_{i+1} - T$,  entonces tiro un genkidama a él , actualizo el maxY e intancio $xPendiente$ en $0$, si no , si $xPendiente$ es $0$ entonces lo reemplazo por la coordenada $x$ del enemigo actual, si un genkidama tirado a el siguiente enemigo no cubre al $xPendiente$, osea  $xPendiente > x_{i+1} - T$, entonces tiro un genkidama a él , actualizo el maxY e intancio $xPendiente$ en $0$. Si el último enemigo no es cubierto por el último genkidama entonces se ha de tirar un genkidama sobre él.
 
         Quiero ver que expuesto algoritmo cumple cierta propiedad la cual me ayudara a probar correctitud del problema previamente descriptó . Llamaremos $P$ a la propiedad expresada en primer orden , $a$ el array de puntos tomados como input del algoritmo y $S$ el conjunto de enemigos a los cuales se tiraran genkdamas. 
-         $P(a) = \forall_{(0 \leq i < n)} ( (i > 0) \land ( (a_i)_y > (a_{i - 1})_y + T ) ) \lor ( (i < n-1) \land  ( (a_i)_x < (a_{i + 1})_x - T ) ) )  \iff  a_i \in S^\complement  $
-        Caso Base n = 1
+        
+        $P(a) = \forall_{0 < i \leq n} ( i \in S  \iff (i = 1 \land |a| = 1 ) \lor ( i = 1  \land (a_{i+1})_x - T  < (a_i)_x ) \lor ( i = n \land (a_i)_y > (a_{i - 1})_y + T ) \lor ( (1 < i < n) \land ( (a_{i+1})_x - T  < (a_i)_x ) ) \land ( (a_i)_y > (a_{i - 1})_y + T ) ) )  $
+        
+        Hago induccion en el tamaño del $a$ .
+
+
+        Caso Base : $|a| = 1$, Segun mi algoritmo devuelvo el array $[1]$ , segun la propiedad $P$ tambien.
+
+        Caso Inductivo : $|a| = n$, $a = a' + e $, $|a'| = n - 1$ , Entonces por HI $a'$ cumple $P$. Ahora depende del las coordenadas del nuevo enemigo $e$. 
+
+        Si $e$ tiene la coordenada $x$ más grande y la coordenada $y$ más chicha entonces le cooresponderia la posición $i = 1$, entonces segun el algoritmo si el primer enemigo no se puede dejar pendiendte, osea que $x_0 > x_1  - T$, entonces $1 \in S$ y en $P(a)$ cae en el caso  ($i = 1  \land (a_{i+1})_x - T  < (a_i)_x$) entonces $1 \in S$.
+
+
 
 
 
