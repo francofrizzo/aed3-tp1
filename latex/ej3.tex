@@ -19,9 +19,9 @@
 
         Una posible salida sería: \\
 
-        2 \\
-        3 3 4 5 \\
-        2 1 2 \\
+        \texttt{2} \\
+        \texttt{3 3 4 5} \\
+        \texttt{2 1 2} \\
 
         Observación: Los kamehamehas matan a los androides. Esto significa que si un androide esta muerto, por mas que un kamehameha vuelva a pasar por encima de él, no vuelve a morir. Es por eso que: \\
 
@@ -43,9 +43,25 @@
 
     La primer poda que hicimos fue la de no probar todos los kamehamehas posibles. El kamehameha que va desde el andoride $a_1$ al androide $a_2$ es el mismo que va del $a_2$ al $a_1$. Esto lo hicimos usando dos ciclos en donde el exterior (correspondiente a $a_1$) recorría todos los androides, y el interior (correspondiente a $a_2$) recorría los androides de $a_1$ en adelante. De esta forma se logra evitar la repetición innecesaria de pares de androides. \\
 
+    \begin{codesnippet}
+    \begin{verbatim}
+        for (int i = 0; i < cantidadDeAndroides - 1; i++){
+            for (int j = i; j < cantidadDeAndroides; j++){
+                lanzarKamehameha(i, j);
+            }
+        }
+    \end{verbatim}
+    \end{codesnippet}
 
+    Pero luego llegamos a una mejor poda. Si bien ya no repetimos pares de androides, todavía existen algunos kamehamehas superpuestos; este es el caso en que elijo un par de andorides y hay un tercero en la misma recta. Si yo tomo cualquier par de androides entre un conjunto en el que todos pasan por la misma recta, estaría tomando el mismo kamehameha. \\
+
+    Ejemplo: El kamehameha que pasa por (0,0) y (1,1) es el mismo que pasa por (1,1) y (2,2) \\
+
+    Lo que hicimos fue almacenar cada disparo para así verificar (recorriendo los kamehamehas guardados) que el par de androides que describen nuestro nuevo kamehameha no haya sido visitado en esta rama de ejecución (podría usarse ese mismo kamehameha pero en una rama diferente). \\
+
+    Otra poda hecha es la de almacenar la cantidad minima de kamehamehas con la cual el algoritmo llegó efectivamente a una solución (hasta ese momento la mejor), para que si en alguna rama se supera esa cantidad, no seguir ese camino, ya que no conducirá a una solución mejor que la antes encontrada. \\  
        
-    % 3. Deducir una cota de complejidad temporal del algoritmo propuesto y justificar por qué el algoritmo cumple la cota dada. Utilizar el modelo uniforme.
+    % hecho. Deducir una cota de complejidad temporal del algoritmo propuesto y justificar por qué el algoritmo cumple la cota dada. Utilizar el modelo uniforme.
     \subsection{Complejidad teórica}
          
        
