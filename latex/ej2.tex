@@ -12,12 +12,12 @@
 	a los ejes y extremos en $(0, 0)$ y $(X + T, Y + T )$. Sólo pueden lanzarse
 	Genkidamas a puntos donde hay o hubo un enemigo. 
 
-	La solución al problema debe tomar las posiciones de los enemigos de
-	Gokú, un valor de $T$ y con estos datos calcular a qué enemigos hay que
-	lanzarles una Genkidama de forma tal que se necesite una cantidad mínima
-	para destruir a todos.
+	La solución al problema debe tomar un $N$ correspondiente a la cantidad de adversarios,
+	$T$ el alcance de la Genkidama, y por último las posiciones de los enemigos
+	de Gokú. Con estos datos calculará a qué enemigos lanzarles una
+	Genkidama para requerir las mínimas posibles.
 
-	La salida consiste en un $N$ que representa la cantidad de Genkidamas
+	La salida consiste en un $G$ que representa la cantidad de Genkidamas
 	seguido de una línea con los índices de los adversarios a los cuáles se
 	les lanzó alguna.
 
@@ -46,8 +46,10 @@
 
 	~
 
-	En este caso, al dispararle a 2 se estaba también destruyendo a 1, quedando
-	fuera del alcance y por ende destinado a ser exterminado aparte 3.
+	Se puede observar que tenemos 3 oponentes ($N$), el rango de la
+	Genkidama es 2 ($T$) y se necesitaron 2 de ellas para vencerlos ($G$). En este caso, al
+	dispararle a 2 se estaba también destruyendo a 1, quedando fuera del alcance
+	y por ende destinado a ser exterminado aparte 3.
 
     % 2. Explicar de forma clara, sencilla, estructurada y concisa, las ideas desarrolladas para la resolución del problema. Utilizar pseudocódigo y lenguaje coloquial (no código fuente). Justificar por qué el procedimiento resuelve efectivamente el problema.
     \subsection{Solución propuesta}
