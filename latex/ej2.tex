@@ -1,10 +1,53 @@
 
 \section{Ejercicio 2}
     % 1. Describir detalladamente el problema a resolver dando ejemplos del mismo y sus soluciones.
-    \subsection{Descripción del problema}
-        $N$ soldados de Freezer estan parados en distintos puntos $(X_i,Y_i)$ sobre nuestro planeta y estan dispuestos a acabar con toda la humanidad. Para esto, Goku desea lanzarles algunas Genkidamas que puedan acabar con ellos. Los puntos cumplen con la propiedad $ X_1 > X_2 >. . . > X_N \geq 0 $ y $ 0 \leq Y_1 < Y_2 < . . . < Y_N$ . Goku quiere lanzar las Genkidamas a puntos donde hay enemigos, por lo que si en un punto no hay un enemigo no puede lanzar una Genkidama a ese punto (si puede lanzarla si habia un enemigo que ya fue destruido por Goku con una Genkidama previa). Una Genkidama lanzada al punto $(X,Y)$ destruye a todos los enemigos que estan en el rectangulo con lados paralelos a los ejes y extremos en $(0, 0)$ y $(X + T, Y + T )$
+	\subsection{Descripción del problema}
 
-        Se pide escribir un algoritmo que tome el numero de enemigos de Goku, las posiciones de los mismos, y el valor de $T$ , y que indique la minima cantidad de Genkidamas debe lanzar Goku para acabar con todos sus enemigos, junto con los  indices de aquellos enemigos a cuyas posiciones lanza las Genkidamas. El algoritmo debe tener una complejidad temporal $O(N)$, siendo $N$ la cantidad de enemigos.
+	$N$ soldados de Freezer estan parados en distintos puntos $(X_i,Y_i)$ sobre
+	nuestro planeta y estan dispuestos a acabar con toda la humanidad. Para
+	esto, Gokú desea lanzarles Genkidamas para acabar con ellos. Los puntos
+	cumplen con la propiedad $ X_1 > X_2 >. . . > X_N \geq 0 $ y $ 0 \leq Y_1 <
+	Y_2 < . . . < Y_N$. Una Genkidama lanzada al objetivo con coordenadas $(X,Y)$
+	destruye a todos los enemigos que estan en el rectángulo con lados paralelos
+	a los ejes y extremos en $(0, 0)$ y $(X + T, Y + T )$. Sólo pueden lanzarse
+	Genkidamas a puntos donde hay o hubo un enemigo. 
+
+	La solución al problema debe tomar las posiciones de los enemigos de
+	Gokú, un valor de $T$ y con estos datos calcular a qué enemigos hay que
+	lanzarles una Genkidama de forma tal que se necesite una cantidad mínima
+	para destruir a todos.
+
+	La salida consiste en un $N$ que representa la cantidad de Genkidamas
+	seguido de una línea con los índices de los adversarios a los cuáles se
+	les lanzó alguna.
+
+	Este es un ejemplo de una entrada con su respectiva
+	solución:
+
+	~
+
+	\textbf{Entrada}
+
+	\begin{tabular}{ll}
+		\texttt{3} & \texttt{2} \\
+		\texttt{4} & \texttt{0} \\
+		\texttt{3} & \texttt{3} \\
+		\texttt{1} & \texttt{6} \\
+	\end{tabular}
+
+	~
+
+	\textbf{Salida}
+
+	\begin{tabular}{ll}
+		\texttt{2} & \\
+		\texttt{2} & \texttt{3} \\
+	\end{tabular}
+
+	~
+
+	En este caso, al dispararle a 2 se estaba también destruyendo a 1, quedando
+	fuera del alcance y por ende destinado a ser exterminado aparte 3.
 
     % 2. Explicar de forma clara, sencilla, estructurada y concisa, las ideas desarrolladas para la resolución del problema. Utilizar pseudocódigo y lenguaje coloquial (no código fuente). Justificar por qué el procedimiento resuelve efectivamente el problema.
     \subsection{Solución propuesta}
