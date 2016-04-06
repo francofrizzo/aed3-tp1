@@ -1,6 +1,7 @@
 \section{Ejercicio 3}
     % 1. Describir detalladamente el problema a resolver dando ejemplos del mismo y sus soluciones.
     \subsection{Descripción del problema}
+
         Gokú se está enfrentando a N androides y necesita destruirlos con la menor cantidad de Kamehamehas posibles. Los enemigos ode Gokú se encuentran en posiciones $(X_i , Y_i)$ y los Kamehameha recorren una semirrecta desde donde Gokú lo lance, en cualquier dirección que Gokú lo decida. ¿Cuántos Kamehamehas necesita Gokú para desturir a todos los androides del doctor Maki Gero? \\
 
         Se pide escribir un algoritmo que tome la cantidad de androides N y las posiciones $(X_i , Y_i)$ de los mismos y decida cuántos Kamehameha debe lanzar Gokú y a qué enemigos destruye con cada Kamehameha. Si hay más de una solución óptima, el algoritmo puede devolver cualquiera de ellas. Se pide utilizar la técnica de Backtracking y elaborar podas y estrategias para mejorar los tiempos de ejecución; éstas deberán estar apropiadamente documentadas en el informe. El algoritmo debe tener una complejidad temporal $O(N^{N+2})$ o mejor. \\
@@ -15,15 +16,52 @@
         \texttt{0 2} \\
         \texttt{1 2} \\
         \texttt{2 2} \\
+
+        Una posible salida sería: \\
+
+        \texttt{2} \\
+        \texttt{3 3 4 5} \\
+        \texttt{2 1 2} \\
+
+        Observación: Los kamehamehas matan a los androides. Esto significa que si un androide esta muerto, por mas que un kamehameha vuelva a pasar por encima de él, no vuelve a morir. Es por eso que: \\
+
+        \texttt{2} \\
+        \texttt{3 3 4 5} \\
+        \texttt{3 1 2 3} \\
+
+        no es una salida válida, ya que estaría matando por segunda vez al androide ubicado en la posicion (0,2) \\
         
 
     % 2. Explicar de forma clara, sencilla, estructurada y concisa, las ideas desarrolladas para la resolución del problema. Utilizar pseudocódigo y lenguaje coloquial (no código fuente). Justificar por qué el procedimiento resuelve efectivamente el problema.
     \subsection{Solución propuesta}
-    La solución consiste en probar todas las combinaciones posibles de kamehamehas, y retornar la lista de kamehamehas de menor tamaño
 
+    La solución consiste en probar todas las combinaciones posibles de kamehamehas, guardando en cada uno de ellos los grupos de androides a quienes destruye, y retornar la lista de grupos de androides de menor tamaño. Para hacer esto utilizamos la técnica de Backtracking; se llama recursivamente a una función que se encarga de probar cada kamehameha posible y para cada uno ramificarse. \\
 
+    Las combianaciones de kamehamehas estan dadas por los pares de androides posibles. Lanzar un kamehameha consiste en tomar la recta que pasa por dos androides elegidos. Luego se almacenan los androides que son destruidos por ese disparo y se continua con la ramificación de kamehamehas. \\
+
+    Una vez finalizada la ejecución del algoritmo, se habrán recorrido todas las posibles combinaciones de disparos. La solucion a este problema es la cual tenga menor cantidad de llamadas recursivas, ya que eso implica una menor cantidad de kamehamehas. \\
+
+    La primer poda que hicimos fue la de no probar todos los kamehamehas posibles. El kamehameha que va desde el andoride $a_1$ al androide $a_2$ es el mismo que va del $a_2$ al $a_1$. Esto lo hicimos usando dos ciclos en donde el exterior (correspondiente a $a_1$) recorría todos los androides, y el interior (correspondiente a $a_2$) recorría los androides de $a_1$ en adelante. De esta forma se logra evitar la repetición innecesaria de pares de androides. \\
+
+    \begin{codesnippet}
+    \begin{verbatim}
+        for (int i = 0; i < cantidadDeAndroides - 1; i++){
+            for (int j = i; j < cantidadDeAndroides; j++){
+                lanzarKamehameha(i, j);
+            }
+        }
+    \end{verbatim}
+    \end{codesnippet}
+
+    Pero luego llegamos a una mejor poda. Si bien ya no repetimos pares de androides, todavía existen algunos kamehamehas superpuestos; este es el caso en que elijo un par de andorides y hay un tercero en la misma recta. Si yo tomo cualquier par de androides entre un conjunto en el que todos pasan por la misma recta, estaría tomando el mismo kamehameha. \\
+
+    Ejemplo: El kamehameha que pasa por (0,0) y (1,1) es el mismo que pasa por (1,1) y (2,2) \\
+
+    Lo que hicimos fue almacenar cada disparo para así verificar (recorriendo los kamehamehas guardados) que el par de androides que describen nuestro nuevo kamehameha no haya sido visitado en esta rama de ejecución (podría usarse ese mismo kamehameha pero en una rama diferente). \\
+
+    Otra poda hecha es la de almacenar la cantidad minima de kamehamehas con la cual el algoritmo llegó efectivamente a una solución (hasta ese momento la mejor), para que si en alguna rama se supera esa cantidad, no seguir ese camino, ya que no conducirá a una solución mejor que la antes encontrada. \\  
        
-    % 3. Deducir una cota de complejidad temporal del algoritmo propuesto y justificar por qué el algoritmo cumple la cota dada. Utilizar el modelo uniforme.
+    % hecho. Deducir una cota de complejidad temporal del algoritmo propuesto y justificar por qué el algoritmo cumple la cota dada. Utilizar el modelo uniforme.
     \subsection{Complejidad teórica}
          
        
