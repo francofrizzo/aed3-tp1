@@ -49,11 +49,11 @@
     % 3. Deducir una cota de complejidad temporal del algoritmo propuesto y justificar por qué el algoritmo cumple la cota dada. Utilizar el modelo uniforme.
     \subsection{Complejidad teórica}
          
-      Durante la ejecución del algoritmo se utiliza una matriz con $\log(N)$ filas y $N$ columnas. En primer lugar, se inicializa esta matriz en \texttt{2}, lo cual tiene un costo del orden de $N \times \log(n)$. Para generar las peleas se recorre esta matriz; se tiene un ciclo que recorre las filas, y dentro del mismo, dos ciclos anidados que se encargan de recorrer las columnas. Los límites de estos últimos dos ciclos varían según la fila; en la fila $i$-ésima, el ciclo externo itera hasta $N$ con incrementos de tamaño $2^i$ ($\frac{n}{2^i}$ iteraciones), mientras que el ciclo interno itera hasta $2^i$ con saltos de a $1$ ($2^i$ iteraciones).
+      Durante la ejecución del algoritmo se utiliza una matriz con $\log(N)$ filas y $N$ columnas. En primer lugar, se inicializa esta matriz en \texttt{2}, lo cual tiene un costo del orden de $N \times \log(N)$. Para generar las peleas se recorre esta matriz; se tiene un ciclo que recorre las filas, y dentro del mismo, dos ciclos anidados que se encargan de recorrer las columnas. Los límites de estos últimos dos ciclos varían según la fila; en la fila $i$-ésima, el ciclo externo itera hasta $N$ con incrementos de tamaño $2^i$ ($\frac{N}{2^i}$ iteraciones), mientras que el ciclo interno itera hasta $2^i$ con saltos de a $1$ ($2^i$ iteraciones).
 
       Por lo tanto, la cantidad de veces que se ejecuta el ciclo interno, sumando sobre todas las filas de la matriz, es
 
-      \[\sum_{i = 0}^{\log(N)} \sum_{j = 0}^{\frac{N}{2^i}} 2^i = \sum_{i = 0}^{\log(N)} \frac{N}{2^i} 2^i = \sum_{i = 0}^{log(N)} N = N \times \log(N)\].
+      \[\sum_{i = 0}^{\log(N)} \sum_{j = 0}^{\frac{N}{2^i}} 2^i = \sum_{i = 0}^{\log(N)} \frac{N}{2^i} 2^i = \sum_{i = 0}^{log(N)} N = N \times \log(N)\]
 
       Como dentro de este último ciclo solo se modifica el valor de una posición de la matriz, con un costo $\ord(1)$, se puede concluir que la complejidad total del algoritmo es $\ord(N \times \log(N))$. 
 
