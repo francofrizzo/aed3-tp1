@@ -8,28 +8,33 @@
 
         La salida que el algoritmo debe retornar consiste en la cantidad de kamehamehas seguido de esa cantidad de lineas, donde cada una comienza con lacantidad de androides destruidos, seguido por los indices de dichos androides. \\
 
-        Por ejemplo, para la entrada: \\
+        Por ejemplo, para la entrada:
+        
+        \begin{verbatim}
+        5
+        0 0
+        0 1
+        0 2
+        1 2
+        2 2
+        \end{verbatim}
+        Una posible salida sería:
 
-        \texttt{5}   \\
-        \texttt{0 0} \\
-        \texttt{0 1} \\
-        \texttt{0 2} \\
-        \texttt{1 2} \\
-        \texttt{2 2} \\
+        \begin{verbatim}
+        2
+        3 3 4 5
+        2 1 2
+        \end{verbatim}
 
-        Una posible salida sería: \\
+        Observación: Los kamehamehas matan a los androides. Esto significa que si un androide esta muerto, por mas que un kamehameha vuelva a pasar por encima de él, no vuelve a morir. Es por eso que:
 
-        \texttt{2} \\
-        \texttt{3 3 4 5} \\
-        \texttt{2 1 2} \\
-
-        Observación: Los kamehamehas matan a los androides. Esto significa que si un androide esta muerto, por mas que un kamehameha vuelva a pasar por encima de él, no vuelve a morir. Es por eso que: \\
-
-        \texttt{2} \\
-        \texttt{3 3 4 5} \\
-        \texttt{3 1 2 3} \\
-
-        no es una salida válida, ya que estaría matando por segunda vez al androide ubicado en la posicion (0,2) \\
+        \begin{verbatim}
+        2
+        3 3 4 5
+        3 1 2 3
+        \end{verbatim}
+        
+        no es una salida válida, ya que estaría matando por segunda vez al androide ubicado en la posicion (0,2). \\
         
 
     % 2. Explicar de forma clara, sencilla, estructurada y concisa, las ideas desarrolladas para la resolución del problema. Utilizar pseudocódigo y lenguaje coloquial (no código fuente). Justificar por qué el procedimiento resuelve efectivamente el problema.
