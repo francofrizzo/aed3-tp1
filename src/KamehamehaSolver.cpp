@@ -10,11 +10,12 @@
 
 using namespace std;
 
-#define MAX_N 10
-#define CANT_REPETICIONES 20
-#define PRUEBA_PEOR_CASO 0
+#define MAX_N                 10
+#define CANT_REPETICIONES     20
+#define PRUEBA_PEOR_CASO       0
 #define PRUEBA_CASO_INTERMEDIO 1
-#define PRUEBA_MEJOR_CASO 2
+#define PRUEBA_MEJOR_CASO      2
+#define PRUEBA_RANDOM          3
 
 /*
 **  Clases y funciones auxiliares
@@ -141,7 +142,8 @@ void imprimirEnemigos() {
 **  Resolución del ejercicio
 */
 
-// Saca los enemigos que destruye de enemigosRestantes y los agrega a enemigosDestruidos
+// Saca los enemigos que destruye de enemigosRestantes y los agrega a
+// enemigosDestruidos
 vector<unsigned int> destruirEnemigos(vector<unsigned int> &enemigosRestantes, Recta kamehameha){
     vector<unsigned int> destruidos;
 
@@ -309,6 +311,8 @@ void test_tres_radiales() {
 **  Pruebas de performance
 */
 
+// Genera una instancia del problema de tamaño n donde no existen tres enemigos
+// que se encuentren alineados
 vector<XY> generarPeorCaso(unsigned int n) {
     vector<XY> enemigos;
 
@@ -344,10 +348,13 @@ vector<XY> generarPeorCaso(unsigned int n) {
         enemigos.push_back(enemigo);
     }
 
+    // cout << "PEOR   " << enemigos.size() << endl;
+
     return enemigos;
 }
 
-
+// Genera una instancia del problema de tamaño n donde todos los enemigos se
+// encuentran sobre una única línea recta
 vector<XY> generarMejorCaso(unsigned int n) {
     vector<XY> enemigos;
 
@@ -383,9 +390,15 @@ vector<XY> generarMejorCaso(unsigned int n) {
         }
     }
 
+    // cout << "MEJOR  " << enemigos.size() << endl;
+
     return enemigos;
 }
 
+// Genera una instancia del problema de tamaño n donde la mitad de los enemigos
+// se encuentran sobre una línea recta y la otra mitad, sobre otra línea recta
+// NOTA: las rectas podrían no ser distintas. Sin embargo, la probabilidad de
+// que esto suceda es despreciable
 vector<XY> generarCasoIntermedioRandom(unsigned int n) {
     vector<XY> enemigos;
 
@@ -404,9 +417,28 @@ vector<XY> generarCasoIntermedioRandom(unsigned int n) {
     }
 
     random_shuffle(enemigos.begin(), enemigos.end());
+
+    // cout << "INTERM " << enemigos.size() << endl;
+
     return enemigos;
 }
 
+// Genera una instancia del problema de tamaño n de forma totalmente aleatoria
+vector<XY> generarCasoRandom(unsigned int n) {
+    vector<XY> enemigos;
+
+    for (unsigned int i = 0; i < n; i ++) {
+        enemigos.push_back(XY(rand(), rand()));
+    }
+
+    // cout << "RANDOM " << enemigos.size() << endl;
+
+    return enemigos;
+}
+
+// Genera una instancia del problema de tamaño n dividiendo a los enemigos en
+// subconjuntos de tamaño aleatorio y ubicando a cada subconjunto sobre una
+// línea recta
 vector<XY> generarCasoIntermedio(unsigned int n) {
     unsigned int k = n / 2;
 
@@ -416,45 +448,62 @@ vector<XY> generarCasoIntermedio(unsigned int n) {
     subEnemigos1.insert(subEnemigos1.end(), subEnemigos2.begin(), subEnemigos2.end());
 
     random_shuffle(subEnemigos1.begin(), subEnemigos1.end());
+    // cout << "INTERM " << subEnemigos1.size() << endl;
+    
     return subEnemigos1;
+
 }
 
 void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
     for (unsigned int i = 1; i <= MAX_N; i++) {
         double tiempos[CANT_REPETICIONES];
         double tiempo_promedio = 0;
-        double varianza = 0;
+        double desv_estandar = 0;
+        bool instancias_random = false;
 
         N = i;
+
         switch (prueba_id) {
-            case PRUEBA_PEOR_CASO:
-                coordenadasEnemigos = generarPeorCaso(N);
+            case PRUEBA_MEJOR_CASO:
+                coordenadasEnemigos = generarMejorCaso(N);
                 break;
 
             case PRUEBA_CASO_INTERMEDIO:
                 coordenadasEnemigos = generarCasoIntermedio(N);
                 break;
 
-            case PRUEBA_MEJOR_CASO:
-                coordenadasEnemigos = generarMejorCaso(N);
+            case PRUEBA_PEOR_CASO:
+                coordenadasEnemigos = generarPeorCaso(N);
+                break;
+
+            case PRUEBA_RANDOM:
+                instancias_random = true;
                 break;
         }
         
-        for (unsigned int r = 0; r < CANT_REPETICIONES; r++) {
+        for (int r = -1; r < CANT_REPETICIONES; r++) {
+            double tiempo;
+            if (instancias_random) {
+                coordenadasEnemigos = generarCasoRandom(N);
+            }
             start_timer();
             resolverKamehameha();
-            tiempos[r] = stop_timer();
-            tiempo_promedio += tiempos[r];
+            tiempo = stop_timer();
+
+            if (r >= 0) {
+                tiempos[r] = tiempo;
+                tiempo_promedio += tiempos[r];
+            }
         }
 
         tiempo_promedio = tiempo_promedio / CANT_REPETICIONES;
 
         for (unsigned int r = 0; r < CANT_REPETICIONES; r++) {
-            varianza += (tiempos[r] - tiempo_promedio) * (tiempos[r] - tiempo_promedio);
+            desv_estandar += (tiempos[r] - tiempo_promedio) * (tiempos[r] - tiempo_promedio);
         }
-        varianza = sqrt(varianza / CANT_REPETICIONES);
+        desv_estandar = sqrt(desv_estandar / CANT_REPETICIONES);
 
-        archivoSalida << i << " " << tiempo_promedio << " " << varianza << endl;
+        archivoSalida << i << " " << tiempo_promedio << " " << desv_estandar << endl;
     }
 }
 
@@ -465,7 +514,7 @@ void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
 int main (int argc, char* argv[]) {
     if (argc > 1) {
         char opt;
-        while ((opt = getopt(argc, argv, "tp")) != -1) {
+        while ((opt = getopt(argc, argv, "tp:")) != -1) {
             switch (opt) {
                 case 't':
                     RUN_TEST(test_vacio);
@@ -474,19 +523,28 @@ int main (int argc, char* argv[]) {
                     RUN_TEST(test_cuadrado);
                     RUN_TEST(test_tres_radiales);
                 case 'p':
+                    // cout << opt;
+                    srand(stoi(optarg));
+
                     ofstream archivoSalida;
 
-                    archivoSalida.open("kamehameha_peor_caso_output");
-                    ejecutarPruebas(PRUEBA_PEOR_CASO, archivoSalida);
-                    archivoSalida.close();
+                    for (int i = 0; i < 3; i++) {
+                        archivoSalida.open("../exp/kamehameha_caso_mejor");
+                        ejecutarPruebas(PRUEBA_MEJOR_CASO, archivoSalida);
+                        archivoSalida.close();
 
-                    archivoSalida.open("kamehameha_caso_intermedio_output");
-                    ejecutarPruebas(PRUEBA_CASO_INTERMEDIO, archivoSalida);
-                    archivoSalida.close();
+                        archivoSalida.open("../exp/kamehameha_caso_intermedio");
+                        ejecutarPruebas(PRUEBA_CASO_INTERMEDIO, archivoSalida);
+                        archivoSalida.close();
 
-                    archivoSalida.open("kamehameha_mejor_caso_output");
-                    ejecutarPruebas(PRUEBA_MEJOR_CASO, archivoSalida);
-                    archivoSalida.close();
+                        archivoSalida.open("../exp/kamehameha_caso_peor");
+                        ejecutarPruebas(PRUEBA_PEOR_CASO, archivoSalida);
+                        archivoSalida.close();
+
+                        archivoSalida.open("../exp/kamehameha_random");
+                        ejecutarPruebas(PRUEBA_RANDOM, archivoSalida);
+                        archivoSalida.close();
+                    }
 
                     break;
             }
