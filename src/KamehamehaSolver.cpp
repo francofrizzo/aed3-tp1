@@ -11,7 +11,10 @@
 using namespace std;
 
 #define MAX_N                 10
-#define CANT_REPETICIONES     20
+#define CANT_REPETICIONES     40
+#define CANT_INST_DESCARTADAS 20
+#define CANT_REP_COMPLETAS     1
+
 #define PRUEBA_PEOR_CASO       0
 #define PRUEBA_CASO_INTERMEDIO 1
 #define PRUEBA_MEJOR_CASO      2
@@ -481,7 +484,7 @@ void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
                 break;
         }
         
-        for (int r = -1; r < CANT_REPETICIONES; r++) {
+        for (int r = -CANT_INST_DESCARTADAS; r < CANT_REPETICIONES; r++) {
             double tiempo;
             if (instancias_random) {
                 coordenadasEnemigos = generarCasoRandom(N);
@@ -527,18 +530,18 @@ int main (int argc, char* argv[]) {
                     srand(stoi(optarg));
 
                     ofstream archivoSalida;
+                    for (int i = 0; i < CANT_REP_COMPLETAS; i++) {
 
-                    for (int i = 0; i < 3; i++) {
-                        archivoSalida.open("../exp/kamehameha_caso_mejor");
-                        ejecutarPruebas(PRUEBA_MEJOR_CASO, archivoSalida);
+                        archivoSalida.open("../exp/kamehameha_caso_peor");
+                        ejecutarPruebas(PRUEBA_PEOR_CASO, archivoSalida);
                         archivoSalida.close();
 
                         archivoSalida.open("../exp/kamehameha_caso_intermedio");
                         ejecutarPruebas(PRUEBA_CASO_INTERMEDIO, archivoSalida);
                         archivoSalida.close();
 
-                        archivoSalida.open("../exp/kamehameha_caso_peor");
-                        ejecutarPruebas(PRUEBA_PEOR_CASO, archivoSalida);
+                        archivoSalida.open("../exp/kamehameha_caso_mejor");
+                        ejecutarPruebas(PRUEBA_MEJOR_CASO, archivoSalida);
                         archivoSalida.close();
 
                         archivoSalida.open("../exp/kamehameha_random");
