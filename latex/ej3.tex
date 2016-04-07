@@ -46,6 +46,20 @@
 
     Una vez finalizada la ejecución del algoritmo, se habrán recorrido todas las posibles combinaciones de disparos. La solucion a este problema es la cual tenga menor cantidad de llamadas recursivas, ya que eso implica una menor cantidad de kamehamehas.
 
+    \subsubsection{Detalles implementativos}
+    
+    El algoritmo fue implementado en lenguaje C++. Para almacenar la solución, se recurre a la clase \texttt{vector}, proporcionada por la librería estándar del lenguaje.
+
+    Durante la ejecución del algoritmo se utilizan dos variables globales; un entero para almacenar la cantidad de enemigos y un vector que contiene la ubicación de cada uno de ellos. La ejecución tiene como función principal un método recursivo. Analizemos este metodo:
+
+    \begin{itemize}
+        \item Se prueban todos los pares de enemigos posibles mediante dos ciclos anidados, de forma que si un kamehameha equivale a un par de enemigos se prueben todos los kamehameha posibles
+        \item Dentro del ciclo interior se revisa a qué enemigos destruye el kamehameha descripto por el par de enemigos elegido y se destruyen esos enemigos para luego agregarlos a la solucion
+        \item Destruir los enemigos consiste en eliminarlos de un vector que contiene a los enemigos restantes. Este vector es una copia del vector de enemigos restantes, ya que para cada kamehameha distinto, el algoritmo se bifurca con enemigos restantes distintos
+        \item Agregarlos a la solución consiste en añadir un vector que contiene a dichos enemigos a un vector de vectores, que representa la solucion: cada posición del vector es un kamehameha distinto conteniendo a los enemigos que destruye
+        \item Tiene como casos base la llamada en donde la cantidad de enemigos restantes es igual o menor a 2, en estos casos lo que se hace es agregar estos ultimos enemigos que quedaron a la solución, como parte del último kamehameha lanzado, y terminar la ejecución del método
+    \end{itemize}
+
     La primer poda que hicimos fue la de no probar todos los kamehamehas posibles. El kamehameha que va desde el andoride $a_1$ al androide $a_2$ es el mismo que va del $a_2$ al $a_1$. Esto lo hicimos usando dos ciclos en donde el exterior (correspondiente a $a_1$) recorría todos los androides, y el interior (correspondiente a $a_2$) recorría los androides de $a_1$ en adelante. De esta forma se logra evitar la repetición innecesaria de pares de androides.
 
     \begin{codesnippet}
@@ -68,8 +82,6 @@
        
     % hecho. Deducir una cota de complejidad temporal del algoritmo propuesto y justificar por qué el algoritmo cumple la cota dada. Utilizar el modelo uniforme.
     \subsection{Complejidad teórica}
-    
-    Durante la ejecución del algoritmo se utilizan dos variables globales; un entero para almacenar la cantidad de enemigos y un vector que contiene la ubicación de cada uno de ellos.
 
     Al comienzo se inicializa un vector de $N$ posiciones, lo cual tiene costo de orden $N$. Principalmente se utiliza una función recursiva, la cual determina la complejidad temporal de la solución.
     
