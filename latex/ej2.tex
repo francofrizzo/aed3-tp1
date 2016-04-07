@@ -53,32 +53,99 @@
 
     % 2. Explicar de forma clara, sencilla, estructurada y concisa, las ideas desarrolladas para la resolución del problema. Utilizar pseudocódigo y lenguaje coloquial (no código fuente). Justificar por qué el procedimiento resuelve efectivamente el problema.
     \subsection{Solución propuesta}
-        Si tirara un genkidama a cada enemigo eso solucionaria el problema de matar a todos los enemigos, pero solo seria solucion optima si todos los enemigos estuviesen a una distancia mayor a $\sqrt{2}T$ , ya que cada enemigo tendria una diferencia mayor a $T$ con respecto a las coordenadas $x$ e $y$. 
 
-        Ahora si un enemigo esta a una diferencia con respecto a la coordenada $y$ menor a $T$ del enemigo siguiente , tirando una genkidama a ese enemigo y no al siguiente reduciria en uno la cantidad de genkidamas ha tirar. Si no , si el proximo enemigo esta a una diferencia menor a $T$ en con respecto a la coordenada $x$, podria no tirar una genkidama sobre ese enemigo dejandolo pendiente, y cuando ya no pueda matar al primer enemigo que deje pendiente , tirar una genkidama sobre ese, asi poder ahorarme esos pendientes enemigos. A partir de la ideas recien expuestas, Se pasa a explicar el algoritmo:  
+	Si se le dedicara una Genkidama a cada oponente se resolvería el problema de
+	destruir al enemigo, pero no sería una estrategia óptima para cualquier
+	caso. Únicamente daría el valor óptimo para el caso donde el área de cobertura de cada
+	Genkidama no fuera suficiente para alcanzar otros adversarios. Por lo tanto
+	es necesario considerar cuándo al eliminar un oponente se está a su vez
+	destruyendo a otros.
 
+	Para este problema en particular se encontró un algoritmo goloso que genera
+	la solución óptima con una complejidad temporal lineal. La idea detrás de
+	esta solución y la cual la caracteriza como golosa consiste en que la
+	decisión sobre si utilizar una Genkidama depende únicamente del
+	elemento (refiriéndonos a las coordenadas de un adversario) a continuación y dos
+	enteros que ofrecen información sobre los enemigos recorridos anteriormente.
 
-        LLamaremos $maxY$ a el maximo $y$ que cubre el último genkidama, y $xPendiente$ a la coordenada $x$ del primer enemigo que deje pendiente ha eleminar con un futuro genkidama.
-        Para el caso $n = 1$ se ha resuelto devolviendo $1$. Para $n > 2$: si el primer enemigo no se puede dejar pendiendte, osea que $x_0 > x_1  - T$, entonces se ha de tirar un genkidama a él y se ha de guardar el maximo $y$ que cubre el genkidama en $maxY$, si no se ha guardar el $x$ del enemigo en $xPendiente$. Para los casos mayores a 1 y menores a $n$ , Si el $maxY$ es menor a la cordenada $y$ del enemigo, entonces si un genkidama tirado a el siguiente enemigo no cubre al anterior, osea $x_i > x_{i+1} - T$,  entonces tiro un genkidama a él , actualizo el maxY e intancio $xPendiente$ en $0$, si no , si $xPendiente$ es $0$ entonces lo reemplazo por la coordenada $x$ del enemigo actual, si un genkidama tirado a el siguiente enemigo no cubre al $xPendiente$, osea  $xPendiente > x_{i+1} - T$, entonces tiro un genkidama a él , actualizo el maxY e intancio $xPendiente$ en $0$. Si el último enemigo no es cubierto por el último genkidama entonces se ha de tirar un genkidama sobre él.
+	Al observar el elemento a continuación, se puede saber si al lanzarle una
+	Genkidama a este, la misma alcanza al enemigo actual. Sin embargo no
+	es tan sencillo, y aquí es donde se utilizan los dos enteros mencionados con
+	anterioridad. Uno de los enteros es $maxY = Y_{E_j} + T$, donde lo que se
+	almacena es la coordenada $Y$ de la última Genkidama lanzada más su alcance
+	$T$, necesaria para saber si mi adversario actual se encuentra bajo el
+	alcance de alguna Genkidama anterior. El otro es $xPendiente$ cuya función
+	es guardar el valor de la coordenada $X$ de un oponente que está en el
+	rango del que le sigue, quedando así pendiente a ser destruido por una
+	Genkidama lanzada a algún sucesor.
 
-        Quiero ver que expuesto algoritmo cumple cierta propiedad la cual me ayudara a probar correctitud del problema previamente descriptó . Llamaremos $P$ a la propiedad expresada en primer orden , $a$ el array de puntos tomados como input del algoritmo y $S$ el conjunto de enemigos a los cuales se tiraran genkdamas. 
-        
-        $P(a) = \forall_{0 < i \leq n} ( i \in S  \iff (i = 1 \land |a| = 1 ) \lor ( i = 1  \land (a_{i+1})_x - T  < (a_i)_x ) \lor ( i = n \land (a_i)_y > (a_{i - 1})_y + T ) \lor ( (1 < i < n) \land ( (a_{i+1})_x - T  < (a_i)_x ) ) \land ( (a_i)_y > (a_{i - 1})_y + T ) ) )  $
-        
-        Hago induccion en el tamaño del $a$ .
+	Habiendo introducido la idea, se detalla el comportamiento del algoritmo para
+	una entrada con $N$ enemigos y rango de Genkidama $T$. Tanto $maxY$ como
+	$xPendiente$ son inicializados en 0.
 
+	\begin{enumerate}
+		\item{
+			El primer elemento es analizado por separado ya que no requiere
+			revisar si un elemento anterior lo cubre, por lo tanto para este lo
+			único que es necesario hacer es observar si en caso de haber un elemento
+			siguiente, este lo cubre. Si es así, entonces no se agrega al primero a
+			la solución y $xPendiente = X_1$. Caso contrario, si no lo cubre el
+			siguiente, se agrega al primero a la solución y $maxY = Y_1 + T$.
+		}
 
-        Caso Base : $|a| = 1$, Segun mi algoritmo devuelvo el array $[1]$ , segun la propiedad $P$ tambien.
+		\item{
+			Si $N > 1$ entonces se procede al ciclo principal que recorrerá los
+			elementos $E_j$ con $1 < j < N$ dado que el último enemigo al igual
+			que el primero se trata aparte. Dentro de este ciclo se tienen
+			varios casos posibles:
+			\begin{enumerate}
+				\item{
+					La coordenada $Y_{E_j} \leq maxY$, con lo cual $E_j$ está
+					dentro del alcance de una Genkidama anterior por lo tanto no
+					es necesario agregarlo a la solución (dispararle una
+					Genkidama).
+					}
+				\item{
+					La coordenada $Y_{E_j} > maxY$. Si $xPendiente = 0$ entonces
+					debo actualizarlo con $xPendiente = X_{E_j}$. Esto se debe a
+					que no había ningún enemigo pendiente, por lo tanto $E_j$
+					pasa a estarlo. De aquí se abren más posibilidades:
+					\begin{enumerate}
+						\item{Si $X_{E_j} > X_{E_{j+1}} + T$ entonces $E_j$ no
+							se encuentra en el rango de su sucesor por lo tanto
+							debe ser agregado. Se asignan $xPendiente = 0$ y
+							$maxY = Y_{E_j} + T$.}
+						\item{Si $X_{E_j} \leq X_{E_{j+1}} + T$ entonces se
+							encuentra en el rango de su sucesor para lo cual
+							existen dos casos:}
+						\begin{enumerate}
+							\item{$X_{E_{j+1}} + T < xPendiente$ donde a pesar
+								de estar en el rango del sucesor, el mismo no
+								alcanza a un enemigo que quedó dependiendo de
+								una futura Genkidama, por lo tanto debo agregar
+								a $E_j$. Se asignan $xPendiente = 0$ y $maxY = Y_{E_j} + T$.}
+							\item{$X_{E_{j+1}} + T \geq xPendiente$ donde el
+								sucesor además de alcanzar a $E_j$ también llega
+								al que quedó pendiente, por lo tanto no es
+								necesario agregar a $E_j$.}
+						\end{enumerate}
+					\end{enumerate}
+					}
+				\end{enumerate}
+		}
+		\item{
+			Finalmente, para el último elemento se tiene que únicamente
+			es necesario agregarlo cuando $Y_{E_N} > yMax$, ya que
+			implica que no está cubierto por la Genkidama de algún
+			elemento anterior. Si $Y_{E_N} \leq yMax$, entonces no es
+			necesario sumarlo a la solución, y no hace falta revisar
+			$xPendiente$ ya que si la última Genkidama alcanza para
+			cubrir $E_N$, por las condiciones que establece el
+			enunciado necesariamente estarán cubiertos los elementos en
+			el medio ($(\forall j < N) Y_j < E_N$).}
 
-        Caso Inductivo : $|a| = n$, $a = a' + e $, $|a'| = n - 1$ , Entonces por HI $a'$ cumple $P$. Ahora depende del las coordenadas del nuevo enemigo $e$. 
+	\end{enumerate}
 
-        Si $e$ tiene la coordenada $x$ más grande y la coordenada $y$ más chicha entonces le cooresponderia la posición $i = 1$, entonces segun el algoritmo si el primer enemigo no se puede dejar pendiendte, osea que $x_0 > x_1  - T$, entonces $1 \in S$ y en $P(a)$ cae en el caso  ($i = 1  \land (a_{i+1})_x - T  < (a_i)_x$) entonces $1 \in S$.
-
-
-
-
-
-       
     % 3. Deducir una cota de complejidad temporal del algoritmo propuesto y justificar por qué el algoritmo cumple la cota dada. Utilizar el modelo uniforme.
     \subsection{Complejidad teórica}
          
