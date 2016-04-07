@@ -1,12 +1,18 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
+#include <numeric>    // iota
 #include <unistd.h>
+#include <algorithm>
+#include <chrono>
 #include "mini_test.h"
+#include <cmath>
+#include <climits>
 
 using namespace std;
 
-#define T                 	  10000
-#define MAX_N                 10000
+#define T                 	  1000
+#define MAX_N                 10
 #define CANT_REPETICIONES     40
 #define CANT_INST_DESCARTADAS 20
 #define CANT_REP_COMPLETAS     1
@@ -14,7 +20,29 @@ using namespace std;
 #define PRUEBA_PEOR_CASO       0
 #define PRUEBA_CASO_INTERMEDIO 1
 #define PRUEBA_MEJOR_CASO      2
-#define PRUEBA_RANDOM          3
+#define PRUEBA_VARIAR_T        3
+
+/*
+**  Variables globales
+*/
+unsigned int N;
+vector< vector<int> > coordenadasEnemigos;
+
+// Medición de tiempos
+
+static chrono::time_point<chrono::high_resolution_clock> start_time;
+
+void start_timer() {
+    start_time = chrono::high_resolution_clock::now();
+}
+
+double stop_timer() {
+    chrono::time_point<chrono::high_resolution_clock> end_time = chrono::high_resolution_clock::now();
+    return double(chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count());
+}
+
+
+
 
 void imprimirVector(const vector<int> &vectorAImprimir){
 	cout << "[";
@@ -25,6 +53,13 @@ void imprimirVector(const vector<int> &vectorAImprimir){
 		}
 	}
 	cout << "]" << endl;
+}
+
+void imprimirVectores(vector < vector < int > > vecs) {
+    cout << vecs.size() << endl;
+    for (unsigned int i = 0; i < vecs.size(); ++i) {
+        imprimirVector(vecs[i]);
+    }
 }
 
 bool compararVectores(const vector<int> calculado, const vector<int> esperado){
@@ -255,65 +290,100 @@ void test_seis_enemigos_cuatro_partes(){
 
 // Genera una instancia del problema de tamaño n donde no existen tres enemigos
 // que se encuentren alineados
-vector<XY> generarPeorCaso(unsigned int n) {
-    vector<XY> enemigos;
+vector < vector<int> > generarPeorCaso(unsigned int n,unsigned int t) {
+    vector< vector<int> > enemigos = vector< vector<int> >(n, vector<int>(2));
+    unsigned int normaT = (RAND_MAX / (t +1));
     vector<int> xs;
     vector<int> ys;
-    int anteriorX = rand();
-	int anteriorY = rand();
-	xs.push_back(anteriorX);
-    ys.push_back(anteriorY);
-    //genero los x e y crecientes con distancia T
-    for (int i = 1; i < n; ++i){
-    	anteriorX = anteriorX + T + rand();
-    	anteriorY = anteriorY + T + rand();
-    	xs.push_back(anteriorX);
-    	ys.push_back(anteriorY);
-    }
+    int Xi;
+    for (unsigned int i = 0; i < n; ++i){
+	    do{
+			Xi = rand() % normaT;
+		}while(find(xs.begin(), xs.end(), Xi) != xs.end());
+		int Yi;
+		do{
+			Yi = rand() % normaT ;
+		}while(find(ys.begin(), ys.end(), Yi) != ys.end());
+		xs.push_back(Xi);
+  		ys.push_back(Yi);
+	}
     
-    // cout << "PEOR   " << enemigos.size() << endl;
+    sort (xs.begin(), xs.end());
+  	sort (ys.begin(), ys.end());
+  	
+
+  	for (unsigned int i = 0; i < n; ++i){
+  		enemigos[i][0] = xs[n - (i+1)] * (t + 1);
+    	enemigos[i][1] = ys[i] * (t + 1);
+  	}
+    cout << "PEOR   " << enemigos.size() << endl;
+    imprimirVectores(enemigos);
 
     return enemigos;
 }
 
 // Genera una instancia del problema de tamaño n donde todos los enemigos se
 // encuentran sobre una única línea recta
-vector<XY> generarMejorCaso(unsigned int n) {
-    vector<XY> enemigos;
+vector < vector<int> > generarMejorCaso(unsigned int n,unsigned int t) {
+    
+    vector < vector<int> > enemigos = vector< vector<int> >(n, vector<int>(2));
+    vector<int> xsA;
+    vector<int> ysA;
+    vector<int> xsB;
+    vector<int> ysB;
+    int genkidamaX = rand() % (RAND_MAX - (n + t) ) + t;
+  	int genkidamaY = rand() % (RAND_MAX - (n + t) ) + t;
+  	for (unsigned int i = 1; i < n; ++i){
+  		if ( (rand()% 2) == 1){
+  			// cae en A
+  			int Xi = 0;
+  			do{
+  				Xi = (rand() % genkidamaX)  ;
+  			}while(find(xsA.begin(), xsA.end(), Xi) != xsA.end());
+  			int Yi = 0;
+  			do{
+  				Yi = (rand() % t) + genkidamaY;
+  			}while(find(ysA.begin(), ysA.end(), Yi) != ysA.end());
+  			xsA.push_back(Xi);
+  			ysA.push_back(Yi);
+  		}else{
+  			// cae en B
+  			int Xi = 0;
+  			do{
+  				Xi = (rand() % t) + genkidamaX;
+  			}while(find(xsB.begin(), xsB.end(), Xi) != xsB.end());
+  			int Yi = 0;
+  			do{
+  				Yi = (rand() % genkidamaY);
+  			}while(find(ysB.begin(), ysB.end(), Yi) != ysB.end());
+  			xsB.push_back(Xi);
+  			ysB.push_back(Yi);
+  		}
+  	}
+  	sort (xsA.begin(), xsA.end());
+  	sort (ysA.begin(),ysA.end());
+  	
 
-    if (n >= 1) {
-        enemigos.push_back(XY(rand(), rand()));
-    }
+  	sort (xsB.begin(), xsB.end());
+  	sort (ysB.begin(), ysB.end());
+  	
 
-    if (n >=2) {
-        XY enemigo;
-        do {
-            enemigo = XY(rand(), rand());
-        } while (enemigo == enemigos[0]);
-        enemigos.push_back(enemigo);
-    }
+  	for (unsigned int i = 0; i < xsB.size(); ++i){
+  		enemigos[i][0] = xsB[xsB.size() - (i+1)];
+    	enemigos[i][1] = ysB[i];
+  	}
 
-    if (n >= 3) {
-        Recta r = Recta(enemigos[0], enemigos[1]);
+  	enemigos[xsB.size()][0] = genkidamaX;
+    enemigos[xsB.size()][1] = genkidamaY;
 
-        for (unsigned int i = 2; i < n; i++) {
-            XY enemigo;
-            bool repetido = true;
-            while (repetido) {
-                enemigo = r.puntoAleatorio();
-                repetido = false;
-                for (unsigned int j = 2; j < enemigos.size(); j++) {
-                    if (enemigo == enemigos[j]) {
-                        repetido = true;
-                        break;
-                    }
-                }
-            }
-            enemigos.push_back(enemigo);
-        }
-    }
 
-    // cout << "MEJOR  " << enemigos.size() << endl;
+  	for (unsigned int i = xsB.size() + 1; i <  n; ++i){
+  		enemigos[i][0] = xsA[n - (i +1)];
+    	enemigos[i][1] = ysA[i - (xsB.size() + 1)];
+  	}
+
+    cout << "MEJOR  " << enemigos.size() << endl;
+    imprimirVectores(enemigos);
 
     return enemigos;
 }
@@ -322,58 +392,49 @@ vector<XY> generarMejorCaso(unsigned int n) {
 // se encuentran sobre una línea recta y la otra mitad, sobre otra línea recta
 // NOTA: las rectas podrían no ser distintas. Sin embargo, la probabilidad de
 // que esto suceda es despreciable
-vector<XY> generarCasoIntermedioRandom(unsigned int n) {
-    vector<XY> enemigos;
+vector< vector<int> > generarCasoIntermedio(unsigned int n) {
+   vector< vector<int> > enemigos = vector< vector<int> >(n, vector<int>(2));
+    vector<int> xs;
+    vector<int> ys;
+    int Xi;
+    for (unsigned int i = 0; i < n; ++i){
+	    do{
+			Xi = rand();
+		}while(find(xs.begin(), xs.end(), Xi) != xs.end());
+		int Yi;
+		do{
+			Yi = rand() ;
+		}while(find(ys.begin(), ys.end(), Yi) != ys.end());
+		xs.push_back(Xi);
+  		ys.push_back(Yi);
+	}
+    
+    sort (xs.begin(), xs.end());
+  	sort (ys.begin(), ys.end());
+  	
 
-    unsigned int k;
-    unsigned int restantes = n;
-
-    while (restantes > 0) {
-        if (restantes < 4) {
-            k = restantes;
-        } else {
-            k = (rand() % (restantes - 3)) + 3;
-        }
-        vector<XY> subEnemigos = generarMejorCaso(k);
-        enemigos.insert(enemigos.end(), subEnemigos.begin(), subEnemigos.end());
-        restantes = restantes - k;
-    }
-
-    random_shuffle(enemigos.begin(), enemigos.end());
-
-    // cout << "INTERM " << enemigos.size() << endl;
-
-    return enemigos;
-}
-
-// Genera una instancia del problema de tamaño n de forma totalmente aleatoria
-vector<XY> generarCasoRandom(unsigned int n) {
-    vector<XY> enemigos;
-
-    for (unsigned int i = 0; i < n; i ++) {
-        enemigos.push_back(XY(rand(), rand()));
-    }
-
-    // cout << "RANDOM " << enemigos.size() << endl;
+  	for (unsigned int i = 0; i < n; ++i){
+  		enemigos[i][0] = xs[n - (i+1)] ;
+    	enemigos[i][1] = ys[i] ;
+  	}
+    cout << "INTERMEDIO   " << enemigos.size() << endl ;
+    imprimirVectores(enemigos);
 
     return enemigos;
 }
+
 
 // Genera una instancia del problema de tamaño n dividiendo a los enemigos en
 // subconjuntos de tamaño aleatorio y ubicando a cada subconjunto sobre una
 // línea recta
-vector<XY> generarCasoIntermedio(unsigned int n) {
-    unsigned int k = n / 2;
+vector < vector<int> > generarVariandoT(unsigned int t) {
+   
 
-    vector<XY> subEnemigos1 = generarMejorCaso(k);
-    vector<XY> subEnemigos2 = generarMejorCaso(n - k);
+    vector< vector<int> > enemigos = vector< vector<int> >(10, vector<int>(2));
 
-    subEnemigos1.insert(subEnemigos1.end(), subEnemigos2.begin(), subEnemigos2.end());
-
-    random_shuffle(subEnemigos1.begin(), subEnemigos1.end());
-    // cout << "INTERM " << subEnemigos1.size() << endl;
+  
     
-    return subEnemigos1;
+    return enemigos;
 
 }
 
@@ -382,13 +443,12 @@ void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
         double tiempos[CANT_REPETICIONES];
         double tiempo_promedio = 0;
         double desv_estandar = 0;
-        bool instancias_random = false;
 
         N = i;
 
         switch (prueba_id) {
             case PRUEBA_MEJOR_CASO:
-                coordenadasEnemigos = generarMejorCaso(N);
+                coordenadasEnemigos = generarMejorCaso(N,T);
                 break;
 
             case PRUEBA_CASO_INTERMEDIO:
@@ -396,21 +456,19 @@ void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
                 break;
 
             case PRUEBA_PEOR_CASO:
-                coordenadasEnemigos = generarPeorCaso(N);
+                coordenadasEnemigos = generarPeorCaso(N,T);
                 break;
 
-            case PRUEBA_RANDOM:
-                instancias_random = true;
+            case PRUEBA_VARIAR_T:
+                coordenadasEnemigos = generarVariandoT(N);
                 break;
         }
         
         for (int r = -CANT_INST_DESCARTADAS; r < CANT_REPETICIONES; r++) {
             double tiempo;
-            if (instancias_random) {
-                coordenadasEnemigos = generarCasoRandom(N);
-            }
+            
             start_timer();
-            resolverKamehameha();
+            resolverGenkidama(N, T, coordenadasEnemigos);
             tiempo = stop_timer();
 
             if (r >= 0) {
@@ -450,17 +508,22 @@ int main(int argc, char *argv[]) {
 					ofstream archivoSalida;
 					srand(stoi(optarg));
 
-                    archivoSalida.open("genkidama_peor_caso_output");
-                    ejecutarPruebas(PRUEBA_PEOR_CASO, archivoSalida);
-                    archivoSalida.close();
+	                archivoSalida.open("../exp/genkidama_peor_caso_output");
+	                ejecutarPruebas(PRUEBA_PEOR_CASO, archivoSalida);
+	                archivoSalida.close();
 
-                    archivoSalida.open("genkidama_caso_intermedio_output");
-                    ejecutarPruebas(PRUEBA_CASO_INTERMEDIO, archivoSalida);
-                    archivoSalida.close();
+	                archivoSalida.open("../exp/genkidama_caso_intermedio_output");
+	                ejecutarPruebas(PRUEBA_CASO_INTERMEDIO, archivoSalida);
+	                archivoSalida.close();
 
-                    archivoSalida.open("genkidama_mejor_caso_output");
+                    archivoSalida.open("../exp/genkidama_mejor_caso_output");
                     ejecutarPruebas(PRUEBA_MEJOR_CASO, archivoSalida);
                     archivoSalida.close();
+
+                    // archivoSalida.open("genkidama_variar_T_output");
+                    // ejecutarPruebas(PRUEBA_VARIAR_T, archivoSalida);
+                    // archivoSalida.close();
+
 					break;
 			}
 		}
@@ -471,7 +534,7 @@ int main(int argc, char *argv[]) {
 
 		cin >> n >> t;
 
-		vector< vector<int>> coordenadasEnemigos = vector< vector<int>>(n, vector<int>(2));
+		coordenadasEnemigos = vector< vector<int> >(n, vector<int>(2));
 		for(int i = 0; i < n; i++){
 			cin >> coordenadasEnemigos[i][0] >> coordenadasEnemigos[i][1];
 		}
