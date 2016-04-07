@@ -10,8 +10,8 @@
 
 using namespace std;
 
-#define MAX_N                 10
-#define CANT_REPETICIONES     40
+#define MAX_N                 16
+#define CANT_REPETICIONES     20
 #define CANT_INST_DESCARTADAS 20
 #define CANT_REP_COMPLETAS     1
 
