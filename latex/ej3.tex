@@ -128,3 +128,32 @@
 
     % 5. Realizar una experimentación computacional para medir la performance del programa implementado. Usar un conjunto de casos de test en función de los parámetros de entrada, con instancias aleatorias e instancias particulares (de peor/mejor caso en tiempo de ejecución, por ejemplo). Presentar en forma gráfica una comparación entre los tiempos medidos y la complejidad teórica calculada y extraer conclusiones.
     \subsection{Experimentación}
+
+        \renewcommand\constante{2.5}
+        \begin{figure}[H]
+            \centering
+            \caption{}
+            \label{fig:tiempo_base}
+            \begin{tikzpicture}
+                \begin{axis}[
+                        title={},
+                        xlabel={Tamaño de entrada ($N$)},
+                        ylabel={Tiempo de ejecución (nanosegundos)},
+                        ymode = log,
+                        scaled x ticks=false,
+                        scaled y ticks=false,
+                        enlargelimits=0.05,
+                        width=0.5\textwidth,
+                        height=0.5\textwidth,
+                        legend pos=north west,
+                        legend cell align=left,
+                        xmin=1
+                    ]
+                    \addplot[color=red] table[x index=0,y index=1]{../exp/kamehameha_caso_peor};
+                    \addplot[color=green] table[x index=0,y index=1]{../exp/kamehameha_caso_intermedio};
+                    \addplot[color=blue] table[x index=0,y index=1]{../exp/kamehameha_caso_mejor};
+                    % \addplot[color=red] table[x index=0, y expr={x*ln(x)*\constante}]{../exp/kamehameha_caso_peor};
+                    \legend{$T$, $c*N^{N}$}
+                \end{axis}
+            \end{tikzpicture}
+        \end{figure}
