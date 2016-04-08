@@ -168,7 +168,10 @@
             \begin{itemize}
                 \item \textbf{Una genkidama:} Para el caso que con un genkidama mate a todos los enemigos , se generaron coordenadas dentro de un rango T , para un enemigo dado. Llamaremos $T2$ al tiempo que tarda en dicho caso.
 
-                \item \textbf{$N$ genkidama:} Para el caso que tenga que matar a cada enemigo con un genkidama, se generaron coordenadas a una distancia mayor a T con respecto a las coordenadas $x$ e $y$ de sus vecinos. Llamaremos $T3$ al tiempo que tarda en dicho caso.
+                \item \textbf{$N$ genkidamas:} Para el caso que tenga que matar a cada enemigo con un genkidama, se generaron coordenadas a una distancia mayor a T con respecto a las coordenadas $x$ e $y$ de sus vecinos. Llamaremos $T3$ al tiempo que tarda en dicho caso.
+
+                \item \textbf{$T$ no afecta la complejidad:}Para ver que variando el $T$ no afecta la complejidad del algoritmo, se fijo un número de enemigos ($10000$) y se hizo variar el $T$.
+
 
             \end{itemize}
 
@@ -180,7 +183,7 @@
 	\begin{figure}[H]
 		\centering
 		\caption{}
-		\label{fig:tiempo_sobre_n}
+		\label{fig:exp2:part_tiempo_base}
 		\begin{tikzpicture}
 			\begin{axis}[
 					title={},
@@ -205,20 +208,23 @@
 			\end{axis}
 		\end{tikzpicture}
 	\end{figure}
+	En la Figura \ref{fig:exp2:part_tiempo_base} se puede ver :
 
-	Se puede ver que en caso $T3$ tiene una constante más pequeña que el resto, esto se debe a que como solo basta un genkidama para matar a todos los enemigos , despues de tirar ese genkidama los siguiente puntos solo verifican que ya esten cubiertos .
+	     \begin{itemize}
+            \item Se puede ver que en caso $T3$ tiene una constante más pequeña que el resto, esto se debe a que como solo basta un genkidama para matar a todos los enemigos , despues de tirar ese genkidama los siguiente puntos solo verifican que ya esten cubiertos .
+            \item 	El caso $T2$ tiene una constante más grande ya que siempre se ha de agregar un genkidama , entonces se ha de verifcar si el anterior y el siguiente lo cubren. 
+            \item El caso $T3$ es el que peor constante tiene , ya que hay veces que llega a tener entrar al mayor numero de condicionantes posibles. 
+            \item Los tres $Ts$ son acotados por $c$ que es $11.5 * x$ lo cual demuestra que la complejidad es cualquiera de los casos planteados es lineal. 
+        \end{itemize}
 
-	El caso $T2$ tiene una constante más grande ya que siempre se ha de agregar un genkidama , entonces se ha de verifcar si el anterior y el siguiente lo cubren. 
 
-	El caso $T3$ es el que peor constante tiene , ya que hay veces que llega a tener entrar al mayor numero de condicionantes posibles.
-
-	Los tres $Ts$ son acotados por $c$ que es $11.5 * x$ lo cual demuestra que la complejidad es cualquiera de los casos planteados es lineal. 
+	
 
 	
 	\begin{figure}[H]
 		\centering
 		\caption{}
-		\label{fig:tiempo_sobre_n}
+		\label{fig:exp2:part_tiempo_sobre_n}
 		\begin{tikzpicture}
 			\begin{axis}[
 					title={},
@@ -244,16 +250,13 @@
 		\end{tikzpicture}
 	\end{figure}
 
-	En la $figura 5$ se ve que si divimos los $Ts$ por $n$ y se puede acotar por $c$ que es $11.5$.
+	En la Figura \ref{fig:exp2:part_tiempo_sobre_n} se ve que si divimos los $Ts$ por $n$ y se puede acotar por $c$ que es $11.5$.
 
-	
-
-	Para ver que variando el $T$ afecta en una constante la complejidad del algoritmo, se fijo un número de enemigos($10000$) y se hizo variar el $T$,las coordenadas se dispucieron en a lo sumo distancia $x$ e $y$ $T'$ ($50$), para ver que despues de cierto $t$ cae en el caso que con un genkidama mata a todos los enemigos y converge a una constante.  
 
 	\begin{figure}[H]
 		\centering
 		\caption{}
-		\label{fig:tiempo_sobre_n}
+		\label{fig:exp2:part_tiempo_base_var_T}
 		\begin{tikzpicture}
 			\begin{axis}[
 					title={},
@@ -274,4 +277,10 @@
 			\end{axis}
 		\end{tikzpicture}
 	\end{figure}
+
+	En la Figura \ref{fig:exp2:part_tiempo_base_var_T} que converge a una constanste .
+
+	 El análisis expuesto de los datos recopilados presenta evidencia empírica sobre la pertinencia la cota de complejidad demostrada teóricamente. Más aún, permite llegar a la conclusión que, incluso en las instancias de peor caso, esta cota resulta holgada, es decir, que la complejidad del algoritmo presentado es estrictamente $\ord(N)$. Ademas se logro ver que la complejidad depende extrictamente del la cantidad de enemigos ha eliminar y no del tamaño de $T$ .
+
+
 
