@@ -138,20 +138,32 @@
 
         \subsubsection{Instancias particulares}
 
-            Todas las instancias utilizadas para estas pruebas se generaron de manera aleatoria, siguiendo en cada caso las metodologías que se detallan a continuación:
+            Todas las instancias utilizadas para estas pruebas se generaron de manera aleatoria, pero restringiendo los resultados obtenidos para cumplir con determinadas características. A continuación se enumeran los criterios tenidos en cuenta para la generación de los escenarios de prueba.
 
             \begin{itemize}
                 \item \textbf{Mejor caso:} El mejor caso del algoritmo se produce cuando todos los androides a destruir están ubicados sobre una única línea recta. En este caso, es seguro que el primer kamehameha con el que se intente será la solución óptima del problema, por lo que solo se bajará por esa rama de la recursión.
-                Para 
-                \item \textbf{Peor caso:} El peor caso del algoritmo se da cuando no existen tres androides alineados a destruir. 
-                \item \textbf{Caso intermedio:} .
+
+                \item \textbf{Peor caso:} El peor caso del algoritmo se da cuando no existen tres androides alineados a destruir. En consecuencia, cada kamehameha destruirá tan solo dos enemigos, que es el mínimo posible. Esto maximiza la complejidad temporal del algoritmo por dos motivos. Por un lado, en cada nivel de la recursión, se intentarán disparar todos los kamehamehas posibles, con la esperanza de que pueda encontrarse una solución más razonable. Por otra parte, en cada llamada recursiva que se efectúe, la entrada solo se reducirá en dos elementos, haciendo que la profundidad de la recursión alcance siempre la cota máxima de $\frac{N}{2}$.
+
+                \item \textbf{Caso intermedio:} También se agregó un escenario de prueba adicional, con el objetivo principal de poner a prueba la efectividad de las podas implementadas. El mismo consiste en la combinación de dos instancias de mejor caso de tamaño $\frac{N}{2}$; es decir, la mitad de los androides se encuentran sobre una línea recta y la otra mitad, sobre una recta diferente. Las coordenadas de los enemigos son mezcladas de forma aleatoria para evitar que el kamehameha óptimo sea necesariamente el primero que se intente.
+                
+                Bajo estas condiciones, cabe esperar que las podas entren en acción, reduciendo considerablemente cantidad de llamadas recursivas que se ejecutan completas y consiguiendo un rendimiento apreciablemente superior al observado en el peor caso.
+
+                Cabe destacar que este es un simple caso adicional de prueba, concebido con el objetivo de ilustrar la gran variación en el rendimiento del algoritmo según las características de los datos de entrada, pero que no guarda relación alguna con el comportamiento del algoritmo en el caso promedio.
             \end{itemize}
 
+            Para los tres escenarios previstos, se generaron instancias de prueba para todos los valores de $N$ entre $1$ y $13$. Luego, en cada caso, se ejecutaron $60$ repeticiones del algoritmo, midiendo cada vez el tiempo de ejecución y tomando luego el promedio entre los resultados obtenidos.
+
+            En un principio, se descubrió que se producían picos en el tiempo de ejecución en las primeras corridas del programa, tendiendo los valores a estabilizarse con las sucesivas corridas. Si bien no se pudo determinar con precisión el origen de estas anomalías, se decidió, para minimizar la varianza de los datos obtenidos, tratar a las primeras $20$ repeticiones de cada instancia como \emph{outliers}, y promediar solo los valores de las últimas $40$.
+
             \renewcommand\constante{0.001}
+
+            Los resultados obtenidos se exponen en el gráfico de la Figura \ref{fig:exp3:part_tiempo_base}, donde se ilustra también la cota teórica de $c \times N^{N + 2}$ (el valor de $c$ utilizado es \constante). Puede observarse claramente que, incluso en el peor escenario, el tiempo de ejecución del algoritmo tiende a aumentar a un ritmo estrictamente más lento que el de la cota prevista.
+
             \begin{figure}[H]
                 \centering
                 \caption{}
-                \label{fig:tiempo_base}
+                \label{fig:exp3:part_tiempo_base}
                 \begin{tikzpicture}
                     \begin{axis}[
                             title={},
@@ -168,18 +180,20 @@
                             xmin=1
                         ]
                         \addplot[color=red] table[x index=0,y index=1]{../exp/kamehameha_caso_peor};
-                        \addplot[color=blue] table[x index=0,y index=1]{../exp/kamehameha_caso_intermedio};
                         \addplot[color=green] table[x index=0,y index=1]{../exp/kamehameha_caso_mejor};
+                        \addplot[color=blue] table[x index=0,y index=1]{../exp/kamehameha_caso_intermedio};
                         \addplot[color=black] table[x index=0, y expr={\constante * (x^(x+2))}]{../exp/kamehameha_caso_peor};
-                        % \legend{$T$, $c*N^{N}$}
+                        \legend{$T_P(N)$, $T_M(N)$, $T_I(N)$, $c \times N^{N+2}$}
                     \end{axis}
                 \end{tikzpicture}
             \end{figure}
 
+            En la Figura \ref{fig:exp3:part_tiempo_sobre_exp} se muestra el cociente entre los datos obtenidos y la función $\times N^{N + 2}$ (se considera el mismo valor de $c$ que en el gráfico anterior). Puede observarse como, al aumentar el tamaño de $N$, el cociente se aproxima rápidamente a $0$, ilustrando el hecho de que el crecimiento asintótico de la cota es estrictamente mayor que el de los tiempos obtenidos en las mediciones.
+
             \begin{figure}[H]
                 \centering
                 \caption{}
-                \label{fig:tiempo_base}
+                \label{fig:exp3:part_tiempo_sobre_exp}
                 \begin{tikzpicture}
                     \begin{axis}[
                             title={},
@@ -199,9 +213,11 @@
                         \addplot[color=blue] table[x index=0,y expr={\thisrowno{1} / (x^(x+2))}]{../exp/kamehameha_caso_intermedio};
                         \addplot[color=green] table[x index=0,y expr={\thisrowno{1} / (x^(x+2))}]{../exp/kamehameha_caso_mejor};
                         \addplot[color=black] table[x index=0, y expr={\constante}]{../exp/kamehameha_caso_peor};
-                        % \legend{$T$, $c*N^{N}$}
+                        \legend{$\frac{T_P(N)}{N^{N+2}}$, $\frac{T_M(N)}{N^{N+2}}$, $\frac{T_I(N)}{N^{N+2}}$, $c$}
                     \end{axis}
                 \end{tikzpicture}
             \end{figure}
+
+            El análisis expuesto de los datos recopilados presenta evidencia empírica sobre la pertinencia la cota de complejidad demostrada teóricamente. Más aún, permite llegar a la conclusión que, incluso en las instancias de peor caso, esta cota resulta holgada, es decir, que la complejidad del algoritmo presentado es estrictamente $\ord(N^{N+2})$.
 
         \subsubsection{Instancias aleatorias}
