@@ -79,6 +79,8 @@
 	rango del que le sigue, quedando así pendiente a ser destruido por una
 	Genkidama lanzada a algún sucesor.
 
+	\subsubsection{Implementación}\label{ej2_imp}
+
 	Habiendo introducido la idea, se detalla el comportamiento del algoritmo para
 	una entrada con $N$ enemigos y rango de Genkidama $T$. Tanto $maxY$ como
 	$xPendiente$ son inicializados en 0.
@@ -90,7 +92,8 @@
 			único que es necesario hacer es observar si en caso de haber un elemento
 			siguiente, este lo cubre. Si es así, entonces no se agrega al primero a
 			la solución y $xPendiente = X_1$. Caso contrario, si no lo cubre el
-			siguiente, se agrega al primero a la solución y $maxY = Y_1 + T$.
+			siguiente, se agrega al primero a la solución y $maxY = Y_1 +
+			T$.\label{ej2_imp:caso_base}
 		}
 
 		\item{
@@ -100,56 +103,392 @@
 			varios casos posibles:
 			\begin{enumerate}
 				\item{
+					\label{ej2_imp:caso_y_max}
 					La coordenada $Y_{E_j} \leq maxY$, con lo cual $E_j$ está
 					dentro del alcance de una Genkidama anterior por lo tanto no
 					es necesario agregarlo a la solución (dispararle una
 					Genkidama).
-					}
+				}
 				\item{
 					La coordenada $Y_{E_j} > maxY$. Si $xPendiente = 0$ entonces
 					debo actualizarlo con $xPendiente = X_{E_j}$. Esto se debe a
 					que no había ningún enemigo pendiente, por lo tanto $E_j$
 					pasa a estarlo. De aquí se abren más posibilidades:
 					\begin{enumerate}
-						\item{Si $X_{E_j} > X_{E_{j+1}} + T$ entonces $E_j$ no
+						\item{
+							\label{ej2_imp:caso_no_cubierto}
+							Si $X_{E_j} > X_{E_{j+1}} + T$ entonces $E_j$ no
 							se encuentra en el rango de su sucesor por lo tanto
 							debe ser agregado. Se asignan $xPendiente = 0$ y
-							$maxY = Y_{E_j} + T$.}
-						\item{Si $X_{E_j} \leq X_{E_{j+1}} + T$ entonces se
+							$maxY = Y_{E_j} + T$.
+						}
+						\item{
+							Si $X_{E_j} \leq X_{E_{j+1}} + T$ entonces se
 							encuentra en el rango de su sucesor para lo cual
-							existen dos casos:}
-						\begin{enumerate}
-							\item{$X_{E_{j+1}} + T < xPendiente$ donde a pesar
-								de estar en el rango del sucesor, el mismo no
-								alcanza a un enemigo que quedó dependiendo de
-								una futura Genkidama, por lo tanto debo agregar
-								a $E_j$. Se asignan $xPendiente = 0$ y $maxY = Y_{E_j} + T$.}
-							\item{$X_{E_{j+1}} + T \geq xPendiente$ donde el
-								sucesor además de alcanzar a $E_j$ también llega
-								al que quedó pendiente, por lo tanto no es
-								necesario agregar a $E_j$.}
-						\end{enumerate}
+							existen dos casos:
+							\begin{enumerate}
+								\item{
+									\label{ej2_imp:caso_no_cubierto_pendiente}
+									$X_{E_{j+1}} + T < xPendiente$ donde a pesar
+									de estar en el rango del sucesor, el mismo no
+									alcanza a un enemigo que quedó dependiendo de
+									una futura Genkidama, por lo tanto debo agregar
+									a $E_j$. Se asignan $xPendiente = 0$ y $maxY = Y_{E_j} + T$.
+								}
+								\item{
+									\label{ej2_imp:caso_cubierto}
+									$X_{E_{j+1}} + T \geq xPendiente$ donde el
+									sucesor además de alcanzar a $E_j$ también llega
+									al que quedó pendiente, por lo tanto no es
+									necesario agregar a	$E_j$.
+								}
+							\end{enumerate}
+						}
 					\end{enumerate}
-					}
+				}
 				\end{enumerate}
+			}
+			\item{
+				\label{ej2_imp:caso_n}
+				Finalmente, para el último elemento se tiene que únicamente
+				es necesario agregarlo cuando $Y_{E_N} > yMax$, ya que
+				implica que no está cubierto por la Genkidama de algún
+				elemento anterior. Si $Y_{E_N} \leq yMax$, entonces no es
+				necesario sumarlo a la solución, y no hace falta revisar
+				$xPendiente$ ya que si la última Genkidama alcanza para
+				cubrir $E_N$, por las condiciones que establece el
+				enunciado necesariamente estarán cubiertos los elementos en
+				el medio $((\forall j < N) Y_j < E_N)$.
+			}
+	\end{enumerate}
+
+	\subsubsection{Demostración de correctitud}
+
+	Habiendo visto cómo funciona el algoritmo desarrollado, se procede a
+	justificar por qué devuelve una solución óptima. Para esto primero se
+	demostrará que el ciclo principal del algoritmo, al cumplir cierto
+	invariante asegura que no quede ningún enemigo sin destruir. Luego es
+	necesario probar que además de destruir a todos los openentes, la cantidad
+	de Genkidamas utilizadas es mínima.
+
+	\subsubsection*{Correctitud de ciclo}
+
+	Lo que se va a demostrar a continuación es que la solución implementada se
+	encarga correctamente de eliminar a todos los adversarios. Para hacer esto
+	se analizarán tres casos:
+
+	\begin{enumerate}
+		\item{
+			$N = 1$, hay un único enemigo que como se ve en
+			en el item \ref{ej2_imp:caso_base} de la sección
+			\ref{ej2_imp} necesariamente será destruido.
 		}
 		\item{
-			Finalmente, para el último elemento se tiene que únicamente
-			es necesario agregarlo cuando $Y_{E_N} > yMax$, ya que
-			implica que no está cubierto por la Genkidama de algún
-			elemento anterior. Si $Y_{E_N} \leq yMax$, entonces no es
-			necesario sumarlo a la solución, y no hace falta revisar
-			$xPendiente$ ya que si la última Genkidama alcanza para
-			cubrir $E_N$, por las condiciones que establece el
-			enunciado necesariamente estarán cubiertos los elementos en
-			el medio ($(\forall j < N) Y_j < E_N$).}
+			$N = 2$, acá tenemos dos posibilidades dependiendo de si el primer
+			enemigo está al alcance del segundo:
+			\begin{enumerate}
+				\item{
+					Si $E_1$ está al alcance de $E_2$ entonces por el ítem
+					\ref{ej2_imp:caso_n} de la sección \ref{ej2_imp}
+					al tener $maxY = 0$, $E_2$ será parte de la solución y
+					la Genkidama que se le lance alcanzará a $E_1$.
+				}
+				\item{
+					Si $E_1$ no está al alcance de $E_2$ entonces puede
+					pasar que $Y_{E_2} \leq maxY$, donde con destruir a
+					$E_1$ alcanza para también eliminar a $E_2$, o $Y_{E_2}
+					> maxY$ y es necesario destruir a ambos.
+				}
+			\end{enumerate}
+		}
+		\item{
+			$N > 2$, ahora es donde se procede a probar que el ciclo con $1 < j <
+			N$ en conjunción con la lógica de los ítems \ref{ej2_imp:caso_base} y
+			\ref{ej2_imp:caso_n} de la sección \ref{ej2_imp} asegurá que se habrán
+			eliminado todos los adversarios.
 
+			Para lograr esto se demostrará que se cumple el siguiente invariante de
+			ciclo:
+
+			\begin{itemize}
+				\item{
+					Al finalizar cada iteración, se debe obtener una
+					\textbf{subsolución} o una \textbf{subsolución parcial}.
+				}
+				\begin{itemize}
+					\item{
+						Una subsolución implica que la solución construida hasta
+						ese $j$, es una solución al problema donde la entrada
+						son esos $j$ enemigos. Por lo tanto $xPendiente = 0$ e
+						$yMax = Y_{E_k} + T$ donde $1 \leq E_k \leq j$.
+					}
+					\item{
+						Una subsolución parcial consiste en una subsolución
+						donde $xPendiente > 0$, por lo tanto hasta que no se
+						agregue al enemigo cuya Genkidama alcance ese valor, no
+						podrá ser una subolución de $j$. En este escenario, si
+						no se llegó a lanzar ninguna Genkidama $yMax = 0$ y si
+						no $yMax = Y_{E_k} + T$ donde $1 \leq E_k < j$.
+					}
+				\end{itemize}
+			\end{itemize}
+
+			Se procede a demostrar por inducción en el valor de $j$ que se preserva
+			el invariante.
+
+			\textbf{Caso base:} $j = 2$
+
+			Se cuenta con que ya se procesó $E_1$ según lo que dicta el
+			ítem \ref{ej2_imp:caso_base} de la sección \ref{ej2_imp}, por lo
+			tanto tenemos dos escenarios a analizar:
+
+			\begin{enumerate}
+				\item{
+					$E_1$ no se agregó a la solución, por lo tanto está dentro
+					del alcance de $j$.
+					\begin{enumerate}
+						\item{
+							Si el rango de la Genkidama sobre $j + 1$ alcanza a
+							$xPendiente = X_{E_1}$, por el ítem
+							\ref{ej2_imp:caso_cubierto} de la sección \ref{ej2_imp}
+							no se agrega a $j$ y se obtiene entonces una subsolución
+							parcial.
+						}
+						\item{
+							Si el rango de la Genkidama sobre $j + 1$ no alcanza a
+							$xPendiente = X_{E_1}$, por el ítem
+							\ref{ej2_imp:caso_no_cubierto_pendiente} de la sección
+							\ref{ej2_imp} es necesario agregarlo quedando una
+							subsolución donde $xPendiente = 0$ y $maxY = Y_{E_2} + T$.
+						}
+					\end{enumerate}
+				}
+				\item{
+					$E_1$ se agregó a la solución, se tienen los siguientes escenarios
+					posibles:
+					\begin{enumerate}
+						\item{
+							Si se cumple el ítem \ref{ej2_imp:caso_y_max} de la
+							sección \ref{ej2_imp}, $j$ no es necesario agregarlo
+							a la solución, con lo cual $xPendiente = 0$ y
+							el resultado es una subsolución.
+						}
+						\item{
+							Cuando se cumple el ítem
+							\ref{ej2_imp:caso_no_cubierto} de la sección
+							\ref{ej2_imp}, no estoy ni en el alcance de $E_1$ ni
+							de $j + 1$, por lo tanto se debe agregar a la
+							solución con $xPendiente = 0$ obteniendo una así
+							subsolución.
+						}
+						\item{
+							Por último, en el caso de cumplir con el ítem
+							\ref{ej2_imp:caso_cubierto} de la sección
+							\ref{ej2_imp}, no estoy cubierto por $E_1$ pero si
+							por $j + 1$, con lo cual, $j$ no se agrega a la
+							solución y $xPendiente = X_{E_j}$ quedando luego
+							una subsolución parcial.
+						}
+					\end{enumerate}
+				}
+			\end{enumerate}
+
+			Se puede ver que en cada rama se termina obteniendo una subsolución o
+			subsolución parcial con las características descriptas con anterioridad,
+			con lo cual el invariante vale para el caso base.
+
+			\textbf{Paso inductivo:} $j > 2$
+
+			La hipótesis inductiva a utilizar es que vale el invariante para $j-1$,
+			por lo tanto se probará que si el invariante se preserva para $j
+			- 1$ entonces vale para $j$.
+
+			Como vale la hipótesis inductiva, se tienen dos situaciones a analizar:
+
+			\begin{itemize}
+				\item{$j - 1$ es una subsolución.}
+				\item{$j - 1$ es una subsolución parcial.}
+			\end{itemize}
+
+			\begin{enumerate}
+				\item{
+					$j - 1$ es una subsolución:
+					\begin{enumerate}
+						\item{
+							Si el rango de la Genkidama sobre $j + 1$ alcanza a
+							$xPendiente$ (podría llegar a ser nulo), por el ítem
+							\ref{ej2_imp:caso_cubierto} de la sección \ref{ej2_imp}
+							no se agrega a $j$ y se obtiene entonces una subsolución
+							parcial.
+						}
+						\item{
+							Si el rango de la Genkidama sobre $j + 1$ no alcanza a
+							$xPendiente$ (podría llegar a ser nulo), por el ítem
+							\ref{ej2_imp:caso_no_cubierto_pendiente} de la
+							sección \ref{ej2_imp} es necesario agregarlo
+							quedando una subsolución donde $xPendiente = 0$ y
+							$maxY = Y_{E_j} + T$.
+						}
+					\end{enumerate}
+					}
+				\item{
+					$j - 1$ es una subsolución parcial:
+					\begin{enumerate}
+						\item{
+							Si se cumple el ítem \ref{ej2_imp:caso_y_max} de la
+							sección \ref{ej2_imp}, $j$ no es necesario agregarlo
+							a la solución, con lo cual $xPendiente = 0$ y
+							el resultado es una subsolución.
+						}
+						\item{
+							Cuando se cumple el ítem
+							\ref{ej2_imp:caso_no_cubierto} de la sección
+							\ref{ej2_imp}, no estoy ni en el alcance de la
+							última Genkidama de la subsolución $j - 1$ ni
+							de la que impactaría sobre $j + 1$, por lo tanto se
+							debe agregar $j$ a la solución con $xPendiente = 0$
+							obteniendo así una subsolución.
+						}
+						\item{
+							Por último, en el caso de cumplir con el ítem
+							\ref{ej2_imp:caso_cubierto} de la sección
+							\ref{ej2_imp}, no estoy cubierto por la última
+							Genkidama de la subsolución $j - 1$ pero si
+							por $j + 1$, con lo cual, $j$ no se agrega a la
+							solución y $xPendiente = X_{E_j}$ quedando luego
+							una subsolución parcial.
+						}
+					\end{enumerate}
+				}
+			\end{enumerate}
+
+			Como se puede observar, en cada rama de decisión se llega a una
+			subsolución o subsolución parcial, cumpliendo así con el invariante
+			definido.
+
+			Así entonces se tiene que por inducción en las iteraciones al
+			finalizar el ciclo se tendrá que $N - 1$ es una subsolución o una
+			subsolución parcial.
+
+			Si $N - 1$ es una subsolución, por el ítem \ref{ej2_imp:caso_n} de
+			la sección \ref{ej2_imp} si $Y_{E_N} > yMax$ se agrega a $E_N$ a la
+			solución final, caso contrario no se lo suma ya que estaría dentro
+			del alcance de la última Genkidama de la subsolución $N -1$.
+
+			Si $N - 1$ no es una subsolución, por definición de la misma se
+			tiene que $xPendiente > 0$, con lo cual hay un enemigo pendiente a
+			ser destruido. Como se trata del último elemento y se opera en base
+			al ítem \ref{ej2_imp:caso_n} de la sección \ref{ej2_imp},
+			si $xPendiente > 0$ no puede ocurrir que $Y_{E_N} \leq yMax$ ya que
+			como se tiene que $(\forall j < N) Y_j < E_N$, implicaría que la
+			última Genkidama que se lanzó cubre todos los enemigos entre ella y
+			$E_N$, haciendo imposible que $xPendiente > 0$. Se concluye que
+			$Y_{E_N} > yMax$ de forma que se lo incluye en la solución.
+
+			En ambos escenarios queda una solución para $N$ por lo que se puede
+			afirmar que no queda ningún enemigo sin destruir.
+		}
+	\end{enumerate}
+
+	\subsubsection*{Optimalidad}
+
+	Queda ver que la solución generada por la implementación desarrollada es
+	óptima, efectivamente devuelve la mínima cantidad de Genkidamas a utilizar.
+	Para mostrar que esto es cierto, se procederá a demostrar mediante inducción
+	sobre las iteraciones del ciclo principal que cada elección tomada (lanzar
+	o no una Genkidama) es la mejor posible, donde al tomar un camino distinto
+	se obtendría un resultado igual o peor.
+
+	Para esto nuevamente es necesario considerar los casos $N = 1$ y $N = 2$ por
+	separado, ya que recién a partir de $N > 2$ se entra en el ciclo.
+	\begin{enumerate}
+		\item{
+			$N = 1$, tengo un único elemento por lo tanto la solución óptima es
+			lanzarle una única Genkidama, caso contrario quedaría sin ser
+			eliminado.
+		}
+		\item{
+			$N = 2$, se tienen dos caminos a considerar en función de si
+			$E_1$ se encuentra en el alcance de $E_2$.
+			\begin{enumerate}
+				\item{
+					Si $E_1$ está en el alcance de $E_2$ la solución
+					implementada únicamente dispararía a $E_2$, destruyendo a su
+					vez a $E_1$. Podría decidirse eliminar únicamente a $E_1$ si su rango
+					llegase a $E_2$, pero seguiría siendo una solución con la
+					misma cantidad de Genkidamas que la implementada.
+				}
+				\item{
+					Si $E_1$ no está en el alcance de $E_2$ la solución
+					implementada tiene dos opciones. Una es que $Y_{E_2} \leq
+					yMax$ por lo que con eliminar a $E_1$ se destruyen a ambos
+					con un costo de una Genkidama. Si en este escenario se
+					decidiera en vez lanzarle a $E_2$ como $E_1$ no está en su
+					alcance, habría que matarlo por separado, obteniendo un
+					número mayor de Genkidamas lo cual no sería óptimo. La otra
+					opción es que $Y_{E_2} > yMax$ donde lo que se hace
+					inevitablemente destruir a ambos, ya que caso contrario
+					quedaría un oponente vivo.
+				}
+			\end{enumerate}
+		}
+		\item{
+			$N > 2$, se procede a demostrar que se preserva la optimalidad en el ciclo principal
+			con $1 < j < N$.
+
+			Para lograr esto se demostrará que para cada iteración se está
+			seleccionando la mejor decisión, que es equivalente a la que lleva a
+			que se necesiten la menor cantidad de Genkidamas.
+
+
+			Se cuenta con que ya se procesó $E_1$ mediante lo que dicta el ítem
+			\ref{ej2_imp:caso_base} de la sección \ref{ej2_imp}. Esto implica
+			que si el elemento siguiente lo cubre no se lo agrega a la solución,
+			caso contrario se lo agrega. Consideremos las alternativas a ambas
+			situaciones:
+
+			\begin{enumerate}
+				\item{
+					Si el elemento siguiente no lo cubre, la alternativa
+					sería no agregarlo, lo cual es inválido por el hecho de que
+					quedaría $E_1$ sin eliminar.
+				}
+				\item{
+					Si el elemento siguiente lo cubre, se tienen dos opciones:
+					\begin{enumerate}
+						\item{
+							$E_1$ no cubre a $E_2$, por lo tanto la alternativa de
+							agregarlo suma una Genkidama que es
+							redunandante, ya que si no cubre a $E_2$ al tener
+							$(\forall 1 < j \leq N) Y_1 < Y_j$ no va a cubrir a
+							ningún futuro enemigo.
+						}
+						\item{
+							$E_1$ cubre a $E_2$, por lo tanto la alternativo de
+							agregarlo parecería no ser mala, por el hecho de que
+							uno podría pensar que con esta elección con una
+							Genkidama estaría destruyendo a $E_1$, $E_2$ y
+							quizás futuros enemigos. Sin embargo, al utilizar la
+							Genkidama sobre $E_2$ o cualquier sucesor que cubra
+							a $E_1$, además de destruirlo el $maxY$
+							resultante es estrictamente mayor que el que
+							resultaría de dispararle a $E_1$ por que $(\forall 1
+							< j \leq N) Y_1 < Y_j$ por lo tanto conviene
+							destinarle la Genkidama al enemigo más lejano que
+							cubra a $E_1$, ya que bajo el mismo costo de una
+							Genkidama se tiene la posibilidad de destruir más
+							enemigos.
+						}
+					\end{enumerate}
+				}
+			\end{enumerate}
+
+			\textbf{Caso base:} $j = 2$
+		}
 	\end{enumerate}
 
     % 3. Deducir una cota de complejidad temporal del algoritmo propuesto y justificar por qué el algoritmo cumple la cota dada. Utilizar el modelo uniforme.
     \subsection{Complejidad teórica}
-         
-       
 
     % 4. Dar un código fuente claro que implemente la solución propuesta. Se deben incluir las partes relevantes del código como apéndice del informe impreso entregado.
 
