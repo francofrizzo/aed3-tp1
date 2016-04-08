@@ -707,7 +707,23 @@
 	cantidad de Genkidamas mínima.
 
     % 3. Deducir una cota de complejidad temporal del algoritmo propuesto y justificar por qué el algoritmo cumple la cota dada. Utilizar el modelo uniforme.
-    \subsection{Complejidad teórica}
+	\subsection{Complejidad teórica}
+
+	Para calcular la complejidad teórica de la solución propuesta se hará
+	referencia a la sección \ref{ej2_imp} donde se posée el pseudocódigo junto a
+	su explicación.
+
+	El algoritmo tiene una complejidad temporal de $\theta(N)$, por lo tanto es
+	lineal. Esto se justifica con el hecho de que el algoritmo posée un ciclo
+	principal que va de $j = 2$ a $j = N - 1$ donde por dentro únicamente se
+	realizan comparaciones y asignaciones que poséen un costo constante. Por
+	fuera del ciclo también se tienen los casos para $j = 1$ y $j = N$ que sólo
+	realizan comparaciones y asignaciones. Se concluye por lo tanto que la
+	complejidad radica en el ciclo que dependará del tamaño de $N$.
+
+	Cabe aclarar que es $\theta(N)$ para todo caso posible, de una manera u otra
+	el algoritmo recorrerá todos esos valores sin importar cómo están dispuestos
+	los enemigos en la entrada.
 
     % 4. Dar un código fuente claro que implemente la solución propuesta. Se deben incluir las partes relevantes del código como apéndice del informe impreso entregado.
 
