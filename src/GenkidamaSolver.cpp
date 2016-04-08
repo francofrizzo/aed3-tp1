@@ -12,6 +12,7 @@
 using namespace std;
 
 #define T                 	  1000
+#define MAX_T                 10	  
 #define MAX_N                 10
 #define CANT_REPETICIONES     40
 #define CANT_INST_DESCARTADAS 20
@@ -316,8 +317,8 @@ vector < vector<int> > generarPeorCaso(unsigned int n,unsigned int t) {
   		enemigos[i][0] = xs[n - (i+1)] * (t + 1);
     	enemigos[i][1] = ys[i] * (t + 1);
   	}
-    cout << "PEOR   " << enemigos.size() << endl;
-    imprimirVectores(enemigos);
+    // cout << "PEOR   " << enemigos.size() << endl;
+    // imprimirVectores(enemigos);
 
     return enemigos;
 }
@@ -382,8 +383,8 @@ vector < vector<int> > generarMejorCaso(unsigned int n,unsigned int t) {
     	enemigos[i][1] = ysA[i - (xsB.size() + 1)];
   	}
 
-    cout << "MEJOR  " << enemigos.size() << endl;
-    imprimirVectores(enemigos);
+    // cout << "MEJOR  " << enemigos.size() << endl;
+    // imprimirVectores(enemigos);
 
     return enemigos;
 }
@@ -417,75 +418,100 @@ vector< vector<int> > generarCasoIntermedio(unsigned int n) {
   		enemigos[i][0] = xs[n - (i+1)] ;
     	enemigos[i][1] = ys[i] ;
   	}
-    cout << "INTERMEDIO   " << enemigos.size() << endl ;
-    imprimirVectores(enemigos);
+    // cout << "INTERMEDIO   " << enemigos.size() << endl ;
+    // imprimirVectores(enemigos);
 
     return enemigos;
 }
 
 
-// Genera una instancia del problema de tamaño n dividiendo a los enemigos en
-// subconjuntos de tamaño aleatorio y ubicando a cada subconjunto sobre una
-// línea recta
-vector < vector<int> > generarVariandoT(unsigned int t) {
-   
 
-    vector< vector<int> > enemigos = vector< vector<int> >(10, vector<int>(2));
-
-  
-    
-    return enemigos;
-
-}
 
 void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
-    for (unsigned int i = 1; i <= MAX_N; i++) {
-        double tiempos[CANT_REPETICIONES];
-        double tiempo_promedio = 0;
-        double desv_estandar = 0;
+	
+	if(PRUEBA_VARIAR_T == prueba_id){
+		// Vario la T
+		coordenadasEnemigos = generarCasoIntermedio(MAX_N);
+		for (int i = 1; i < MAX_T; ++i){
+			double tiempos[CANT_REPETICIONES];
+	        double tiempo_promedio = 0;
+	        double desv_estandar = 0;
 
-        N = i;
+	        for (int r = -CANT_INST_DESCARTADAS; r < CANT_REPETICIONES; r++) {
+	            double tiempo;
+	            
+	            start_timer();
+	            //cout << "resuelvo para t = "<< i << endl;
+	            resolverGenkidama(MAX_N, i, coordenadasEnemigos);
+	            tiempo = stop_timer();
 
-        switch (prueba_id) {
-            case PRUEBA_MEJOR_CASO:
-                coordenadasEnemigos = generarMejorCaso(N,T);
-                break;
+	            if (r >= 0) {
+	                tiempos[r] = tiempo;
+	                tiempo_promedio += tiempos[r];
+	            }
+	        }
 
-            case PRUEBA_CASO_INTERMEDIO:
-                coordenadasEnemigos = generarCasoIntermedio(N);
-                break;
+	        tiempo_promedio = tiempo_promedio / CANT_REPETICIONES;
 
-            case PRUEBA_PEOR_CASO:
-                coordenadasEnemigos = generarPeorCaso(N,T);
-                break;
+	        for (unsigned int r = 0; r < CANT_REPETICIONES; r++) {
+	            desv_estandar += (tiempos[r] - tiempo_promedio) * (tiempos[r] - tiempo_promedio);
+	        }
+	        desv_estandar = sqrt(desv_estandar / CANT_REPETICIONES);
 
-            case PRUEBA_VARIAR_T:
-                coordenadasEnemigos = generarVariandoT(N);
-                break;
-        }
-        
-        for (int r = -CANT_INST_DESCARTADAS; r < CANT_REPETICIONES; r++) {
-            double tiempo;
-            
-            start_timer();
-            resolverGenkidama(N, T, coordenadasEnemigos);
-            tiempo = stop_timer();
+	        archivoSalida << i << " " << tiempo_promedio << " " << desv_estandar << endl;
 
-            if (r >= 0) {
-                tiempos[r] = tiempo;
-                tiempo_promedio += tiempos[r];
-            }
-        }
 
-        tiempo_promedio = tiempo_promedio / CANT_REPETICIONES;
+		}
 
-        for (unsigned int r = 0; r < CANT_REPETICIONES; r++) {
-            desv_estandar += (tiempos[r] - tiempo_promedio) * (tiempos[r] - tiempo_promedio);
-        }
-        desv_estandar = sqrt(desv_estandar / CANT_REPETICIONES);
+	}else{
+		//Vario la cantidad de enemigos
+	    for (unsigned int i = 1; i <= MAX_N; i++) {
+	        double tiempos[CANT_REPETICIONES];
+	        double tiempo_promedio = 0;
+	        double desv_estandar = 0;
 
-        archivoSalida << i << " " << tiempo_promedio << " " << desv_estandar << endl;
-    }
+	        N = i;
+
+	        switch (prueba_id) {
+	            case PRUEBA_MEJOR_CASO:
+	                coordenadasEnemigos = generarMejorCaso(N,T);
+	                break;
+
+	            case PRUEBA_CASO_INTERMEDIO:
+	                coordenadasEnemigos = generarCasoIntermedio(N);
+	                break;
+
+	            case PRUEBA_PEOR_CASO:
+	                coordenadasEnemigos = generarPeorCaso(N,T);
+	                break;
+
+	            
+	        }
+	        
+	        for (int r = -CANT_INST_DESCARTADAS; r < CANT_REPETICIONES; r++) {
+	            double tiempo;
+	            
+	            start_timer();
+	            resolverGenkidama(N, T, coordenadasEnemigos);
+	            tiempo = stop_timer();
+
+	            if (r >= 0) {
+	                tiempos[r] = tiempo;
+	                tiempo_promedio += tiempos[r];
+	            }
+	        }
+
+	        tiempo_promedio = tiempo_promedio / CANT_REPETICIONES;
+
+	        for (unsigned int r = 0; r < CANT_REPETICIONES; r++) {
+	            desv_estandar += (tiempos[r] - tiempo_promedio) * (tiempos[r] - tiempo_promedio);
+	        }
+	        desv_estandar = sqrt(desv_estandar / CANT_REPETICIONES);
+
+	        archivoSalida << i << " " << tiempo_promedio << " " << desv_estandar << endl;
+	    }
+	}
+	
 }
 
 int main(int argc, char *argv[]) {
@@ -508,21 +534,21 @@ int main(int argc, char *argv[]) {
 					ofstream archivoSalida;
 					srand(stoi(optarg));
 
-	                archivoSalida.open("../exp/genkidama_peor_caso_output");
-	                ejecutarPruebas(PRUEBA_PEOR_CASO, archivoSalida);
-	                archivoSalida.close();
+	                // archivoSalida.open("../exp/genkidama_peor_caso_output");
+	                // ejecutarPruebas(PRUEBA_PEOR_CASO, archivoSalida);
+	                // archivoSalida.close();
 
-	                archivoSalida.open("../exp/genkidama_caso_intermedio_output");
-	                ejecutarPruebas(PRUEBA_CASO_INTERMEDIO, archivoSalida);
-	                archivoSalida.close();
+	                // archivoSalida.open("../exp/genkidama_caso_intermedio_output");
+	                // ejecutarPruebas(PRUEBA_CASO_INTERMEDIO, archivoSalida);
+	                // archivoSalida.close();
 
-                    archivoSalida.open("../exp/genkidama_mejor_caso_output");
-                    ejecutarPruebas(PRUEBA_MEJOR_CASO, archivoSalida);
+                 	// archivoSalida.open("../exp/genkidama_mejor_caso_output");
+                 	// ejecutarPruebas(PRUEBA_MEJOR_CASO, archivoSalida);
+                 	// archivoSalida.close();
+
+                    archivoSalida.open("../exp/genkidama_variar_T_output");
+                    ejecutarPruebas(PRUEBA_VARIAR_T, archivoSalida);
                     archivoSalida.close();
-
-                    // archivoSalida.open("genkidama_variar_T_output");
-                    // ejecutarPruebas(PRUEBA_VARIAR_T, archivoSalida);
-                    // archivoSalida.close();
 
 					break;
 			}
