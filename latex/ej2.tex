@@ -86,19 +86,27 @@
 
     % 4. Dar un código fuente claro que implemente la solución propuesta. Se deben incluir las partes relevantes del código como apéndice del informe impreso entregado.
 
-    % 5. Realizar una experimentación computacional para medir la performance del programa implementado. Usar un conjunto de casos de test en función de los parámetros de entrada, con instancias aleatorias e instancias particulares (de peor/mejor caso en tiempo de ejecución, por ejemplo). Presentar en forma gráfica una comparación entre los tiempos medidos y la complejidad teórica calculada y extraer conclusiones.
-    \subsection{Experimentación}
+	Se realizaron pruebas experimentales para verificar que el tiempo de ejecución del algoritmo cumpliera con la cota asintótica de $\ord(N)$, teóricamente demostrada para el peor caso. Se realizaron dos tipos de pruebas:
+        
+        \begin{itemize}
+            \item Pruebas con instancias con características particulares, más específicamente, para el caso que se ha de tirar una genkidama y el caso que se ha de tirar $N$ genkidamas .
+            \item Pruebas con instancias generadas aleatoriamente, para obtener una aproximación al comportamiento del algoritmo en el caso promedio.
+            \item Pruebas fijando un $N$ y variando el T. 
+        \end{itemize}
 
-    A la hora de medir el rendimiento del algoritmo y confirmar la complejidad teórica se tuvieron que
-	considerar varios aspectos tales que los resultados de la experimentación reflejaran lo mejor posible su
-	comportamiento.
-	Dado que el problema consiste en una única entrada, los casos de prueba posibles se reducen al
-	conjunto de los puntos ordenados de cardinal $N$ que cumplan lo pedido en el enunciado. Como la complejidad temporal del algoritmo es $\theta(N)$, Se plantearon tres escenarios para ver como varia su constante:
-	\begin{itemize}
-		\item{Para el caso promedio, se generaron coordenadas xs e ys al azar y luego se ordenaron. Llamaremos $T1$ al tiempo que tarda en dicho caso.}
-		\item{Para el caso que con un genkidama mate a todos los enemigos , se generaron coordenadas dentro de un rango T. Llamaremos $T2$ al tiempo que tarda en dicho caso.}
-		\item{Para el caso que tenga que matar a cada enemigo con un genkidama, se generaron coordenadas a una distancia mayor a T con respecto a las coordenadas $x$ e $y$ de sus vecinos. Llamaremos $T3$ al tiempo que tarda en dicho caso.}
-	\end{itemize}
+        \subsubsection{Instancias particulares}
+
+            Todas las instancias utilizadas para estas pruebas se generaron de manera aleatoria, pero restringiendo los resultados obtenidos para cumplir con determinadas características. A continuación se enumeran los criterios tenidos en cuenta para la generación de los escenarios de prueba.
+
+            \begin{itemize}
+                \item \textbf{Una genkidama:} Para el caso que con un genkidama mate a todos los enemigos , se generaron coordenadas dentro de un rango T , para un enemigo dado. Llamaremos $T2$ al tiempo que tarda en dicho caso.
+
+                \item \textbf{$N$ genkidama:} Para el caso que tenga que matar a cada enemigo con un genkidama, se generaron coordenadas a una distancia mayor a T con respecto a las coordenadas $x$ e $y$ de sus vecinos. Llamaremos $T3$ al tiempo que tarda en dicho caso.
+
+            \end{itemize}
+
+   Para el caso promedio, se generaron coordenadas xs e ys al azar y luego se ordenaron para que cumpla con la descripcion del problema. Llamaremos $T1$ al tiempo que tarda en dicho caso.
+
 
     \renewcommand\constante{11.5}
 
