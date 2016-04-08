@@ -94,13 +94,13 @@
                 Cabe destacar que este es un simple caso adicional de prueba, concebido con el objetivo de ilustrar la gran variación en el rendimiento del algoritmo según las características de los datos de entrada, pero que no guarda relación alguna con el comportamiento del algoritmo en el caso promedio.
             \end{itemize}
 
-            Para los tres escenarios previstos, se generaron instancias de prueba para todos los valores de $N$ entre $1$ y $13$. Luego, en cada caso, se ejecutaron $60$ repeticiones del algoritmo, midiendo cada vez el tiempo de ejecución y tomando luego el promedio entre los resultados obtenidos.
+            Para los tres escenarios previstos, se generaron instancias de prueba para todos los valores de $N$ entre $1$ y $12$, inclusive. Luego, en cada caso, se ejecutaron $60$ repeticiones del algoritmo, midiendo cada vez el tiempo de ejecución y tomando luego el promedio entre los resultados obtenidos.
 
             En un principio, se descubrió que se producían picos en el tiempo de ejecución en las primeras corridas del programa, tendiendo los valores a estabilizarse con las sucesivas corridas. Si bien no se pudo determinar con precisión el origen de estas anomalías, se decidió, para minimizar la varianza de los datos obtenidos, tratar a las primeras $20$ repeticiones de cada instancia como \emph{outliers}, y promediar solo los valores de las últimas $40$.
 
             \renewcommand\constante{0.001}
 
-            Los resultados obtenidos se exponen en el gráfico de la Figura \ref{fig:exp3:part_tiempo_base}, donde se ilustra también la cota teórica de $c \times N^{N + 2}$ (el valor de $c$ utilizado es \constante). Puede observarse claramente que, incluso en el peor escenario, el tiempo de ejecución del algoritmo tiende a aumentar a un ritmo estrictamente más lento que el de la cota prevista.
+            Los resultados obtenidos se exponen en el gráfico de la Figura \ref{fig:exp3:part_tiempo_base}, donde se ilustra también la cota teórica de $c \times N^{N + 2}$ (el valor de $c$ utilizado es \constante). Se representan como $T_P$ los tiempos obtenidos para peor caso, como $T_M$ para el mejor caso, y como $T_I$ para el caso intermedio. Puede observarse claramente que, incluso en el peor escenario, el tiempo de ejecución del algoritmo tiende a aumentar a un ritmo estrictamente más lento que el de la cota prevista.
 
             \begin{figure}[H]
                 \centering
@@ -124,7 +124,7 @@
                         \addplot[color=red] table[x index=0,y index=1]{../exp/kamehamehaPeor};
                         \addplot[color=blue] table[x index=0,y index=1]{../exp/kamehamehaIntermedio};
                         \addplot[color=green] table[x index=0,y index=1]{../exp/kamehamehaMejor};
-                        \addplot[color=black] table[x index=0, y expr={\constante * (x^(x+2))}]{../exp/kamehamehaPeor};
+                        \addplot[color=gray] table[x index=0, y expr={\constante * (x^(x+2))}]{../exp/kamehamehaPeor};
                         \legend{$T_P(N)$, $T_M(N)$, $T_I(N)$, $c \times N^{N+2}$}
                     \end{axis}
                 \end{tikzpicture}
@@ -154,7 +154,7 @@
                         \addplot[color=red] table[x index=0,y expr={\thisrowno{1} / (x^(x+2))}]{../exp/kamehamehaPeor};
                         \addplot[color=blue] table[x index=0,y expr={\thisrowno{1} / (x^(x+2))}]{../exp/kamehamehaIntermedio};
                         \addplot[color=green] table[x index=0,y expr={\thisrowno{1} / (x^(x+2))}]{../exp/kamehamehaMejor};
-                        \addplot[color=black] table[x index=0, y expr={\constante}]{../exp/kamehamehaPeor};
+                        \addplot[color=gray] table[x index=0, y expr={\constante}]{../exp/kamehamehaPeor};
                         \legend{$\frac{T_P(N)}{N^{N+2}}$, $\frac{T_M(N)}{N^{N+2}}$, $\frac{T_I(N)}{N^{N+2}}$, $c$}
                     \end{axis}
                 \end{tikzpicture}
@@ -163,3 +163,35 @@
             El análisis expuesto de los datos recopilados presenta evidencia empírica sobre la pertinencia la cota de complejidad demostrada teóricamente. Más aún, permite llegar a la conclusión que, incluso en las instancias de peor caso, esta cota resulta holgada, es decir, que la complejidad del algoritmo presentado es estrictamente $\ord(N^{N+2})$.
 
         \subsubsection{Instancias aleatorias}
+
+            Para obtener una aproximación al comportamiento del algoritmo en el caso promedio, se realizaron también pruebas con instancias generadas de forma completamente aleatoria. Este experimento también se realizó para los valores de $N$ entre $1$ y $12$, y al igual que el anterior, la prueba se repitió $60$ veces para cada valor de $N$, descartando los resultados de las primeras $20$ repeticiones y promediando los obtenidos en las otras $40$. Sin embargo, esta vez cada medición se realizó sobre una instancia de prueba diferente, generada al azar.
+
+            Intuitivamente, resulta razonable conjeturar que la probabilidad de que al tres enemigos se encuentren alineados en una instancia aleatoria es muy baja, especialmente teniendo en cuenta los pequeños tamaños de entrada considerados. En otras palabras, parece esperable que un escenario aleatorio tenga características similares a un escenario de peor caso, y por lo tanto, que el rendimiento promedio del algoritmo sea similar a este último caso.
+
+            En la figura \ref{fig:exp3:random_tiempo} se presentan los resultados obtenidos para estas instancias aleatorias ($T_R$), y se los compara con los previamente obtenidos para las instancias de peor caso ($T_P$). Como puede observarse, los datos empíricos respaldan la hipótesis recién expuesta. Cabe destacar que, a pesar de que todas las mediciones se realizaron sobre instancias diferentes, la varianza muestral observada fue comparable a la obtenida para el peor caso, donde las repeticiones se efectuaban con instancias idénticas, mostrando cierta uniformidad en el rendimiento del algoritmo cuando los datos de entrada no cumplen características particulares que permitan aprovechar las podas diseñadas.
+
+            \begin{figure}[H]
+                \centering
+                \caption{}
+                \label{fig:exp3:random_tiempo}
+                \begin{tikzpicture}
+                    \begin{axis}[
+                            title={},
+                            xlabel={Tamaño de entrada ($N$)},
+                            ylabel={Tiempo de ejecución (nanosegundos)},
+                            ymode = log,
+                            scaled x ticks=false,
+                            scaled y ticks=false,
+                            enlargelimits=0.05,
+                            width=0.5\textwidth,
+                            height=0.5\textwidth,
+                            legend pos=north west,
+                            legend cell align=left,
+                            xmin=1
+                        ]
+                        \addplot[color=red] table[x index=0, y index=1]{../exp/kamehamehaRandom};
+                        \addplot[color=gray] table[x index=0, y index=1]{../exp/kamehamehaPeor};
+                        \legend{$T_R(N)$, $T_P(N)$}
+                    \end{axis}
+                \end{tikzpicture}
+            \end{figure}
