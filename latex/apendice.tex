@@ -1,8 +1,166 @@
 \section{Apéndice}\label{sec:codigo}
 
-\subsection{KaioKenSolver.cpp}
-\lstinputlisting[language=C++]{../src/KaioKenSolver.cpp}
-\subsection{GenkidamaSolver.cpp}
-\lstinputlisting[language=C++]{../src/GenkidamaSolver.cpp}
-\subsection{KamehamehaSolver.cpp}
-\lstinputlisting[language=C++]{../src/KamehamehaSolver.cpp}
+\subsection{Funciones principales de Kaioken}
+\begin{lstlisting}
+vector< vector<int>> generarPeleas(int n){
+  int cantidadPeleas = ceil(log(n)/log(2));
+  vector<vector<int>> peleas = 
+  vector<vector<int>>(cantidadPeleas, vector<int>(n, 2));
+  int saltos = 1;
+  for(int i = 0; i < cantidadPeleas; i++){
+  for(int j = 0; j < n; j += 2*saltos){
+    for(int k = 0; k < saltos; k++){
+    if(j + k < n){
+      peleas[i][j + k] = 1;
+    }
+    }
+  }
+  saltos *= 2;
+  }
+  return peleas;
+}
+\end{lstlisting}
+
+\subsection{Funciones principales de Genkidama}
+\begin{lstlisting}
+vector<int> resolverGenkidama(const int n, const int t, 
+	const vector< vector<int>> &coordenadasEnemigos){
+  vector<int> solucion;
+  int max_y = 0;
+  int x_a_cubrir = 0;
+  if(coordenadasEnemigos.size() > 1){
+    // Primer elemento, si no esta cubierto por el siguiente, lo agrego
+    if(coordenadasEnemigos[1][0] + t < coordenadasEnemigos[0][0]){
+      solucion.push_back(1);
+      // Me guardo la altura para ver si cubre a alguno que este delante
+      max_y = coordenadasEnemigos[0][1] + t;
+    }
+    else{
+      x_a_cubrir = coordenadasEnemigos[0][0];
+    }
+    // Elementos entre el primer y ultimo
+    for(unsigned int i = 1; i < coordenadasEnemigos.size() - 1; i++){
+      // Si no esta cubierto por un elemento anterior
+      if(coordenadasEnemigos[i][1] > max_y){
+        // Si el siguiente elemento me cubre
+        if(coordenadasEnemigos[i + 1][0] + t >= coordenadasEnemigos[i][0]){
+          x_a_cubrir = (x_a_cubrir == 0) ? 
+            coordenadasEnemigos[i][0] : x_a_cubrir;
+          // Si no cubre al que yo si, entonces me agrego
+          if(coordenadasEnemigos[i + 1][0] + t < x_a_cubrir){
+            solucion.push_back(i + 1);
+            max_y = coordenadasEnemigos[i][1] + t;
+            x_a_cubrir = 0;
+          }
+        }
+        else{
+          solucion.push_back(i + 1);
+          max_y = coordenadasEnemigos[i][1] + t;
+          x_a_cubrir = 0;
+        }
+      }
+    }
+    // Ultimo elemento
+    if(coordenadasEnemigos[n - 1][1] > max_y){
+      solucion.push_back(n);
+    }
+  }
+  else{
+  // Solucion para unico elemento
+  solucion.push_back(1);
+  }
+  return solucion;
+}
+\end{lstlisting}
+
+\subsection{Funciones principales de Kamehameha}
+\begin{lstlisting}
+// Saca los enemigos que destruye de enemigosRestantes y los agrega a
+// enemigosDestruidos
+vector<unsigned int> destruirEnemigos(vector<unsigned int> &enemigosRestantes, 
+	Recta kamehameha){
+  vector<unsigned int> destruidos;
+
+  unsigned int i = 0;
+  while (i < enemigosRestantes.size()) {
+    if (kamehameha.pasaPor(coordenadasEnemigos[enemigosRestantes[i]])){
+      destruidos.push_back(enemigosRestantes[i]);
+      enemigosRestantes.erase(enemigosRestantes.begin() + i);
+    }
+    else {
+      i++;
+    }
+  }
+
+  return destruidos;
+}
+
+bool resolverKamehamehaRecursivo(vector<unsigned int> enemigos, 
+	vector<vector<unsigned int>>& solucion, unsigned int limite) {
+  // solucion = vector<vector<unsigned int>>();
+
+  if (enemigos.size() == 0) {
+    return true;
+  } else if (limite > 0) {
+    if (enemigos.size() == 1 || enemigos.size() == 2) {
+      solucion.push_back(enemigos);
+      return true;
+    } else {
+      vector<vector<unsigned int> > mejorSubsolucion;
+      bool haySubsolucionValida = false;
+      vector<Recta> kamehamehasProbados;
+
+      // Todas las posibles combinaciones de Kamehamehas sin contar las 
+      // que ya hice al reves
+      // Ejemplo: si hice un kamehameha de 0,0 a 1,1 no voy a hacer de 
+      // 1,1 a 0,0 porque es lo mismo
+      for (unsigned int i = 0; i < enemigos.size() - 1; i++){
+        for (unsigned int j = i + 1; j < enemigos.size(); j++){
+          Recta kamehameha = Recta(coordenadasEnemigos[enemigos[i]], 
+          	coordenadasEnemigos[enemigos[j]]);
+
+          bool repetido = false;
+          for (unsigned int k = 0; k < kamehamehasProbados.size(); k++) {
+            if (kamehameha == kamehamehasProbados[k]) {
+              repetido = true;
+              break;
+            }
+          }
+
+          if (!repetido) {
+            kamehamehasProbados.push_back(kamehameha);
+            vector<unsigned int> enemigosRestantes = enemigos;
+            vector<vector<unsigned int> > subsolucion;
+            subsolucion.push_back(destruirEnemigos(enemigosRestantes, 
+            	kamehameha));
+
+            if (enemigosRestantes.size() > 0) {
+              vector<vector<unsigned int> > subsolucionRecursiva;
+              if (resolverKamehamehaRecursivo(enemigosRestantes, 
+              	subsolucionRecursiva, limite - 1)) {
+                haySubsolucionValida = true;
+                subsolucion.insert(subsolucion.end(), 
+                	subsolucionRecursiva.begin(), subsolucionRecursiva.end());
+                mejorSubsolucion = subsolucion;
+                limite = subsolucion.size();
+              }
+            } else {
+              haySubsolucionValida = true;
+              mejorSubsolucion = subsolucion;
+              limite = 1;
+            }
+          }
+        }
+      }
+
+      if (haySubsolucionValida) {
+        solucion.insert(solucion.end(), mejorSubsolucion.begin(), 
+        	mejorSubsolucion.end());
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+\end{lstlisting}
