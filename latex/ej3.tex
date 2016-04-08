@@ -114,7 +114,11 @@
 
     Ejemplo para $N$ = 4: 
 
-    %\includegraphics[width=0.6\columnwidth]{imagenes/ej3_arbol.svg}
+    \begin{center}
+    \includegraphics[width=0.6\columnwidth]{imagenes/ej3_arbol.pdf}
+    \end{center}
+    
+    Se puede ver como para el caso de $N = 4$ tenemos que la raiz tiene $4 \times 3 = 12$ hijos y que cada uno tiene $2 \times 1 = 2$ hijos. En otras palabras, en la primera ejecución (la raíz) se hacen 12 llamados (uno por cada par de enemigos), y para cada uno se hacen dos llamados (uno por cada par de enemigos restantes).
 
     En el nivel $k$ con $0 \leq k \leq N / 2$ se puede ver que cada nodo tiene $(N - 2k) \times (N - 2k - 1)$ hijos,
     debido a los ciclos explicados previamente. Entonces la cantidad de nodos en el nivel $k$ está dada por la cantidad de nodos en $k - 1$ multiplcado por $(N - 2k) \times (N - 2k -1)$. De esta forma la cantidad de nodos en el nivel $k$ es igual al producto de las cantidades de hijos por nodo de cada nivel, hasta $k$. Es decir, 
