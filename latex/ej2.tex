@@ -88,3 +88,115 @@
 
     % 5. Realizar una experimentación computacional para medir la performance del programa implementado. Usar un conjunto de casos de test en función de los parámetros de entrada, con instancias aleatorias e instancias particulares (de peor/mejor caso en tiempo de ejecución, por ejemplo). Presentar en forma gráfica una comparación entre los tiempos medidos y la complejidad teórica calculada y extraer conclusiones.
     \subsection{Experimentación}
+
+    A la hora de medir el rendimiento del algoritmo y confirmar la complejidad teórica se tuvieron que
+	considerar varios aspectos tales que los resultados de la experimentación reflejaran lo mejor posible su
+	comportamiento.
+	Dado que el problema consiste en una única entrada, los casos de prueba posibles se reducen al
+	conjunto de los puntos ordenados de cardinal $N$ que cumplan lo pedido en el enunciado. Como la complejidad temporal del algoritmo es $\theta(N)$, Se plantearon tres escenarios para ver como varia su constante:
+	\begin{itemize}
+		\item{Para el caso promedio, se generaron coordenadas xs e ys al azar y luego se ordenaron. Llamaremos $T1$ al tiempo que tarda en dicho caso.}
+		\item{Para el caso que con un genkidama mate a todos los enemigos , se generaron coordenadas dentro de un rango T. Llamaremos $T2$ al tiempo que tarda en dicho caso.}
+		\item{Para el caso que tenga que matar a cada enemigo con un genkidama, se generaron coordenadas a una distancia mayor a T con respecto a las coordenadas $x$ e $y$ de sus vecinos. Llamaremos $T3$ al tiempo que tarda en dicho caso.}
+	\end{itemize}
+
+    \renewcommand\constante{11.5}
+
+	\begin{figure}[H]
+		\centering
+		\caption{}
+		\label{fig:tiempo_sobre_n}
+		\begin{tikzpicture}
+			\begin{axis}[
+					title={},
+					xlabel={Tamaño de entrada ($N$)},
+					ylabel={Tiempo de ejecución (nanosegundos)},
+					scaled x ticks=false,
+					scaled y ticks=false,
+					ymin=0,
+					enlargelimits=0.05,
+					width=0.5\textwidth,
+					height=0.5\textwidth,
+					legend pos=south east,
+					legend cell align=left,
+					xmin=1
+				]
+
+				\addplot[color=red] table[x index=0,y index=1 ]{../exp/genkidama_caso_intermedio_output};
+				\addplot[color=black] table[x index=0,y index=1 ]{../exp/genkidama_mejor_caso_output};
+				\addplot[color=blue] table[x index=0,y index=1 ]{../exp/genkidama_peor_caso_output}; 
+				\addplot[color=green] table[x index=0,y expr={x*\constante}]{../exp/genkidama_caso_intermedio_output};
+				\legend{$T1$, $T2$ , $T3$, $c$ }
+			\end{axis}
+		\end{tikzpicture}
+	\end{figure}
+
+	Se puede ver que en caso $T3$ tiene una constante más pequeña que el resto, esto se debe a que como solo basta un genkidama para matar a todos los enemigos , despues de tirar ese genkidama los siguiente puntos solo verifican que ya esten cubiertos .
+
+	El caso $T2$ tiene una constante más grande ya que siempre se ha de agregar un genkidama , entonces se ha de verifcar si el anterior y el siguiente lo cubren. 
+
+	El caso $T3$ es el que peor constante tiene , ya que hay veces que llega a tener entrar al mayor numero de condicionantes posibles.
+
+	Los tres $Ts$ son acotados por $c$ que es $11.5 * x$ lo cual demuestra que la complejidad es cualquiera de los casos planteados es lineal. 
+
+	
+	\begin{figure}[H]
+		\centering
+		\caption{}
+		\label{fig:tiempo_sobre_n}
+		\begin{tikzpicture}
+			\begin{axis}[
+					title={},
+					xlabel={Tamaño de entrada ($N$)},
+					ylabel={Tiempo de ejecución (nanosegundos)},
+					scaled x ticks=false,
+					scaled y ticks=false,
+					ymin=0,
+					enlargelimits=0.05,
+					width=0.5\textwidth,
+					height=0.5\textwidth,
+					legend pos=south east,
+					legend cell align=left,
+					xmin=1
+				]
+
+				\addplot[color=red] table[x index=0,y expr={\thisrowno{1} / x} ]{../exp/genkidama_caso_intermedio_output};
+				\addplot[color=black] table[x index=0,y expr={\thisrowno{1} / x} ]{../exp/genkidama_mejor_caso_output};
+				\addplot[color=blue] table[x index=0,y expr={\thisrowno{1} / x} ]{../exp/genkidama_peor_caso_output}; 
+				\addplot[color=green] table[x index=0, y expr={\constante}]{../exp/genkidama_caso_intermedio_output};
+				\legend{$\frac{T1}{N}$, $\frac{T2}{N}$, $\frac{T3}{N}$ , $c$}
+			\end{axis}
+		\end{tikzpicture}
+	\end{figure}
+
+	En la $figura 5$ se ve que si divimos los $Ts$ por $n$ y se puede acotar por $c$ que es $11.5$.
+
+	
+
+	Para ver que variando el $T$ afecta en una constante la complejidad del algoritmo, se fijo un número de enemigos($10000$) y se hizo variar el $T$,las coordenadas se dispucieron en a lo sumo distancia $x$ e $y$ $T'$ ($50$), para ver que despues de cierto $t$ cae en el caso que con un genkidama mata a todos los enemigos y converge a una constante.  
+
+	\begin{figure}[H]
+		\centering
+		\caption{}
+		\label{fig:tiempo_sobre_n}
+		\begin{tikzpicture}
+			\begin{axis}[
+					title={},
+					xlabel={Tamaño de entrada ($T$)},
+					ylabel={Tiempo de ejecución (nanosegundos)},
+					scaled x ticks=false,
+					scaled y ticks=false,
+					ymin=0,
+					enlargelimits=0.05,
+					width=0.5\textwidth,
+					height=0.5\textwidth,
+					legend pos=south east,
+					legend cell align=left,
+					xmin=1
+				]
+				\addplot[color=black] table[x index=0,y index=1 ]{../exp/genkidama_variar_T_output};
+				\legend{$T$ }
+			\end{axis}
+		\end{tikzpicture}
+	\end{figure}
+

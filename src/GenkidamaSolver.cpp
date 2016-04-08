@@ -11,9 +11,9 @@
 
 using namespace std;
 
-#define T                 	  1000
-#define MAX_T                 10	  
-#define MAX_N                 10
+#define T                 	  10000
+#define MAX_T                 50000 
+#define MAX_N                 10000
 #define CANT_REPETICIONES     40
 #define CANT_INST_DESCARTADAS 20
 #define CANT_REP_COMPLETAS     1
@@ -424,6 +424,25 @@ vector< vector<int> > generarCasoIntermedio(unsigned int n) {
     return enemigos;
 }
 
+vector< vector<int> > generarCasoT(unsigned int n, unsigned int t) {
+   vector< vector<int> > enemigos = vector< vector<int> >(n, vector<int>(2));
+    // Los primeros puntos
+    enemigos[n-1][0] = rand() % (RAND_MAX - (n * t));
+    enemigos[0][1] = rand() % (RAND_MAX - (n * t));
+  	
+
+  	for (unsigned int i = 1; i < n; ++i){
+  		enemigos[n - (i+1)][0] =  enemigos[n - i][0] + ((rand() % (t-1 )) + 1) ;
+    	enemigos[i][1] =  enemigos[i-1][1] + ((rand() % (t-1 )) + 1) ;
+  	}
+    // cout << "T   " << enemigos.size() << endl ;
+    //  imprimirVectores(enemigos);
+
+    return enemigos;
+}
+
+
+
 
 
 
@@ -431,12 +450,13 @@ void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
 	
 	if(PRUEBA_VARIAR_T == prueba_id){
 		// Vario la T
-		coordenadasEnemigos = generarCasoIntermedio(MAX_N);
-		for (int i = 1; i < MAX_T; ++i){
+		coordenadasEnemigos = generarCasoT(MAX_N,50);
+		for (int i = 1; i < MAX_T; i += 50){
 			double tiempos[CANT_REPETICIONES];
 	        double tiempo_promedio = 0;
 	        double desv_estandar = 0;
 
+	        //cout << "Corro con T  : " << i << endl;
 	        for (int r = -CANT_INST_DESCARTADAS; r < CANT_REPETICIONES; r++) {
 	            double tiempo;
 	            
@@ -465,13 +485,13 @@ void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
 
 	}else{
 		//Vario la cantidad de enemigos
-	    for (unsigned int i = 1; i <= MAX_N; i++) {
+	    for (unsigned int i = 1; i <= MAX_N; i += 100) {
 	        double tiempos[CANT_REPETICIONES];
 	        double tiempo_promedio = 0;
 	        double desv_estandar = 0;
 
 	        N = i;
-
+	        cout << "Genero el caso n : " << N << endl;
 	        switch (prueba_id) {
 	            case PRUEBA_MEJOR_CASO:
 	                coordenadasEnemigos = generarMejorCaso(N,T);
@@ -487,7 +507,7 @@ void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
 
 	            
 	        }
-	        
+	        cout << "Corro el caso n : " << N << endl;
 	        for (int r = -CANT_INST_DESCARTADAS; r < CANT_REPETICIONES; r++) {
 	            double tiempo;
 	            
@@ -534,17 +554,20 @@ int main(int argc, char *argv[]) {
 					ofstream archivoSalida;
 					srand(stoi(optarg));
 
-	                // archivoSalida.open("../exp/genkidama_peor_caso_output");
-	                // ejecutarPruebas(PRUEBA_PEOR_CASO, archivoSalida);
-	                // archivoSalida.close();
+					// cout << "genkidama_peor_caso_output" << endl;
+		   //          archivoSalida.open("../exp/genkidama_peor_caso_output");
+		   //          ejecutarPruebas(PRUEBA_PEOR_CASO, archivoSalida);
+		   //          archivoSalida.close();
 
-	                // archivoSalida.open("../exp/genkidama_caso_intermedio_output");
-	                // ejecutarPruebas(PRUEBA_CASO_INTERMEDIO, archivoSalida);
-	                // archivoSalida.close();
+		   //          cout << "genkidama_caso_intermedio_output" << endl;
+		   //          archivoSalida.open("../exp/genkidama_caso_intermedio_output");
+		   //          ejecutarPruebas(PRUEBA_CASO_INTERMEDIO, archivoSalida);
+		   //          archivoSalida.close();
 
-                 	// archivoSalida.open("../exp/genkidama_mejor_caso_output");
-                 	// ejecutarPruebas(PRUEBA_MEJOR_CASO, archivoSalida);
-                 	// archivoSalida.close();
+		   //          cout << "genkidama_mejor_caso_output" << endl;
+		   //       	archivoSalida.open("../exp/genkidama_mejor_caso_output");
+		   //       	ejecutarPruebas(PRUEBA_MEJOR_CASO, archivoSalida);
+		   //       	archivoSalida.close();
 
                     archivoSalida.open("../exp/genkidama_variar_T_output");
                     ejecutarPruebas(PRUEBA_VARIAR_T, archivoSalida);
