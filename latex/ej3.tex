@@ -179,10 +179,11 @@
                             legend cell align=left,
                             xmin=1
                         ]
-                        \addplot[color=red] table[x index=0,y index=1]{../exp/kamehameha_caso_peor};
-                        \addplot[color=green] table[x index=0,y index=1]{../exp/kamehameha_caso_mejor};
-                        \addplot[color=blue] table[x index=0,y index=1]{../exp/kamehameha_caso_intermedio};
-                        \addplot[color=black] table[x index=0, y expr={\constante * (x^(x+2))}]{../exp/kamehameha_caso_peor};
+
+                        \addplot[color=red] table[x index=0,y index=1]{../exp/kamehamehaPeor};
+                        \addplot[color=blue] table[x index=0,y index=1]{../exp/kamehamehaIntermedio};
+                        \addplot[color=green] table[x index=0,y index=1]{../exp/kamehamehaMejor};
+                        \addplot[color=black] table[x index=0, y expr={\constante * (x^(x+2))}]{../exp/kamehamehaPeor};
                         \legend{$T_P(N)$, $T_M(N)$, $T_I(N)$, $c \times N^{N+2}$}
                     \end{axis}
                 \end{tikzpicture}
@@ -209,10 +210,11 @@
                             legend cell align=left,
                             xmin=1
                         ]
-                        \addplot[color=red] table[x index=0,y expr={\thisrowno{1} / (x^(x+2))}]{../exp/kamehameha_caso_peor};
-                        \addplot[color=blue] table[x index=0,y expr={\thisrowno{1} / (x^(x+2))}]{../exp/kamehameha_caso_intermedio};
-                        \addplot[color=green] table[x index=0,y expr={\thisrowno{1} / (x^(x+2))}]{../exp/kamehameha_caso_mejor};
-                        \addplot[color=black] table[x index=0, y expr={\constante}]{../exp/kamehameha_caso_peor};
+
+                        \addplot[color=red] table[x index=0,y expr={\thisrowno{1} / (x^(x+2))}]{../exp/kamehamehaPeor};
+                        \addplot[color=blue] table[x index=0,y expr={\thisrowno{1} / (x^(x+2))}]{../exp/kamehamehaIntermedio};
+                        \addplot[color=green] table[x index=0,y expr={\thisrowno{1} / (x^(x+2))}]{../exp/kamehamehaMejor};
+                        \addplot[color=black] table[x index=0, y expr={\constante}]{../exp/kamehamehaPeor};
                         \legend{$\frac{T_P(N)}{N^{N+2}}$, $\frac{T_M(N)}{N^{N+2}}$, $\frac{T_I(N)}{N^{N+2}}$, $c$}
                     \end{axis}
                 \end{tikzpicture}

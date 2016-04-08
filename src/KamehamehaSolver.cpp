@@ -7,11 +7,12 @@
 #include <chrono>
 #include "mini_test.h"
 #include <cmath>
+#include <iomanip>
 
 using namespace std;
 
-#define MAX_N                 10
-#define CANT_REPETICIONES     20
+#define MAX_N                 12
+#define CANT_REPETICIONES     40
 #define CANT_INST_DESCARTADAS 20
 #define CANT_REP_COMPLETAS     1
 
@@ -165,7 +166,7 @@ vector<unsigned int> destruirEnemigos(vector<unsigned int> &enemigosRestantes, R
 }
 
 bool resolverKamehamehaRecursivo(vector<unsigned int> enemigos, vector<vector<unsigned int>>& solucion, unsigned int limite) {
-    solucion = vector<vector<unsigned int>>();
+    // solucion = vector<vector<unsigned int>>();
 
     if (enemigos.size() == 0) {
         return true;
@@ -457,17 +458,31 @@ vector<XY> generarCasoIntermedio(unsigned int n) {
 
 }
 
-void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
-    double tiempo_promedio;
-    double c;
-    
+void ejecutarPruebas(int prueba_id, ofstream& archivoSalida, bool quiet) {
+    if (!quiet) {
+        switch (prueba_id) {
+            case PRUEBA_MEJOR_CASO:
+                cout << "Escenario: mejor caso" << endl; break;
+            case PRUEBA_CASO_INTERMEDIO:
+                cout << "Escenario: caso intermedio" << endl; break;
+            case PRUEBA_PEOR_CASO:
+                cout << "Escenario: peor caso" << endl; break;
+            case PRUEBA_RANDOM:
+                cout << "Escenario: aleatorio" << endl; break;
+        }
+    }
+
     for (unsigned int i = 1; i <= MAX_N; i++) {
         double tiempos[CANT_REPETICIONES];
-        tiempo_promedio = 0;
+        double tiempo_promedio = 0;
         double desv_estandar = 0;
         bool instancias_random = false;
 
         N = i;
+
+        if (!quiet) {
+            cout << "  N = " << setfill(' ') << setw(2) << i << "    " << flush;
+        }
 
         switch (prueba_id) {
             case PRUEBA_MEJOR_CASO:
@@ -488,6 +503,10 @@ void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
         }
         
         for (int r = -CANT_INST_DESCARTADAS; r < CANT_REPETICIONES; r++) {
+            if (!quiet) {
+                cout << "\b\b\b" << setfill(' ') << setw(3) << r << flush;
+            }
+
             double tiempo;
             if (instancias_random) {
                 coordenadasEnemigos = generarCasoRandom(N);
@@ -510,9 +529,11 @@ void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
         desv_estandar = sqrt(desv_estandar / CANT_REPETICIONES);
 
         archivoSalida << i << " " << tiempo_promedio << " " << desv_estandar << endl;
+
+        if (!quiet) {
+            cout << "\b\b\b  ✓" << endl;
+        }
     }
-        c = tiempo_promedio / pow(CANT_REPETICIONES, CANT_REPETICIONES + 2);
-        cout << c << endl;
 }
 
 /*
@@ -522,7 +543,7 @@ void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
 int main (int argc, char* argv[]) {
     if (argc > 1) {
         char opt;
-        while ((opt = getopt(argc, argv, "tp:")) != -1) {
+        while ((opt = getopt(argc, argv, "tqp:")) != -1) {
             switch (opt) {
                 case 't':
                     RUN_TEST(test_vacio);
@@ -530,27 +551,28 @@ int main (int argc, char* argv[]) {
                     RUN_TEST(test_cuatro_en_linea);
                     RUN_TEST(test_cuadrado);
                     RUN_TEST(test_tres_radiales);
+                    break;
                 case 'p':
-                    // cout << opt;
+                    bool quiet = false;
                     srand(stoi(optarg));
 
                     ofstream archivoSalida;
                     for (int i = 0; i < CANT_REP_COMPLETAS; i++) {
 
-                        archivoSalida.open("../exp/kamehameha_caso_peor");
-                        ejecutarPruebas(PRUEBA_PEOR_CASO, archivoSalida);
+                        archivoSalida.open("../exp/kamehamehaPeor");
+                        ejecutarPruebas(PRUEBA_PEOR_CASO, archivoSalida, quiet);
                         archivoSalida.close();
 
-                        archivoSalida.open("../exp/kamehameha_caso_intermedio");
-                        ejecutarPruebas(PRUEBA_CASO_INTERMEDIO, archivoSalida);
+                        archivoSalida.open("../exp/kamehamehaIntermedio");
+                        ejecutarPruebas(PRUEBA_CASO_INTERMEDIO, archivoSalida, quiet);
                         archivoSalida.close();
 
-                        archivoSalida.open("../exp/kamehameha_caso_mejor");
-                        ejecutarPruebas(PRUEBA_MEJOR_CASO, archivoSalida);
+                        archivoSalida.open("../exp/kamehamehaMejor");
+                        ejecutarPruebas(PRUEBA_MEJOR_CASO, archivoSalida, quiet);
                         archivoSalida.close();
 
-                        archivoSalida.open("../exp/kamehameha_random");
-                        ejecutarPruebas(PRUEBA_RANDOM, archivoSalida);
+                        archivoSalida.open("../exp/kamehamehaRandom");
+                        ejecutarPruebas(PRUEBA_RANDOM, archivoSalida, quiet);
                         archivoSalida.close();
                     }
 
