@@ -7,11 +7,12 @@
 #include <chrono>
 #include "mini_test.h"
 #include <cmath>
+#include <iomanip>
 
 using namespace std;
 
-#define MAX_N                 10
-#define CANT_REPETICIONES     20
+#define MAX_N                 12
+#define CANT_REPETICIONES     40
 #define CANT_INST_DESCARTADAS 20
 #define CANT_REP_COMPLETAS     1
 
@@ -165,7 +166,7 @@ vector<unsigned int> destruirEnemigos(vector<unsigned int> &enemigosRestantes, R
 }
 
 bool resolverKamehamehaRecursivo(vector<unsigned int> enemigos, vector<vector<unsigned int>>& solucion, unsigned int limite) {
-    solucion = vector<vector<unsigned int>>();
+    // solucion = vector<vector<unsigned int>>();
 
     if (enemigos.size() == 0) {
         return true;
@@ -480,7 +481,7 @@ void ejecutarPruebas(int prueba_id, ofstream& archivoSalida, bool quiet) {
         N = i;
 
         if (!quiet) {
-            cout << "  N = " << i << " " << flush;
+            cout << "  N = " << setfill(' ') << setw(2) << i << "    " << flush;
         }
 
         switch (prueba_id) {
@@ -502,6 +503,10 @@ void ejecutarPruebas(int prueba_id, ofstream& archivoSalida, bool quiet) {
         }
         
         for (int r = -CANT_INST_DESCARTADAS; r < CANT_REPETICIONES; r++) {
+            if (!quiet) {
+                cout << "\b\b\b" << setfill(' ') << setw(3) << r << flush;
+            }
+
             double tiempo;
             if (instancias_random) {
                 coordenadasEnemigos = generarCasoRandom(N);
@@ -526,7 +531,7 @@ void ejecutarPruebas(int prueba_id, ofstream& archivoSalida, bool quiet) {
         archivoSalida << i << " " << tiempo_promedio << " " << desv_estandar << endl;
 
         if (!quiet) {
-            cout << "✓" << endl;
+            cout << "\b\b\b  ✓" << endl;
         }
     }
 }
