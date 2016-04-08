@@ -458,9 +458,12 @@ vector<XY> generarCasoIntermedio(unsigned int n) {
 }
 
 void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
+    double tiempo_promedio;
+    double c;
+    
     for (unsigned int i = 1; i <= MAX_N; i++) {
         double tiempos[CANT_REPETICIONES];
-        double tiempo_promedio = 0;
+        tiempo_promedio = 0;
         double desv_estandar = 0;
         bool instancias_random = false;
 
@@ -502,12 +505,14 @@ void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
         tiempo_promedio = tiempo_promedio / CANT_REPETICIONES;
 
         for (unsigned int r = 0; r < CANT_REPETICIONES; r++) {
-            desv_estandar += (tiempos[r] - tiempo_promedio) * (tiempos[r] - tiempo_promedio);
+            desv_estandar += pow(tiempos[r] - tiempo_promedio, 2);
         }
         desv_estandar = sqrt(desv_estandar / CANT_REPETICIONES);
 
         archivoSalida << i << " " << tiempo_promedio << " " << desv_estandar << endl;
     }
+        c = tiempo_promedio / pow(CANT_REPETICIONES, CANT_REPETICIONES + 2);
+        cout << c << endl;
 }
 
 /*
