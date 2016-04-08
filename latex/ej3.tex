@@ -2,13 +2,13 @@
     % 1. Describir detalladamente el problema a resolver dando ejemplos del mismo y sus soluciones.
     \subsection{Descripción del problema}
 
-        Gokú se está enfrentando a N androides y necesita destruirlos con la menor cantidad de Kamehamehas posibles. Los enemigos ode Gokú se encuentran en posiciones $(X_i , Y_i)$ y los Kamehameha recorren una semirrecta desde donde Gokú lo lance, en cualquier dirección que Gokú lo decida. ¿Cuántos Kamehamehas necesita Gokú para desturir a todos los androides del doctor Maki Gero?
+        Gokú se está enfrentando a $N$ androides y necesita destruirlos con la menor cantidad de kamehamehas posibles. Los enemigos de Gokú se encuentran en posiciones $(X_i , Y_i)$ y los kamehamehas recorren una semirrecta desde donde Gokú lo lance, en cualquier dirección que Gokú lo decida, destruyendo a todos los androides que encuentren a su paso.
 
-        Se pide escribir un algoritmo que tome la cantidad de androides N y las posiciones $(X_i , Y_i)$ de los mismos y decida cuántos Kamehameha debe lanzar Gokú y a qué enemigos destruye con cada Kamehameha. Si hay más de una solución óptima, el algoritmo puede devolver cualquiera de ellas. Se pide utilizar la técnica de Backtracking y elaborar podas y estrategias para mejorar los tiempos de ejecución; éstas deberán estar apropiadamente documentadas en el informe. El algoritmo debe tener una complejidad temporal $O(N^{N+2})$ o mejor.
+        Se desea escribir un algoritmo que tome la cantidad de androides $N$ y sus posiciones, y decida cuántos kamehameha debe lanzar Gokú y a qué enemigos destruye con cada uno de ellos. Si hay más de una solución óptima, se puede devolver cualquiera de ellas. Se debe utilizar la técnica de \emph{backtracking}, elaborando podas y estrategias para mejorar los tiempos de ejecución, y lograr una complejidad temporal $\ord(N^{N+2})$ o mejor.
 
-        La salida que el algoritmo debe retornar consiste en la cantidad de kamehamehas seguido de esa cantidad de lineas, donde cada una comienza con lacantidad de androides destruidos, seguido por los indices de dichos androides.
+        La salida que del algoritmo debe comenzar con la cantidad de kamehamehas usados. A continuación se debe agregar una línea por cada kamehameha, que debe contener la cantidad de androides destruidos por el mismo, seguido por los índices de dichos androides.
 
-        Por ejemplo, para la entrada:
+        Por ejemplo, para la siguiente entrada:
         
         \begin{verbatim}
         5
@@ -18,7 +18,8 @@
         1 2
         2 2
         \end{verbatim}
-        Una posible salida sería:
+
+        Una posible salida válida sería:
 
         \begin{verbatim}
         2
@@ -36,66 +37,76 @@
 
         no es una salida válida, ya que estaría matando por segunda vez al androide ubicado en la posicion (0,2).
         
-
     % 2. Explicar de forma clara, sencilla, estructurada y concisa, las ideas desarrolladas para la resolución del problema. Utilizar pseudocódigo y lenguaje coloquial (no código fuente). Justificar por qué el procedimiento resuelve efectivamente el problema.
     \subsection{Solución propuesta}
 
-    La solución consiste en probar todas las combinaciones posibles de kamehamehas, guardando en cada uno de ellos los grupos de androides a quienes destruye, y retornar la lista de grupos de androides de menor tamaño. Para hacer esto utilizamos la técnica de Backtracking; se llama recursivamente a una función que se encarga de probar cada kamehameha posible y para cada uno ramificarse.
+    Como toda solución planteada siguiendo la técnica de \emph{bracktracking}, la solución se basa en probar todas las combinaciones posibles de kamehamehas, guardando para cada una de ellas la manera en que los androides son destruidos, para luego retornar la lista correspondiende a una de las soluciones que utilice una cantidad de kamehamehas óptima. Esto se hace de manera recursiva, llamando a una función que se encarga de probar cada kamehameha posible y para cada uno ramificarse, buscando destruir a los que hayan sobrevivido.
 
-    Las combianaciones de kamehamehas estan dadas por los pares de androides posibles. Lanzar un kamehameha consiste en tomar la recta que pasa por dos androides elegidos. Luego se almacenan los androides que son destruidos por ese disparo y se continua con la ramificación de kamehamehas.
+    Teniendo en cuenta que cualquier par de androides puede ser eliminado con un único kamehameha, en ningún caso (suponiendo $N \geq 2$) será conveniente realizar un disparo que no aniquile al menos a dos enemigos. Por lo tanto, se considerará que los kamehamehas que se pueden disparar están dados por los todos los pares de androides posibles. Lanzar un kamehameha consiste en tomar la recta que pasa por estos dos androides, y luego, recorrer todos los demás enemigos, determinando cuáles de ellos son destruidos por ese disparo. A continuación, se utiliza la recursión para encontrar la forma óptima de matar a los androides restantes.
 
-    Una vez finalizada la ejecución del algoritmo, se habrán recorrido todas las posibles combinaciones de disparos. La solucion a este problema es la cual tenga menor cantidad de llamadas recursivas, ya que eso implica una menor cantidad de kamehamehas.
+    Los casos base de la recursión son triviales, y están planteados para $N = 0$ (no se realiza ningún disparo) y $N =1$ o $N = 2$ (se dispara un único kamehameha que mata a todos los androides). En los demás casos, por la naturaleza de la recursión, para cada posibilidad para el primer disparo se habrá obtenido la solución óptima para destruir a los enemigos restantes; por lo tanto basta con elegir, de entre estas opciones, aquella cuya solución recursiva utilice la cantidad de disparos mínima.
+
+    Si se analiza la forma en que se construye la solución, resulta claro que la respuesta del algoritmo planteado es efectivamente una solución correcta del problema. Por un lado, todos los enemigos son necesariamente destruidos en algún nivel de la recursión. Además, dado que al finalizar la ejecución se habrán recorrido todas las posibles combinaciones de disparos, es posible asegurar que se encontrará, efectivamente, aquella cuya cantidad de kamehamehas sea mínima. 
+
+    \subsubsection{Podas y otras mejoras diseñadas}
+
+    Desde luego, si bien se acaba de presentar una solución válida al problema, Gokú podría verse en apuros si debiera utilizarla para frenar una invasión inminente de androides, dado que el costo computacional de probar todos los kamehamehas posibles puede resultar excesivamente alto. Es por eso que se decidió implementar una serie de podas y otras metodologías que permitieran mejorar la eficiencia del algoritmo.
+
+    \begin{enumerate}
+        \item La primer estrategia que se incorporó consistió en evitar la repetición trivial de kamehamehas: resulta evidente que el kamehameha dado por el par de androides $(a_1, a_2)$ es el mismo que el dado por $(a_2, a_1)$. Por esta razón, se modificó la metodología utilizada para recorrer los enemigos, implementando dos ciclos, en donde el exterior (correspondiente a $a_1$) recorre todos los androides, y el interior (correspondiente a $a_2$) solo recorre los androides de $a_1$ en adelante.
+
+        \begin{codesnippet}
+        \begin{verbatim}
+            para i entre 0 y cantidadDeAndroides - 1 hacer:
+             |  para j entre i y cantidadDeAndroides - 1 hacer:
+             |   |  lanzarKamehameha(i, j)
+             |  fin para
+            fin para
+        \end{verbatim}
+        \end{codesnippet}
+
+        Dado que tras esta modificación aún se siguen intentado todos los disparos posibles, resulta claro que al agregarla no se altera la correctitud del algoritmo.
+
+        \item Si bien ya no se repiten pares de androides, aún puede existir algunos kamehamehas superpuestos; este es el caso en el que se selecciona un par de andorides y aparece un tercero en la misma recta. Por ejemplo, el kamehameha que pasa por (0,0) y (1,1) es el mismo que pasa por (1,1) y (2,2). Estos kamehamehas redundantes también pueden omitirse, evitando llamadas recursivas innecesarias sin afectar en absoluto el resultado del algoritmo.
+
+        Para implementar esta estrategia, se decidió ir almacenando los disparos efectuados. Luego, al seleccionar un par de androides distintos, antes de realizar la llamada recursiva correspondiente, se verifica que el disparo no resulte redundante con uno que ya se haya realizado con anterioridad durante la misma rama de ejecución (podría usarse ese mismo kamehameha, pero en una rama diferente).
+
+        \item La última poda diseñada se basa en la idea de que, en muchos casos, es posible determinar que una rama de la recursión no producirá una solución óptima sin necesidad de ejecutarla hasta el final. Esto puede hacerse almacenando la cantidad de kamehamehas usados por la mejor solución hallada hasta el momento, y pasando dicho valor por parámetro en cada llamada recursiva. Dicho valor funciona como un ``tope'' para la profundidad de la recursión: dado que cada nivel recursivo agrega un kamehameha a la solución, cuando una determinada rama de ejecución alcanza dicho tope de profundidad sin haber llegado a una solución válida, esto significa que la mencionada rama no podrá aportar una solución mejor que una que ya se obtuvo con anterioridad y, por lo tanto, puede descartarse sin problemas. En este caso se detiene la ejecución de la rama y se comunica al nivel superior de la recursión que no se obtuvo un resultado válido.
+
+        Es importante señalar que ninguna rama se descarta a menos que se tenga la seguridad de que no producirá un resultado correcto. Por lo tanto, nuevamente, la correctitud del algoritmo no se ve afectada.
+
+    \end{enumerate}
 
     \subsubsection{Detalles implementativos}
     
     El algoritmo fue implementado en lenguaje C++. Para almacenar la solución, se recurre a la clase \texttt{vector}, proporcionada por la librería estándar del lenguaje.
 
-    Durante la ejecución del algoritmo se utilizan dos variables globales; un entero para almacenar la cantidad de enemigos y un vector que contiene la ubicación de cada uno de ellos. La ejecución tiene como función principal un método recursivo. Analizemos este metodo:
+    Durante la ejecución del algoritmo se utilizan dos variables globales; un entero para almacenar la cantidad de enemigos y un vector que contiene la ubicación de cada uno de ellos. La ejecución consiste principalmente de una función recursiva, que presenta las siguientes características:
 
     \begin{itemize}
-        \item Se prueban todos los pares de enemigos posibles mediante dos ciclos anidados, de forma que si un kamehameha equivale a un par de enemigos se prueben todos los kamehameha posibles
-        \item Dentro del ciclo interior se revisa a qué enemigos destruye el kamehameha descripto por el par de enemigos elegido y se destruyen esos enemigos para luego agregarlos a la solucion
-        \item Destruir los enemigos consiste en eliminarlos de un vector que contiene a los enemigos restantes. Este vector es una copia del vector de enemigos restantes, ya que para cada kamehameha distinto, el algoritmo se bifurca con enemigos restantes distintos
-        \item Agregarlos a la solución consiste en añadir un vector que contiene a dichos enemigos a un vector de vectores, que representa la solucion: cada posición del vector es un kamehameha distinto conteniendo a los enemigos que destruye
-        \item Tiene como casos base la llamada en donde la cantidad de enemigos restantes es igual o menor a 2, en estos casos lo que se hace es agregar estos ultimos enemigos que quedaron a la solución, como parte del último kamehameha lanzado, y terminar la ejecución del método
+        \item Se prueban todos los pares de enemigos posibles mediante dos ciclos anidados, de la forma que se describe en el primer punto de la sección anterior.
+        \item Dentro del ciclo interior se revisa a qué enemigos destruye el kamehameha descripto por el par de enemigos elegido y se destruyen esos enemigos para luego agregarlos a la solución.
+        \item Destruir los enemigos consiste en eliminarlos de un vector que contiene a los enemigos restantes. Este vector es una copia del vector de enemigos restantes; el original debe conservarse porque, para cada kamehameha distinto, el algoritmo se bifurca con diferentes enemigos restantes.
+        \item Agregarlos a la solución consiste en añadir un vector que contiene a dichos enemigos a un vector de vectores, que representa la solución parcial construida hasta el momento: cada posición del vector corresponde a un kamehameha distinto y contiene a los enemigos que el mismo destruye.
+        \item Sus casos base son las llamadas donde la cantidad de enemigos restantes es igual o menor que 2. Estos casos no necesitan realizar llamadas recursivas, y simplemente devuelven un vector cuyo único enemigo es el vector de los enemigos a destruir, ya que estos pueden ser liquidados con un único kamehameha.
     \end{itemize}
 
-    La primer poda que hicimos fue la de no probar todos los kamehamehas posibles. El kamehameha que va desde el andoride $a_1$ al androide $a_2$ es el mismo que va del $a_2$ al $a_1$. Esto lo hicimos usando dos ciclos en donde el exterior (correspondiente a $a_1$) recorría todos los androides, y el interior (correspondiente a $a_2$) recorría los androides de $a_1$ en adelante. De esta forma se logra evitar la repetición innecesaria de pares de androides.
-
-    \begin{codesnippet}
-    \begin{verbatim}
-        for (int i = 0; i < cantidadDeAndroides - 1; i++){
-            for (int j = i; j < cantidadDeAndroides; j++){
-                lanzarKamehameha(i, j);
-            }
-        }
-    \end{verbatim}
-    \end{codesnippet}
-
-    Pero luego llegamos a una mejor poda. Si bien ya no repetimos pares de androides, todavía existen algunos kamehamehas superpuestos; este es el caso en que elijo un par de andorides y hay un tercero en la misma recta. Si yo tomo cualquier par de androides entre un conjunto en el que todos pasan por la misma recta, estaría tomando el mismo kamehameha.
-
-    Ejemplo: El kamehameha que pasa por (0,0) y (1,1) es el mismo que pasa por (1,1) y (2,2).
-
-    Lo que hicimos fue almacenar cada disparo para así verificar (recorriendo los kamehamehas guardados) que el par de androides que describen nuestro nuevo kamehameha no haya sido visitado en esta rama de ejecución (podría usarse ese mismo kamehameha pero en una rama diferente).
-
-    Otra poda hecha es la de almacenar la cantidad minima de kamehamehas con la cual el algoritmo llegó efectivamente a una solución (hasta ese momento la mejor), para que si en alguna rama se supera esa cantidad, no seguir ese camino, ya que no conducirá a una solución mejor que la antes encontrada.
-       
     % hecho. Deducir una cota de complejidad temporal del algoritmo propuesto y justificar por qué el algoritmo cumple la cota dada. Utilizar el modelo uniforme.
     \subsection{Complejidad teórica}
 
-    Al comienzo se inicializa un vector de $N$ posiciones, lo cual tiene costo de orden $N$. Principalmente se utiliza una función recursiva, la cual determina la complejidad temporal de la solución.
+    Al comienzo se inicializa un vector de $N$ posiciones, lo cual tiene costo del orden de $N$. El algoritmo consiste principalmente de una función recursiva, cuyo costo determina la complejidad temporal total de la solución.
     
-    Dicha función contiene dos ciclos, un dentro del otro, en donde el ciclo exterior recorre indices $i$ desde 0 hasta $N - 1$, y el interior desde $i$ hasta $N$. Esto implica que lo implementado dentro del ciclo interior se ejecute $N \times (N - 1)$ veces.
-
-    Analizemos el ciclo interior:
+    Dicha función contiene dos ciclos, un dentro del otro; el ciclo exterior recorre índices desde $0$ hasta $N - 1$, y el interior, desde $i$ hasta $N$. Esto implica que lo implementado dentro del ciclo interior se ejecute $N \times (N - 1)$ veces. Analizando este último ciclo, puede verse que:
 
     \begin{itemize}
-        \item Se recorren todos los kamehamehas anteriormente lanzados, que a lo sumo pueden ser $N/2$ ya que puedo eliminar al menos 2 androides con un mismo kamehameha, lo cual tiene costo de orden $N$.
-        \item Se destruyen los enemigos alcanzados por el kamehameha, esto consiste en recorrerlos todos y borrar cada uno del vector donde estan almacenados, con costo de orden $N^2$ y se los agrega a un vector con enemigos destruidos con costo de orden $N$. Por lo tanto el costo total es de orden $N^2$.
-        \item Por último se llama a la función nuevamente.
+        \item Se recorren todos los kamehamehas anteriormente lanzados, que a lo sumo pueden ser $N/2$, ya que cada kamehameha elimina al menos a 2 androides. Esto tiene un costo del orden de $N$.
+        \item Se destruyen los enemigos alcanzados por el kamehameha. Esto consiste en recorrerlos todos (ciclo con orden de $N$ iteraciones) y borrar cada uno del vector donde estan almacenados (esto cuesta también $\ord(N)$), con un costo del orden de $N^2$. Luego se los agrega a un vector con enemigos destruidos, con un costo del orden de $N$. Por lo tanto, el costo total es del orden de $N^2$.
+        \item Por último se llama a la misma función en forma recursiva.
     \end{itemize}
 
-    Se debe observar que al hacer el nuevo llamado, la cantidad de enemigos va a haber disminuido al menos en 2. Debido a esto, dentro de la siguiente llamada, el ciclo exterior recorrerá $N - 2$ indices y el interior $N - 3$. Así estas cantidades disminuirán de a 2 hasta terminar, llegando a 1.
+    Se debe observar que al hacer el nuevo llamado, la cantidad de enemigos va a haber disminuido al menos en 2. Debido a esto, dentro de la siguiente llamada, el ciclo exterior recorrerá solo $N - 2$ indices y el interior $N - 3$. Así estas cantidades disminuirán de a 2 hasta terminar, llegando a 1.
+
+    %% IMPORTANTE: LLEGUÉ A REVISAR HASTA ACÁ.
 
     Si pensamos la cantidad de llamadas recursivas como un árbol donde cada node es una llamada, tenemos un árbol de a lo sumo $N/2$ niveles, donde en su primer nivel hay $N \times (N - 1)$ llamados. Cada uno tiene $(N - 2) \times (N - 3)$ hijos, a su vez cada uno de ellos $(N - 4) \times (N - 5)$ y así sucesivamente hasta llegar a 1. Por lo que en el segundo nivel habrán $N \times (N - 1) \times (N - 2) \times (N - 3)$ nodos, y de esta forma en el último nivel se encontraran $N!$ hojas.
 
@@ -114,7 +125,7 @@
 
     \[\text{\#hojas }= \prod_{l = 0}^{N / 2}(N - 2l) \times (N - 2l -1) = N!\]
 
-    Sabiendo que la cantidad de hojas es $N!$ y la altura es $N/2$, y que cada llamada tiene un costo de orden $N^2$, se puede pensar que este arbol de ejecución está acotado superiormente por una "matriz" de $N/2$ filas y $N!$ columnas donde cada elemento es una llamada de costo $N^2$.
+    Sabiendo que la cantidad de hojas es $N!$ y la altura es $N/2$, y que cada llamada tiene un costo de orden $N^2$, se puede pensar que este arbol de ejecución está acotado superiormente por una ``matriz'' de $N/2$ filas y $N!$ columnas donde cada elemento es una llamada de costo $N^2$.
 
     Es decir, la complejidad del algoritmo está acotada superiormente por $N/2 \times N! \times N^2$ que es de orden $N^3 \times N!$.
 
