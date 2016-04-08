@@ -2,6 +2,13 @@
     % 1. Describir detalladamente el problema a resolver dando ejemplos del mismo y sus soluciones.
     \subsection{Descripción del problema}
 
+		\begin{figure}[ht]
+			\begin{center}
+				\includegraphics[width=0.4\columnwidth]{imagenes/kamehameha.png}
+				\caption{Onda vital!!!}
+			\end{center}
+		\end{figure}
+
         Gokú se está enfrentando a $N$ androides y necesita destruirlos con la menor cantidad de kamehamehas posibles. Los enemigos de Gokú se encuentran en posiciones $(X_i , Y_i)$ y los kamehamehas recorren una semirrecta desde donde Gokú lo lance, en cualquier dirección que Gokú lo decida, destruyendo a todos los androides que encuentren a su paso.
 
         Se desea escribir un algoritmo que tome la cantidad de androides $N$ y sus posiciones, y decida cuántos kamehameha debe lanzar Gokú y a qué enemigos destruye con cada uno de ellos. Si hay más de una solución óptima, se puede devolver cualquiera de ellas. Se debe utilizar la técnica de \emph{backtracking}, elaborando podas y estrategias para mejorar los tiempos de ejecución, y lograr una complejidad temporal $\ord(N^{N+2})$ o mejor.
