@@ -85,6 +85,35 @@
 	una entrada con $N$ enemigos y rango de Genkidama $T$. Tanto $maxY$ como
 	$xPendiente$ son inicializados en 0.
 
+	Se presenta un pseudocódigo para tener de referencia al seguir la
+	explicación detallada a continuación:
+
+	\begin{codesnippet}
+	\begin{verbatim}
+	Si N = 1 devuelvo como solución ese único enemigo
+	Si N > 1
+	    Si al primer elemento no lo cubre el siguiente
+	        Lo agrego a la solución
+	        maxY = coordenada Y del primero + T
+	    Si no
+	        xPendiente = coordenada X del primero
+
+	    Para los elementos j entre el primero y el último no inclusive
+	        Si el elemento j no está cubierto por alguna Genkidama anterior
+	            Si el elemento j + 1 cubre a j
+	                xPendiente = coordenada X del elemento j si actualmente vale 0
+	                Si j + 1 no cubre al elemento que j si
+	                    Agrego a j a la solución
+	                    maxY = coordenada Y del elemento j + T
+	            Si no
+	                Agrego a j a la solución
+	                maxY = coordenada Y del elemento j + T
+	                xPendiente = 0
+
+	    Si el elemento N no está cubierto por alguna Genkidama anterior, lo agrego
+	\end{verbatim}
+	\end{codesnippet}
+
 	\begin{enumerate}
 		\item{
 			El primer elemento es analizado por separado ya que no requiere
