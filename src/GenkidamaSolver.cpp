@@ -1,9 +1,49 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
+#include <numeric>    // iota
 #include <unistd.h>
+#include <algorithm>
+#include <chrono>
 #include "mini_test.h"
+#include <cmath>
+#include <climits>
 
 using namespace std;
+
+#define T                 	  10000
+#define MAX_T                 50000 
+#define MAX_N                 10000
+#define CANT_REPETICIONES     40
+#define CANT_INST_DESCARTADAS 20
+#define CANT_REP_COMPLETAS     1
+
+#define PRUEBA_PEOR_CASO       0
+#define PRUEBA_CASO_INTERMEDIO 1
+#define PRUEBA_MEJOR_CASO      2
+#define PRUEBA_VARIAR_T        3
+
+/*
+**  Variables globales
+*/
+unsigned int N;
+vector< vector<int> > coordenadasEnemigos;
+
+// Medición de tiempos
+
+static chrono::time_point<chrono::high_resolution_clock> start_time;
+
+void start_timer() {
+    start_time = chrono::high_resolution_clock::now();
+}
+
+double stop_timer() {
+    chrono::time_point<chrono::high_resolution_clock> end_time = chrono::high_resolution_clock::now();
+    return double(chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count());
+}
+
+
+
 
 void imprimirVector(const vector<int> &vectorAImprimir){
 	cout << "[";
@@ -14,6 +54,13 @@ void imprimirVector(const vector<int> &vectorAImprimir){
 		}
 	}
 	cout << "]" << endl;
+}
+
+void imprimirVectores(vector < vector < int > > vecs) {
+    cout << vecs.size() << endl;
+    for (unsigned int i = 0; i < vecs.size(); ++i) {
+        imprimirVector(vecs[i]);
+    }
 }
 
 bool compararVectores(const vector<int> calculado, const vector<int> esperado){
@@ -77,6 +124,7 @@ vector<int> resolverGenkidama(const int n, const int t, const vector< vector<int
 
 	return solucion;
 }
+
 
 void test_un_enemigo(){
 	int n = 1;
@@ -237,10 +285,259 @@ void test_seis_enemigos_cuatro_partes(){
 	ASSERT(compararVectores(solucion, esperado));
 }
 
+/*
+**  Pruebas de performance
+*/
+
+// Genera una instancia del problema de tamaño n donde no existen tres enemigos
+// que se encuentren alineados
+vector < vector<int> > generarPeorCaso(unsigned int n,unsigned int t) {
+    vector< vector<int> > enemigos = vector< vector<int> >(n, vector<int>(2));
+    unsigned int normaT = (RAND_MAX / (t +1));
+    vector<int> xs;
+    vector<int> ys;
+    int Xi;
+    for (unsigned int i = 0; i < n; ++i){
+	    do{
+			Xi = rand() % normaT;
+		}while(find(xs.begin(), xs.end(), Xi) != xs.end());
+		int Yi;
+		do{
+			Yi = rand() % normaT ;
+		}while(find(ys.begin(), ys.end(), Yi) != ys.end());
+		xs.push_back(Xi);
+  		ys.push_back(Yi);
+	}
+    
+    sort (xs.begin(), xs.end());
+  	sort (ys.begin(), ys.end());
+  	
+
+  	for (unsigned int i = 0; i < n; ++i){
+  		enemigos[i][0] = xs[n - (i+1)] * (t + 1);
+    	enemigos[i][1] = ys[i] * (t + 1);
+  	}
+    // cout << "PEOR   " << enemigos.size() << endl;
+    // imprimirVectores(enemigos);
+
+    return enemigos;
+}
+
+// Genera una instancia del problema de tamaño n donde todos los enemigos se
+// encuentran sobre una única línea recta
+vector < vector<int> > generarMejorCaso(unsigned int n,unsigned int t) {
+    
+    vector < vector<int> > enemigos = vector< vector<int> >(n, vector<int>(2));
+    vector<int> xsA;
+    vector<int> ysA;
+    vector<int> xsB;
+    vector<int> ysB;
+    int genkidamaX = rand() % (RAND_MAX - (n + t) ) + t;
+  	int genkidamaY = rand() % (RAND_MAX - (n + t) ) + t;
+  	for (unsigned int i = 1; i < n; ++i){
+  		if ( (rand()% 2) == 1){
+  			// cae en A
+  			int Xi = 0;
+  			do{
+  				Xi = (rand() % genkidamaX)  ;
+  			}while(find(xsA.begin(), xsA.end(), Xi) != xsA.end());
+  			int Yi = 0;
+  			do{
+  				Yi = (rand() % t) + genkidamaY;
+  			}while(find(ysA.begin(), ysA.end(), Yi) != ysA.end());
+  			xsA.push_back(Xi);
+  			ysA.push_back(Yi);
+  		}else{
+  			// cae en B
+  			int Xi = 0;
+  			do{
+  				Xi = (rand() % t) + genkidamaX;
+  			}while(find(xsB.begin(), xsB.end(), Xi) != xsB.end());
+  			int Yi = 0;
+  			do{
+  				Yi = (rand() % genkidamaY);
+  			}while(find(ysB.begin(), ysB.end(), Yi) != ysB.end());
+  			xsB.push_back(Xi);
+  			ysB.push_back(Yi);
+  		}
+  	}
+  	sort (xsA.begin(), xsA.end());
+  	sort (ysA.begin(),ysA.end());
+  	
+
+  	sort (xsB.begin(), xsB.end());
+  	sort (ysB.begin(), ysB.end());
+  	
+
+  	for (unsigned int i = 0; i < xsB.size(); ++i){
+  		enemigos[i][0] = xsB[xsB.size() - (i+1)];
+    	enemigos[i][1] = ysB[i];
+  	}
+
+  	enemigos[xsB.size()][0] = genkidamaX;
+    enemigos[xsB.size()][1] = genkidamaY;
+
+
+  	for (unsigned int i = xsB.size() + 1; i <  n; ++i){
+  		enemigos[i][0] = xsA[n - (i +1)];
+    	enemigos[i][1] = ysA[i - (xsB.size() + 1)];
+  	}
+
+    // cout << "MEJOR  " << enemigos.size() << endl;
+    // imprimirVectores(enemigos);
+
+    return enemigos;
+}
+
+// Genera una instancia del problema de tamaño n donde la mitad de los enemigos
+// se encuentran sobre una línea recta y la otra mitad, sobre otra línea recta
+// NOTA: las rectas podrían no ser distintas. Sin embargo, la probabilidad de
+// que esto suceda es despreciable
+vector< vector<int> > generarCasoIntermedio(unsigned int n) {
+   vector< vector<int> > enemigos = vector< vector<int> >(n, vector<int>(2));
+    vector<int> xs;
+    vector<int> ys;
+    int Xi;
+    for (unsigned int i = 0; i < n; ++i){
+	    do{
+			Xi = rand();
+		}while(find(xs.begin(), xs.end(), Xi) != xs.end());
+		int Yi;
+		do{
+			Yi = rand() ;
+		}while(find(ys.begin(), ys.end(), Yi) != ys.end());
+		xs.push_back(Xi);
+  		ys.push_back(Yi);
+	}
+    
+    sort (xs.begin(), xs.end());
+  	sort (ys.begin(), ys.end());
+  	
+
+  	for (unsigned int i = 0; i < n; ++i){
+  		enemigos[i][0] = xs[n - (i+1)] ;
+    	enemigos[i][1] = ys[i] ;
+  	}
+    // cout << "INTERMEDIO   " << enemigos.size() << endl ;
+    // imprimirVectores(enemigos);
+
+    return enemigos;
+}
+
+vector< vector<int> > generarCasoT(unsigned int n, unsigned int t) {
+   vector< vector<int> > enemigos = vector< vector<int> >(n, vector<int>(2));
+    // Los primeros puntos
+    enemigos[n-1][0] = rand() % (RAND_MAX - (n * t));
+    enemigos[0][1] = rand() % (RAND_MAX - (n * t));
+  	
+
+  	for (unsigned int i = 1; i < n; ++i){
+  		enemigos[n - (i+1)][0] =  enemigos[n - i][0] + ((rand() % (t-1 )) + 1) ;
+    	enemigos[i][1] =  enemigos[i-1][1] + ((rand() % (t-1 )) + 1) ;
+  	}
+    // cout << "T   " << enemigos.size() << endl ;
+    //  imprimirVectores(enemigos);
+
+    return enemigos;
+}
+
+
+
+
+
+
+void ejecutarPruebas(int prueba_id, ofstream& archivoSalida) {
+	
+	if(PRUEBA_VARIAR_T == prueba_id){
+		// Vario la T
+		coordenadasEnemigos = generarCasoT(MAX_N,50);
+		for (int i = 1; i < MAX_T; i += 50){
+			double tiempos[CANT_REPETICIONES];
+	        double tiempo_promedio = 0;
+	        double desv_estandar = 0;
+
+	        //cout << "Corro con T  : " << i << endl;
+	        for (int r = -CANT_INST_DESCARTADAS; r < CANT_REPETICIONES; r++) {
+	            double tiempo;
+	            
+	            start_timer();
+	            //cout << "resuelvo para t = "<< i << endl;
+	            resolverGenkidama(MAX_N, i, coordenadasEnemigos);
+	            tiempo = stop_timer();
+
+	            if (r >= 0) {
+	                tiempos[r] = tiempo;
+	                tiempo_promedio += tiempos[r];
+	            }
+	        }
+
+	        tiempo_promedio = tiempo_promedio / CANT_REPETICIONES;
+
+	        for (unsigned int r = 0; r < CANT_REPETICIONES; r++) {
+	            desv_estandar += (tiempos[r] - tiempo_promedio) * (tiempos[r] - tiempo_promedio);
+	        }
+	        desv_estandar = sqrt(desv_estandar / CANT_REPETICIONES);
+
+	        archivoSalida << i << " " << tiempo_promedio << " " << desv_estandar << endl;
+
+
+		}
+
+	}else{
+		//Vario la cantidad de enemigos
+	    for (unsigned int i = 1; i <= MAX_N; i += 100) {
+	        double tiempos[CANT_REPETICIONES];
+	        double tiempo_promedio = 0;
+	        double desv_estandar = 0;
+
+	        N = i;
+	        cout << "Genero el caso n : " << N << endl;
+	        switch (prueba_id) {
+	            case PRUEBA_MEJOR_CASO:
+	                coordenadasEnemigos = generarMejorCaso(N,T);
+	                break;
+
+	            case PRUEBA_CASO_INTERMEDIO:
+	                coordenadasEnemigos = generarCasoIntermedio(N);
+	                break;
+
+	            case PRUEBA_PEOR_CASO:
+	                coordenadasEnemigos = generarPeorCaso(N,T);
+	                break;
+
+	            
+	        }
+	        cout << "Corro el caso n : " << N << endl;
+	        for (int r = -CANT_INST_DESCARTADAS; r < CANT_REPETICIONES; r++) {
+	            double tiempo;
+	            
+	            start_timer();
+	            resolverGenkidama(N, T, coordenadasEnemigos);
+	            tiempo = stop_timer();
+
+	            if (r >= 0) {
+	                tiempos[r] = tiempo;
+	                tiempo_promedio += tiempos[r];
+	            }
+	        }
+
+	        tiempo_promedio = tiempo_promedio / CANT_REPETICIONES;
+
+	        for (unsigned int r = 0; r < CANT_REPETICIONES; r++) {
+	            desv_estandar += (tiempos[r] - tiempo_promedio) * (tiempos[r] - tiempo_promedio);
+	        }
+	        desv_estandar = sqrt(desv_estandar / CANT_REPETICIONES);
+
+	        archivoSalida << i << " " << tiempo_promedio << " " << desv_estandar << endl;
+	    }
+	}
+	
+}
+
 int main(int argc, char *argv[]) {
 	if(argc > 1){
 		char opt;
-		while ((opt = getopt(argc, argv, "tp")) != -1) {
+		while ((opt = getopt(argc, argv, "tp:")) != -1) {
 			switch (opt) {
 				case 't':
 					RUN_TEST(test_un_enemigo);
@@ -254,6 +551,28 @@ int main(int argc, char *argv[]) {
 					RUN_TEST(test_seis_enemigos_cuatro_partes);
 					break;
 				case 'p':
+					ofstream archivoSalida;
+					srand(stoi(optarg));
+
+					// cout << "genkidama_peor_caso_output" << endl;
+		   //          archivoSalida.open("../exp/genkidama_peor_caso_output");
+		   //          ejecutarPruebas(PRUEBA_PEOR_CASO, archivoSalida);
+		   //          archivoSalida.close();
+
+		   //          cout << "genkidama_caso_intermedio_output" << endl;
+		   //          archivoSalida.open("../exp/genkidama_caso_intermedio_output");
+		   //          ejecutarPruebas(PRUEBA_CASO_INTERMEDIO, archivoSalida);
+		   //          archivoSalida.close();
+
+		   //          cout << "genkidama_mejor_caso_output" << endl;
+		   //       	archivoSalida.open("../exp/genkidama_mejor_caso_output");
+		   //       	ejecutarPruebas(PRUEBA_MEJOR_CASO, archivoSalida);
+		   //       	archivoSalida.close();
+
+                    archivoSalida.open("../exp/genkidama_variar_T_output");
+                    ejecutarPruebas(PRUEBA_VARIAR_T, archivoSalida);
+                    archivoSalida.close();
+
 					break;
 			}
 		}
@@ -264,7 +583,7 @@ int main(int argc, char *argv[]) {
 
 		cin >> n >> t;
 
-		vector< vector<int>> coordenadasEnemigos = vector< vector<int>>(n, vector<int>(2));
+		coordenadasEnemigos = vector< vector<int> >(n, vector<int>(2));
 		for(int i = 0; i < n; i++){
 			cin >> coordenadasEnemigos[i][0] >> coordenadasEnemigos[i][1];
 		}
