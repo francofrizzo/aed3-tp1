@@ -93,8 +93,9 @@ void generarPerformanceTest(bool exponencial, int n){
 		}
 	}
 	else{
-		muestras = 10;
-		for(int i = 1; i < n; i += 100){
+		muestras = 40;
+		// Arrancamos con 200 para descartar las muestras con mucho ruido
+		for(int i = 200; i < n; i += 100){
 			tiempo_promedio = 0;
 			for(int j = 0; j < muestras; j++){
 				start_timer();
@@ -119,7 +120,7 @@ int main(int argc, char *argv[]) {
 				case 't':
 					break;
 				case 'p':
-					generarPerformanceTest(true, 25);
+					generarPerformanceTest(false, 100000);
 					break;
 			}
 		}
