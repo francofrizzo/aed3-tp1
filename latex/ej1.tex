@@ -85,23 +85,16 @@
 	para el mismo:
 
 	\begin{itemize}
-		\item{Como entrada se utilizó $N = 2^{k}$ con $0 < k < 25.$}
-		\item{Por cada $N$, se repitió $2^{\frac{25 - k}{2}}$ veces la medición y se calculó un
+		\item{Como entrada se utilizó $N = k$ con $200 < k < 100000$}
+		\item{Por cada $N$, se repitió 40 veces la medición y se calculó un
 			promedio.}
-		\item{Sólo se midió el costo temporal de generar la solución, no
-			de lectura y escritura del problema.}
-		\item{Para la medición del tiempo se utilizó la librería \texttt{chronos}
-			con unidad de tiempo en nanosegundos.}
 	\end{itemize}
 
-	De estos puntos, cabe destacar la elección de potencias de dos como
-	entrada. Esta decisión surge del hecho de que en valores pequeños las
-	mediciones de tiempo son más sensibles a perturbaciones del sistema en el
-	que están corriendo. Al elegir $N = 2^{k}$ como entrada tenemos que para los
-	primeros valores de $k$, los $N$ resultantes se encuentran relativamente
-	concentrados, logrando así un muestreo que caracterice mejor estos valores.
-	A medida que se aumenta el $k$, obtenemos valores de entrada más espaciados
-	con tamaños donde el ruido introducido por el sistema es despreciable.
+	De estos puntos, cabe destacar la elección de comenzar con $N = 200$. Esta
+	decisión surge del hecho de que en valores pequeños las mediciones de tiempo
+	son más sensibles a perturbaciones del sistema en el que están corriendo.
+	Por lo tanto, en base a las pruebas realizadas, se optó por ignorar los
+	primeros valores dado que no aportaban información pertinente al experimento.
 
 	Los resultados obtenidos fueron los siguientes:
 
