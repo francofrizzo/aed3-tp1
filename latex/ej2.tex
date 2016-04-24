@@ -776,9 +776,12 @@
 					al tiempo transcurrido para estas instancias.
             \end{itemize}
 
+		En cada experimento se graficaron los resultados para entradas de valor
+		mayor o igual a 500 con el propósito de ignorar los valores pequeños sensibles al ruido
+		del sistema en el que se realizaron las pruebas.
 
 
-    \renewcommand\constante{11.5}
+    \renewcommand\constante{5}
 
 	\begin{figure}[H]
 		\centering
@@ -795,7 +798,7 @@
 					enlargelimits=0.05,
 					width=0.5\textwidth,
 					height=0.5\textwidth,
-					legend pos=north east,
+					legend pos=north west,
 					legend cell align=left,
 					xmin=1
 				]
@@ -874,7 +877,8 @@
 					ylabel={Tiempo de ejecución (nanosegundos)},
 					scaled x ticks=false,
 					scaled y ticks=false,
-					ymin=0,
+					ymin=18000,
+					ymax=28000,
 					enlargelimits=0.05,
 					width=0.5\textwidth,
 					height=0.5\textwidth,
