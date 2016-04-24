@@ -151,7 +151,7 @@
     % 5. Realizar una experimentación computacional para medir la performance del programa implementado. Usar un conjunto de casos de test en función de los parámetros de entrada, con instancias aleatorias e instancias particulares (de peor/mejor caso en tiempo de ejecución, por ejemplo). Presentar en forma gráfica una comparación entre los tiempos medidos y la complejidad teórica calculada y extraer conclusiones.
     \subsection{Experimentación}
 
-        Al igual que con los otros dos ejercicios, se realizaron pruebas experimentales para verificar que el tiempo de ejecución del algoritmo cumpliera con la cota asintótica de $\ord(N^{N+2})$, teóricamente demostrada para el peor caso. Se realizaron dos tipos de pruebas:
+        Al igual que con los otros dos ejercicios, se realizaron pruebas experimentales para verificar que el tiempo de ejecución del algoritmo cumpliera con la cota asintótica de $\ord(N^3 \times N!)$, teóricamente demostrada para el peor caso. Se realizaron dos tipos de pruebas:
         
         \begin{itemize}
             \item Pruebas con instancias con características particulares, más específicamente, para el mejor caso, el peor caso y casos intermedios.
@@ -178,9 +178,9 @@
 
             En un principio, se descubrió que se producían picos en el tiempo de ejecución en las primeras corridas del programa, tendiendo los valores a estabilizarse con las sucesivas corridas. Si bien no se pudo determinar con precisión el origen de estas anomalías, se decidió, para minimizar la varianza de los datos obtenidos, tratar a las primeras $20$ repeticiones de cada instancia como \emph{outliers}, y promediar solo los valores de las últimas $40$.
 
-            \renewcommand\constante{0.001}
+            \renewcommand\constante{0.1}
 
-            Los resultados obtenidos se exponen en el gráfico de la Figura \ref{fig:exp3:part_tiempo_base}, donde se ilustra también la cota teórica de $c \times N^{N + 2}$ (el valor de $c$ utilizado es \constante). Se representan como $T_P$ los tiempos obtenidos para peor caso, como $T_M$ para el mejor caso, y como $T_I$ para el caso intermedio. Puede observarse claramente que, incluso en el peor escenario, el tiempo de ejecución del algoritmo tiende a aumentar a un ritmo estrictamente más lento que el de la cota prevista.
+            Los resultados obtenidos se exponen en el gráfico de la Figura \ref{fig:exp3:part_tiempo_base}, donde se ilustra también la cota teórica de $c \times N^3 \times N!$ (el valor de $c$ utilizado es \constante). Se representan como $T_P$ los tiempos obtenidos para peor caso, como $T_M$ para el mejor caso, y como $T_I$ para el caso intermedio. Puede observarse claramente que, incluso en el peor escenario, el tiempo de ejecución del algoritmo tiende a aumentar a un ritmo estrictamente más lento que el de la cota prevista.
 
             \begin{figure}[H]
                 \centering
@@ -205,8 +205,8 @@
                         \addplot[color=red] table[x index=0,y index=1]{../exp/kamehamehaPeor};
                         \addplot[color=blue] table[x index=0,y index=1]{../exp/kamehamehaIntermedio};
                         \addplot[color=green] table[x index=0,y index=1]{../exp/kamehamehaMejor};
-                        \addplot[color=gray] table[x index=0, y expr={\constante * (x^(x+2))}]{../exp/kamehamehaPeor};
-                        \legend{$T_P(N)$, $T_M(N)$, $T_I(N)$, $c \times N^{N+2}$}
+                        \addplot[color=gray] table[x index=0, y expr={\constante * (x^3) * x!}]{../exp/kamehamehaPeor};
+                        \legend{$T_P(N)$, $T_M(N)$, $T_I(N)$, $c \times N^3 \times N!$}
                     \end{axis}
                 \end{tikzpicture}
             \end{figure}
@@ -237,12 +237,12 @@
                         \addplot[color=blue] table[x index=0,y expr={\thisrowno{1} / (x^(x+2))}]{../exp/kamehamehaIntermedio};
                         \addplot[color=green] table[x index=0,y expr={\thisrowno{1} / (x^(x+2))}]{../exp/kamehamehaMejor};
                         \addplot[color=gray] table[x index=0, y expr={\constante}]{../exp/kamehamehaPeor};
-                        \legend{$\frac{T_P(N)}{N^{N+2}}$, $\frac{T_M(N)}{N^{N+2}}$, $\frac{T_I(N)}{N^{N+2}}$, $c$}
+                        \legend{$\frac{T_P(N)}{N^3 \times N!}$, $\frac{T_M(N)}{N^3 \times N!}$, $\frac{T_I(N)}{N^3 \times N!}$, $c$}
                     \end{axis}
                 \end{tikzpicture}
             \end{figure}
 
-            El análisis expuesto de los datos recopilados presenta evidencia empírica sobre la pertinencia la cota de complejidad demostrada teóricamente. Más aún, permite llegar a la conclusión que, incluso en las instancias de peor caso, esta cota resulta holgada, es decir, que la complejidad del algoritmo presentado es estrictamente $\ord(N^{N+2})$.
+            El análisis expuesto de los datos recopilados presenta evidencia empírica sobre la pertinencia la cota de complejidad demostrada teóricamente. Más aún, permite llegar a la conclusión que, incluso en las instancias de peor caso, esta cota resulta holgada, es decir, que la complejidad del algoritmo presentado es estrictamente $\ord(N^3 \times N!)$.
 
         \subsubsection{Instancias aleatorias}
 
