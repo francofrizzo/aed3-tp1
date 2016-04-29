@@ -65,9 +65,9 @@
         \begin{codesnippet}
         \begin{verbatim}
 para i entre 0 y cantidadDeAndroides - 1 hacer:
- |  para j entre i y cantidadDeAndroides - 1 hacer:
- |   |  lanzarKamehameha(i, j)
- |  fin para
+    para j entre i y cantidadDeAndroides - 1 hacer:
+        lanzarKamehameha(i, j)
+    fin para
 fin para
         \end{verbatim}
         \end{codesnippet}
@@ -84,14 +84,14 @@ kamehameha = construirRecta(enemigoI, enemigoJ);
 
 bool repetido = false;
 para i entre 0 y cantidadDeKamehamehasProbados
- |  si kamehameha == kamehamehasProbados[i] entonces
- |   |  repetido = true;
- |  fin si
+    si kamehameha == kamehamehasProbados[i] entonces
+        repetido = true;
+    fin si
 fin para
 
 si repetido entonces
- |  kamehamehasProbados.agregar(kamehameha)
- |  lanzarKamehameha(kamehameha)
+    kamehamehasProbados.agregar(kamehameha)
+    lanzarKamehameha(kamehameha)
 fin si
         \end{verbatim}
         \end{codesnippet}
@@ -105,40 +105,40 @@ fin si
         \begin{codesnippet}
         \begin{verbatim}
 bool resolverKamehamehaRecursivo(vector<int> enemigos, vector<vector<int>> solucion, limite)
- |
- |  si enemigos.tamaño() == 0 entonces
- |   |  return true
- |  sino si limite > 0 entonces
- |   |
- |   |  ...
- |   |  
- |   |  para i entre 0 y cantidadDeKamehamehas
- |   |   |
- |   |   |  subsolucion = enemigosDestruidosPorElKamehameha()
- |   |   |
- |   |   |  si cantidadDeEnemigosRestantes > 0 entonces
- |   |   |   |  vector<vector<int>> subsolucionRecursiva
- |   |   |   |  si resolverKamehamehaRecursivo(enemigosRestantes,subsolucionRecursiva,limite-1)
- |   |   |   |   |  subsolucion.insertar(subsolucionRecursiva)
- |   |   |   |   |  mejorSubsolucion = subsolucion
- |   |   |   |   |  limite = subsolucion.size()
- |   |   |   |  fin si
- |   |   |  sino
- |   |   |   |  mejorSubsolucion = subsolucion
- |   |   |   |  limite = 1
- |   |   |  fin si
- |   |  fin para
- |  fin si
- |
- |  ...
- |
- |  si haySubsolucionValida() entonces
- |   |  solucion.insertar(mejorSubsolucion)
- |   |  return true
- |  fin si
- |
- |  return false
- |
+  
+    si enemigos.tamaño() == 0 entonces
+        return true
+    sino si limite > 0 entonces
+      
+        ...
+        
+        para i entre 0 y cantidadDeKamehamehas
+          
+            subsolucion = enemigosDestruidosPorElKamehameha()
+          
+            si cantidadDeEnemigosRestantes > 0 entonces
+                vector<vector<int>> subsolucionRecursiva
+                si resolverKamehamehaRecursivo(enemigosRestantes,subsolucionRecursiva,limite-1)
+                    subsolucion.insertar(subsolucionRecursiva)
+                    mejorSubsolucion = subsolucion
+                    limite = subsolucion.size()
+                fin si
+            sino
+                mejorSubsolucion = subsolucion
+                limite = 1
+            fin si
+        fin para
+    fin si
+  
+    ...
+  
+    si haySubsolucionValida() entonces
+        solucion.insertar(mejorSubsolucion)
+        return true
+    fin si
+  
+    return false
+  
 fin resolverKamehamehaRecursivo
         \end{verbatim}
         \end{codesnippet}
@@ -279,7 +279,7 @@ fin resolverKamehamehaRecursivo
                 \end{tikzpicture}
             \end{figure}
 
-            En la Figura \ref{fig:exp3:part_tiempo_sobre_exp} se muestra el cociente entre los datos obtenidos y la función $\times N^{N + 2}$ (se considera el mismo valor de $c$ que en el gráfico anterior). Puede observarse como, al aumentar el tamaño de $N$, el cociente se aproxima rápidamente a $0$, ilustrando el hecho de que el crecimiento asintótico de la cota es estrictamente mayor que el de los tiempos obtenidos en las mediciones.
+            En la Figura \ref{fig:exp3:part_tiempo_sobre_exp} se muestra el cociente entre los datos obtenidos y la función $N^3 \times N!$ (se considera el mismo valor de $c$ que en el gráfico anterior). Puede observarse como, al aumentar el tamaño de $N$, el cociente se aproxima rápidamente a $0$, ilustrando el hecho de que el crecimiento asintótico de la cota es estrictamente mayor que el de los tiempos obtenidos en las mediciones.
 
             \begin{figure}[H]
                 \centering
