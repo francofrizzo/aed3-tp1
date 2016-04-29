@@ -82,10 +82,10 @@ fin para
         \begin{verbatim}
 kamehameha = construirRecta(enemigoI, enemigoJ);
 
-bool repetido = false;
+bool repetido = falso;
 para i entre 0 y cantidadDeKamehamehasProbados
     si kamehameha == kamehamehasProbados[i] entonces
-        repetido = true;
+        repetido = verdadero;
     fin si
 fin para
 
@@ -107,7 +107,7 @@ fin si
 bool resolverKamehamehaRecursivo(vector<int> enemigos, vector<vector<int>> solucion, limite)
   
     si enemigos.tamaño() == 0 entonces
-        return true
+        devolver verdadero
     sino si limite > 0 entonces
       
         ...
@@ -134,10 +134,10 @@ bool resolverKamehamehaRecursivo(vector<int> enemigos, vector<vector<int>> soluc
   
     si haySubsolucionValida() entonces
         solucion.insertar(mejorSubsolucion)
-        return true
+        devolver verdadero
     fin si
   
-    return false
+    devolver falso
   
 fin resolverKamehamehaRecursivo
         \end{verbatim}
