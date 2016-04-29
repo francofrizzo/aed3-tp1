@@ -64,23 +64,92 @@
 
         \begin{codesnippet}
         \begin{verbatim}
-            para i entre 0 y cantidadDeAndroides - 1 hacer:
-             |  para j entre i y cantidadDeAndroides - 1 hacer:
-             |   |  lanzarKamehameha(i, j)
-             |  fin para
-            fin para
+para i entre 0 y cantidadDeAndroides - 1 hacer:
+ |  para j entre i y cantidadDeAndroides - 1 hacer:
+ |   |  lanzarKamehameha(i, j)
+ |  fin para
+fin para
         \end{verbatim}
         \end{codesnippet}
 
         Dado que tras esta modificación aún se siguen intentado todos los disparos posibles, resulta claro que al agregarla no se altera la correctitud del algoritmo.
 
-        \item Si bien ya no se repiten pares de androides, aún puede existir algunos kamehamehas superpuestos; este es el caso en el que se selecciona un par de andorides y aparece un tercero en la misma recta. Por ejemplo, el kamehameha que pasa por (0,0) y (1,1) es el mismo que pasa por (1,1) y (2,2). Estos kamehamehas redundantes también pueden omitirse, evitando llamadas recursivas innecesarias sin afectar en absoluto el resultado del algoritmo.
+        \item Si bien ya no se repiten pares de androides, aún pueden existir algunos kamehamehas superpuestos; este es el caso en el que se selecciona un par de andorides y aparece un tercero en la misma recta. Por ejemplo, el kamehameha que pasa por (0,0) y (1,1) es el mismo que pasa por (1,1) y (2,2). Estos kamehamehas redundantes también pueden omitirse, evitando llamadas recursivas innecesarias sin afectar en absoluto el resultado del algoritmo.
 
         Para implementar esta estrategia, se decidió ir almacenando los disparos efectuados. Luego, al seleccionar un par de androides distintos, antes de realizar la llamada recursiva correspondiente, se verifica que el disparo no resulte redundante con uno que ya se haya realizado con anterioridad durante la misma rama de ejecución (podría usarse ese mismo kamehameha, pero en una rama diferente).
+
+        \begin{codesnippet}
+        \begin{verbatim}
+kamehameha = construirRecta(enemigoI, enemigoJ);
+
+bool repetido = false;
+para i entre 0 y cantidadDeKamehamehasProbados
+ |  si kamehameha == kamehamehasProbados[k] entonces
+ |   |  repetido = true;
+ |  fin si
+fin para
+
+si repetido entonces
+ |  kamehamehasProbados.agregar(kamehameha)
+ |  lanzarKamehameha(kamehameha)
+fin si
+        \end{verbatim}
+        \end{codesnippet}
 
         \item La última poda diseñada se basa en la idea de que, en muchos casos, es posible determinar que una rama de la recursión no producirá una solución óptima sin necesidad de ejecutarla hasta el final. Esto puede hacerse almacenando la cantidad de kamehamehas usados por la mejor solución hallada hasta el momento, y pasando dicho valor por parámetro en cada llamada recursiva. Dicho valor funciona como un ``tope'' para la profundidad de la recursión: dado que cada nivel recursivo agrega un kamehameha a la solución, cuando una determinada rama de ejecución alcanza dicho tope de profundidad sin haber llegado a una solución válida, esto significa que la mencionada rama no podrá aportar una solución mejor que una que ya se obtuvo con anterioridad y, por lo tanto, puede descartarse sin problemas. En este caso se detiene la ejecución de la rama y se comunica al nivel superior de la recursión que no se obtuvo un resultado válido.
 
         Es importante señalar que ninguna rama se descarta a menos que se tenga la seguridad de que no producirá un resultado correcto. Por lo tanto, nuevamente, la correctitud del algoritmo no se ve afectada.
+
+        Este es un pseudocódigo de la funcion principal, donde se hace foco unicamente en la poda:
+
+        \begin{codesnippet}
+        \begin{verbatim}
+bool resolverKamehamehaRecursivo(vector<int> enemigos, vector<vector<int>> solucion, limite)
+ |
+ |  si enemigos.tamaño() == 0 entonces
+ |   |  return true
+ |  sino si limite > 0 entonces
+ |   |
+ |   |  ...
+ |   |
+ |   |  vector<vector<int>> mejorSubsolucion
+ |   |  bool haySubsolucionValida = false;
+ |   |
+ |   |  subsolucion = crear_vector<vector<int>>_vacio()
+ |   |  subsolucion.agregar(enemigosDestruidosPorElKamehameha())
+ |   |
+ |   |  si cantidadDeEnemigosRestantes > 0 entonces
+ |   |   |  vector<vector<int>> subsolucionRecursiva
+ |   |   |  si resolverKamehamehaRecursivo(enemigosRestantes, subsolucionRecursiva, limite - 1) entonces
+ |   |   |   |  haySubsolucionValida = true
+ |   |   |   |  subsolucion.insertar(subsolucionRecursiva)
+ |   |   |   |  mejorSubsolucion = subsolucion
+ |   |   |   |  limite = subsolucion.size()
+ |   |   |  fin si
+ |   |  sino
+ |   |   |  haySubsolucionValida = true
+ |   |   |  mejorSubsolucion = subsolucion
+ |   |   |  limite = 1
+ |   |  fin si
+ |   |
+ |   |  si haySubsolucionValida entonces
+ |   |   |  solucion.insertar(mejorSubsolucion)
+ |   |   |  return true
+ |   |  fin si
+ |  fin si
+ |
+ |  si haySubsolucionValida entonces
+ |   |  solucion.insertar(mejorSubsolucion)
+ |   |  return true
+ |  fin si
+fin resolverKamehamehaRecursivo
+        \end{verbatim}
+        \end{codesnippet}
+
+        Puede observarse que al comienzo del algoritmo en la condición se analiza si $limite > 0$. Esto es lo que le da la capacidad de hacer efectiva la poda. 
+        Lo que limite representa es la cantidad de kamehamehas que faltan para llegar a la mejor solución encontrada, no la cantidad de kamehamehas de la mejor solución. Esto es importante ya que durante la ramificación del algoritmo, éste no conoce la cantidad de kamehamehas de la mejor solución, ni lo necesita; lo que sí necesita es saber cuántos kamehamehas puede disparar en la rama actual, para saber si debe descartarla o continuar.
+
+        Se le asigna el valor a este limite dentro de las estructuras de decisión, que como mencionamos previamente, es la cantidad de kamehamehas restantes hasta llegar a un tope en el cual continuar no lleva a ninguna mejor solución.
 
     \end{enumerate}
 
