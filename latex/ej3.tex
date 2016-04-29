@@ -65,7 +65,7 @@
         \begin{codesnippet}
         \begin{verbatim}
 para i entre 0 y cantidadDeAndroides - 1 hacer:
-    para j entre i y cantidadDeAndroides - 1 hacer:
+    para j entre i + 1 y cantidadDeAndroides - 1 hacer:
         lanzarKamehameha(i, j)
     fin para
 fin para
@@ -143,12 +143,12 @@ fin resolverKamehamehaRecursivo
         \end{verbatim}
         \end{codesnippet}
 
-        Puede observarse que al comienzo del algoritmo en la condición se analiza si $limite > 0$. Esto es lo que le da la capacidad de hacer efectiva la poda. 
-        Lo que limite representa es la cantidad de kamehamehas que faltan para llegar a la mejor solución encontrada, no la cantidad de kamehamehas de la mejor solución. Esto es importante ya que durante la ramificación del algoritmo, éste no conoce la cantidad de kamehamehas de la mejor solución, ni lo necesita; lo que sí necesita es saber cuántos kamehamehas puede disparar en la rama actual, para saber si debe descartarla o continuar.
+        Puede observarse que al comienzo del algoritmo en la condición se analiza si $\mathtt{limite} > 0$. Esto es lo que le da la capacidad de hacer efectiva la poda. 
+        Lo que \texttt{limite} representa es la cantidad de kamehamehas que faltan para llegar a la mejor solución encontrada, no la cantidad de kamehamehas de la mejor solución. Esto es importante ya que durante la ramificación del algoritmo, éste no conoce la cantidad de kamehamehas de la mejor solución, ni lo necesita; lo que sí necesita es saber cuántos kamehamehas puede disparar en la rama actual, para saber si debe descartarla o continuar.
 
-        Se le asigna el valor a este limite dentro de las estructuras de decisión, que como mencionamos previamente, es la cantidad de kamehamehas restantes hasta llegar a un tope en el cual continuar no lleva a ninguna mejor solución.
+        Se le asigna el valor a este \texttt{limite} dentro de las estructuras de decisión, que como mencionamos previamente, es la cantidad de kamehamehas restantes hasta llegar a un tope en el cual continuar no lleva a ninguna mejor solución.
 
-        Si el llamado recursivo encuentra una subsolucion valida, es decir una rama que mejora las ramas hermanas, se establece como mejor rama, se actualiza limite y se continua en busqueda de mejores. Al finalizar devuelve si encontró una mejor rama, y de haberlo hecho la agrega a la solución.
+        Si el llamado recursivo encuentra una subsolucion valida, es decir una rama que mejora las ramas hermanas, se establece como mejor rama, se actualiza \texttt{limite} y se continua en busqueda de mejores. Al finalizar devuelve si encontró una mejor rama, y de haberlo hecho la agrega a la solución.
 
     \end{enumerate}
 
