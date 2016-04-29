@@ -111,37 +111,36 @@ bool resolverKamehamehaRecursivo(vector<int> enemigos, vector<vector<int>> soluc
  |  sino si limite > 0 entonces
  |   |
  |   |  ...
- |   |
- |   |  vector<vector<int>> mejorSubsolucion
- |   |  bool haySubsolucionValida = false;
- |   |
- |   |  subsolucion = crear_vector<vector<int>>_vacio()
- |   |  subsolucion.agregar(enemigosDestruidosPorElKamehameha())
- |   |
- |   |  si cantidadDeEnemigosRestantes > 0 entonces
- |   |   |  vector<vector<int>> subsolucionRecursiva
- |   |   |  si resolverKamehamehaRecursivo(enemigosRestantes, subsolucionRecursiva, limite - 1) entonces
- |   |   |   |  haySubsolucionValida = true
- |   |   |   |  subsolucion.insertar(subsolucionRecursiva)
+ |   |  
+ |   |  para i entre 0 y cantidadDeKamehamehas
+ |   |   |  vector<vector<int>> mejorSubsolucion
+ |   |   |  bool haySubsolucionValida = false;
+ |   |   |
+ |   |   |  subsolucion = enemigosDestruidosPorElKamehameha()
+ |   |   |
+ |   |   |  si cantidadDeEnemigosRestantes > 0 entonces
+ |   |   |   |  vector<vector<int>> subsolucionRecursiva
+ |   |   |   |  si resolverKamehamehaRecursivo(enemigosRestantes,subsolucionRecursiva,limite-1)
+ |   |   |   |   |  subsolucion.insertar(subsolucionRecursiva)
+ |   |   |   |   |  mejorSubsolucion = subsolucion
+ |   |   |   |   |  limite = subsolucion.size()
+ |   |   |   |  fin si
+ |   |   |  sino
  |   |   |   |  mejorSubsolucion = subsolucion
- |   |   |   |  limite = subsolucion.size()
+ |   |   |   |  limite = 1
  |   |   |  fin si
- |   |  sino
- |   |   |  haySubsolucionValida = true
- |   |   |  mejorSubsolucion = subsolucion
- |   |   |  limite = 1
- |   |  fin si
- |   |
- |   |  si haySubsolucionValida entonces
- |   |   |  solucion.insertar(mejorSubsolucion)
- |   |   |  return true
- |   |  fin si
+ |   |  fin para
  |  fin si
  |
- |  si haySubsolucionValida entonces
+ |  ...
+ |
+ |  si haySubsolucionValida() entonces
  |   |  solucion.insertar(mejorSubsolucion)
  |   |  return true
  |  fin si
+ |
+ |  return false
+ |
 fin resolverKamehamehaRecursivo
         \end{verbatim}
         \end{codesnippet}
@@ -150,6 +149,8 @@ fin resolverKamehamehaRecursivo
         Lo que limite representa es la cantidad de kamehamehas que faltan para llegar a la mejor solución encontrada, no la cantidad de kamehamehas de la mejor solución. Esto es importante ya que durante la ramificación del algoritmo, éste no conoce la cantidad de kamehamehas de la mejor solución, ni lo necesita; lo que sí necesita es saber cuántos kamehamehas puede disparar en la rama actual, para saber si debe descartarla o continuar.
 
         Se le asigna el valor a este limite dentro de las estructuras de decisión, que como mencionamos previamente, es la cantidad de kamehamehas restantes hasta llegar a un tope en el cual continuar no lleva a ninguna mejor solución.
+
+        Si el llamado recursivo encuentra una subsolucion valida, es decir una rama que mejora las ramas hermanas, se establece como mejor rama, se actualiza limite y se continua en busqueda de mejores. Al finalizar devuelve si encontró una mejor rama, y de haberlo hecho la agrega a la solución.
 
     \end{enumerate}
 
