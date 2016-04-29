@@ -84,7 +84,7 @@ kamehameha = construirRecta(enemigoI, enemigoJ);
 
 bool repetido = false;
 para i entre 0 y cantidadDeKamehamehasProbados
- |  si kamehameha == kamehamehasProbados[k] entonces
+ |  si kamehameha == kamehamehasProbados[i] entonces
  |   |  repetido = true;
  |  fin si
 fin para
@@ -113,8 +113,6 @@ bool resolverKamehamehaRecursivo(vector<int> enemigos, vector<vector<int>> soluc
  |   |  ...
  |   |  
  |   |  para i entre 0 y cantidadDeKamehamehas
- |   |   |  vector<vector<int>> mejorSubsolucion
- |   |   |  bool haySubsolucionValida = false;
  |   |   |
  |   |   |  subsolucion = enemigosDestruidosPorElKamehameha()
  |   |   |
