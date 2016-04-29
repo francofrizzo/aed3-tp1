@@ -30,7 +30,7 @@
 
         El sistema de numeración binario utiliza, comúnmente, los símbolos \texttt{0} y \texttt{1}. Sin embargo, esta elección es completamente arbitraria. Si se piensa en una variante de este sistema construida en base a los símbolos \texttt{1} y \texttt{2}, el problema de asignar un historial de peleas para $N$ guerreros que cumpla los requerimientos de Gokú puede reducirse a encontrar una representación en dicho sistema para los primeros $N$ números naturales. (A modo ilustrativo, pueden observarse las columnas de las soluciones de ejemplo expuestas en la descripción del problema. Si se reemplazan los símbolos $\lbrace\mathtt{1},\mathtt{2}\rbrace$ por $\lbrace\mathtt{0},\mathtt{1}\rbrace$, las columnas corresponden exactamente a la escritura binaria de los números entre $0$ y $7$).
 
-        El algoritmo propuesto para resolver el problema planteado se basa en esta idea, y consiste simplemente en escribir los números naturales entre $0$ y $N-1$ en notación binaria utilizando $\lceil \log_2(N) \rceil$ dígitos para cada uno de ellos, pero cambiando los símbolos \texttt{1} y \texttt{2} por \texttt{0} y \texttt{1}, respectivamente. Estas escrituras representarán el historial de peleas de cada guerrero. Dado que para escribir los primeros $N$ naturales en notación binaria son necesarios exactamente $\lceil\log_2(N)\rceil$ dígitos, esta será la mínima cantidad de peleas necesarias para que todos los guerreros se enfrenten alguna vez entre sí. La línea correspondiente a la $i$-ésima pelea se obtiene tomando en orden los $i$-ésimos dígitos de las escrituras generadas; en otras palabras, leyendo las mismas ``por columnas''.
+        El algoritmo propuesto para resolver el problema planteado se basa en esta idea, y consiste simplemente en escribir los números naturales entre $0$ y $N-1$ en notación binaria utilizando $\lceil \log_2(N) \rceil$ dígitos para cada uno de ellos, pero cambiando los símbolos \texttt{0} y \texttt{1} por \texttt{1} y \texttt{2}, respectivamente. Estas escrituras representarán el historial de peleas de cada guerrero. Dado que para escribir los primeros $N$ naturales en notación binaria son necesarios exactamente $\lceil\log_2(N)\rceil$ dígitos, esta será la mínima cantidad de peleas necesarias para que todos los guerreros se enfrenten alguna vez entre sí. La línea correspondiente a la $i$-ésima pelea se obtiene tomando en orden los $i$-ésimos dígitos de las escrituras generadas; en otras palabras, leyendo las mismas ``por columnas''.
 
         El resultado así obtenido cumple con los requisitos necesarios para ser solución del problema. En efecto:
         \begin{itemize}
@@ -48,14 +48,35 @@
 
             La ejecución consiste en un ciclo que se repite $\lceil \log_2(N) \rceil$ veces. La $i$-ésima iteración de este ciclo corresponde a la $i$-ésima pelea de la solución, y durante ella se construye la línea correspondiente a la misma, escribiendo repetidamente los símbolos \texttt{1} y \texttt{2}, alternando entre ellos cada $2^i$ símbolos. Es decir, la primera línea generada tiene la forma \texttt{1212121...}, la segunda, \texttt{1122112...}, y así sucesivamente. Si se observan las columnas del resultado así obtenido, se encuentran (con sus dígitos en orden inverso) las escrituras binarias de los primeros $N$ naturales, escritas con los símbolos \texttt{1} y \texttt{2}.
 
-            En rigor, dado que la matriz necesaria para almacenar la solución es creada al comienzo de la ejecución, se aprovecha este momento para inicializarla con el símbolo \texttt{2}, utilizando el ciclo recién explicado parar reemplazarlo por el símbolo \texttt{1} donde es necesario.
+        \begin{codesnippet}
+        \begin{verbatim}
+cantidadPeleas = parte entera de log_2(n)
+peleas = vector de tamaño cantidadPeleas inicializado en 2
+saltos = 1
+para i entre 0 y cantidadPeleas:
+    para j entre 0 y n, con incrementos de 2 * saltos:
+        para k entre 0 y saltos:
+            si j + k < n:
+                peleas[i][j + k] = 1
+            fin si
+        fin para
+    fin para
+
+    saltos = 2 * saltos
+fin para
+
+devolver peleas
+        \end{verbatim}
+        \end{codesnippet}
+
+            En rigor, dado que la matriz necesaria para almacenar la solución es creada al comienzo de la ejecución, se aprovecha este momento para inicializarla con el símbolo \texttt{2}, utilizando el ciclo recién explicado para reemplazarlo por el símbolo \texttt{1} donde es necesario.
 
             % ¿MANDAMOS PSEUDOCÓDIGO? - NO, pero igual te quiero fran :) 
 
     % 3. Deducir una cota de complejidad temporal del algoritmo propuesto y justificar por qué el algoritmo cumple la cota dada. Utilizar el modelo uniforme.
     \subsection{Complejidad teórica}
          
-      Durante la ejecución del algoritmo se utiliza una matriz con $\log(N)$ filas y $N$ columnas. En primer lugar, se inicializa esta matriz en \texttt{2}, lo cual tiene un costo del orden de $N \times \log(N)$. Para generar las peleas se recorre esta matriz; se tiene un ciclo que recorre las filas, y dentro del mismo, dos ciclos anidados que se encargan de recorrer las columnas. Los límites de estos últimos dos ciclos varían según la fila; en la fila $i$-ésima, el ciclo externo itera hasta $N$ con incrementos de tamaño $2^i$ ($\frac{N}{2^i}$ iteraciones), mientras que el ciclo interno itera hasta $2^i$ con saltos de a $1$ ($2^i$ iteraciones).
+      Durante la ejecución del algoritmo se utiliza una matriz con $\lceil \log_2(N) \rceil$ filas y $N$ columnas. En primer lugar, se inicializa esta matriz en \texttt{2}, lo cual tiene un costo del orden de $N \times \log(N)$. Para generar las peleas se recorre esta matriz; se tiene un ciclo que recorre las filas, y dentro del mismo, dos ciclos anidados que se encargan de recorrer las columnas. Los límites de estos últimos dos ciclos varían según la fila; en la fila $i$-ésima, el ciclo externo itera hasta $N$ con incrementos de tamaño $2^i$ ($\frac{N}{2^i}$ iteraciones), mientras que el ciclo interno itera hasta $2^i$ con saltos de a $1$ ($2^i$ iteraciones).
 
       Por lo tanto, la cantidad de veces que se ejecuta el ciclo interno, sumando sobre todas las filas de la matriz, es
 
