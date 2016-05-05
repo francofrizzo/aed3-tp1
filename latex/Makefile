@@ -5,7 +5,7 @@ LATEXFLAGS := -interaction=nonstopmode
 
 PDFS := informe.pdf
 
-all: clean $(PDFS)
+all: $(PDFS)
 
 %.pdf: %.tex
 	$(LATEX) $(LATEXFLAGS) $<
